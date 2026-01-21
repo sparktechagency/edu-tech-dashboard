@@ -1,7 +1,7 @@
 import { TSidebarItem } from './generateSidebarItems';
 // import {  AiOutlineDollarCircle } from 'react-icons/ai';
 import { IoBarChartOutline } from 'react-icons/io5';
-import { TbLogout, TbMessage2Check } from 'react-icons/tb';
+import {  TbMessage2Check } from 'react-icons/tb';
 import { HiOutlineUserGroup } from 'react-icons/hi2';
 import { BsBuildingGear } from 'react-icons/bs';
 import { LuCrown } from 'react-icons/lu';

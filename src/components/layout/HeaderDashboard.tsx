@@ -1,13 +1,11 @@
-import { Layout } from 'antd';
 import {  useNavigate } from 'react-router-dom';
 import { FiLogOut } from "react-icons/fi";
-const { Header } = Layout;
- 
+
 const HeaderDashboard = () => {
     const navigate = useNavigate()
 
     return (
-        <Header className='container  bg-transparent flex items-center justify-between text-white '> 
+        <div className='container  bg-transparent flex items-center justify-between text-white '> 
         <div> 
                       <div onClick={()=>navigate("/")} className=' cursor-pointer'>
                     <div className=' flex items-center justify-center gap-2.5'>
@@ -28,7 +26,7 @@ const HeaderDashboard = () => {
                 <span className="text-lg font-medium tracking-wide">Log Out</span>
             </button>
             </div>
-        </Header>
+        </div>
     );
 };
 

@@ -2,34 +2,62 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 * {
     padding: 0;
     margin: 0;
- --font-primary: 'Plus Jakarta Sans', sans-serif;
-  --font-heading: 'F37 Ginger', sans-serif; 
-   --container-width: calc(100% - 4rem); 
+    --font-primary: 'Plus Jakarta Sans', sans-serif;
+    --font-heading: 'F37 Ginger', sans-serif;
     font-family: var(--font-primary);
-} 
+}
 
 
 body {
-  font-family: var(--font-primary);
-}   
+    font-family: var(--font-primary);
+}
 
+
+/* Container */
 .container {
-  max-width: var(--container-width);
-  margin-left: auto;
-  margin-right: auto;
-} 
+    width: 100%;
+    padding-left: 16px;
+    padding-right: 16px;
+    margin-left: auto;
+    margin-right: auto;
+}
 
-.flex-center{
+/* Laptop */
+@media (min-width: 1024px) {
+    .container {
+        max-width: 1024px;
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+}
+
+/* Desktop */
+@media (min-width: 1280px) {
+    .container {
+        max-width: 1200px;
+    }
+}
+
+/* Large Desktop */
+@media (min-width: 1536px) {
+    .container {
+        max-width: 1480px;
+    }
+}
+
+.flex-center {
     display: flex;
     align-items: center;
     justify-content: center;
 }
+
 .font-heading {
-  font-family: var(--font-heading);
-} 
+    font-family: var(--font-heading);
+}
 
 
 /* scroll bar */
@@ -64,14 +92,15 @@ body {
     background-color: transparent !important;
     border: 1px solid #3bb77e !important;
     color: #3bb77e !important;
-    font-weight: 600; 
-     border-radius: 8px;
+    font-weight: 600;
+    border-radius: 8px;
 }
 
 .custom-sidebar-menu .ant-menu-item {
     border: 1px solid transparent;
     margin-bottom: 8px !important;
-    border-radius: 8px; /* Match rounded look */
+    border-radius: 8px;
+    /* Match rounded look */
 }
 
 /* Ensure links inside inherit color */
