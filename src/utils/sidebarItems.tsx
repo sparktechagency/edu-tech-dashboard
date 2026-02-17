@@ -18,13 +18,13 @@ const sidebarItems: TSidebarItem[] = [
     {
         key: 'users',
         label: 'User Management',
-        path: 'users',
+        path: 'admin/student',
         icon: <HiOutlineUserGroup size={24} />,
     },
     {
         key: 'hosts',
         label: 'Host List',
-        path: 'hosts',
+        path: 'admin/mentors',
         icon: <RiUserStarLine size={24} />,
     },
     

@@ -1,11 +1,8 @@
 import React from 'react';
-
-import { Layout, theme } from 'antd';
+import { theme } from 'antd';
 import { Outlet } from 'react-router-dom';
 import HeaderDashboard from './HeaderDashboard';
 import Sidebar from './Sidebar';
-
-const { Content } = Layout;
 
 const MainLayout: React.FC = () => {
     const {
@@ -13,31 +10,23 @@ const MainLayout: React.FC = () => {
     } = theme.useToken();
 
     return (
-        <div className=' flex flex-col h-screen '>
-            {/* header */}
-
+        <div className=' flex flex-col h-screen '> 
             <div className='bg-[#21C45D] h-20 w-full flex-center'>
                 <HeaderDashboard />
             </div>
 
-            <div className=' flex-center bg-red-50'>
+            <div className=' flex-center bg-white shadow-2xl'>
                 <Sidebar />
             </div>
 
-            <Content className='overflow-y-scroll' >
-                <div
-                    style={{
-                        padding: 0,
-                        minHeight: '50vh',
-                        width: '100%',
-                        background: '#F6F6F6',
-                        borderRadius: borderRadiusLG,
-                    }}
-                    className=''
-                >
+            <div className='overflow-y-scroll bg-[#F6F6F6] min-h-[82vh]'>
+                <div className='container py-5  w-full'
+                style={{
+                    borderRadius: borderRadiusLG,
+                }}>
                     <Outlet />
                 </div>
-            </Content>
+            </div>
         </div>
     );
 };

@@ -1,21 +1,12 @@
 import { createBrowserRouter } from 'react-router-dom';
 import App from '../App';
-import Dashboard from '../pages/dashboard/dashboard/Dashboard';
 import Login from '../pages/authentication/Login';
-import ErrorPage from '../pages/error/ErrorPage';
-import Notification from '../pages/dashboard/Notification';
+import ErrorPage from '../components/ui/error/ErrorPage';
 import ForgetPassword from '../pages/authentication/ForgetPassword';
 import VerifyOtp from '../pages/authentication/VerifyOtp';
 import NewPassword from '../pages/authentication/NewPassword';
-import Profile from '../pages/dashboard/profile/Profile';
-import Users from '../pages/dashboard/Users';
-import BookingHistory from '../pages/dashboard/BookingHistory';
-import Transactions from '../pages/dashboard/Transactions';
-import Facilities from '../pages/dashboard/Facilities';
-import Subscription from '../pages/dashboard/Subscription';
-// import PrivateRoute from '../provider/PrivateRoutes';
-import SubscriptionList from '../pages/dashboard/SubscriptionList';
-import HostList from '../pages/dashboard/HostList';
+import Users from '../pages/Users';
+import AdminOverview from '../pages/admin/overview';
 
 const router = createBrowserRouter([
     {
@@ -23,20 +14,53 @@ const router = createBrowserRouter([
         // element: <PrivateRoute> <App /> </PrivateRoute>,
         element: <App />,
         errorElement: <ErrorPage />,
-        children: [
-            { path: '', element: <Dashboard /> },
-            { path: 'users', element: <Users /> },
-            { path: 'reviews', element: <BookingHistory /> },
-            { path: 'subscription', element: <Subscription/> },
-            { path: 'facilities', element: <Facilities /> },
-            { path: 'transactions', element: <Transactions /> },
-            { path: 'notification', element: <Notification /> },
-            { path: 'profile', element: <Profile /> },
-             {path:"subscription-list",element:<SubscriptionList/>},
-            {
-                path:"hosts",
-                element:<HostList/>
-            }
+        children: [ 
+            // Admin 
+            { path: '/admin/overview', element: <AdminOverview /> },
+            { path: '/admin/student', element: <Users /> },
+            { path: '/admin/mentors', element: <Users /> },
+            { path: '/admin/teacher', element: <Users /> },
+            { path: '/admin/events', element: <Users /> },
+            { path: '/admin/materials', element: <Users /> },
+            { path: '/admin/schedule', element: <Users /> },
+            {path:"/admin/weekly-report",element:<Users/>}, 
+
+             //Teacher   
+            { path: '/teacher/overview', element: <Users /> },
+            { path: '/teacher/my-student', element: <Users /> },
+            { path: '/teacher/class-schedule', element: <Users /> },
+            { path: '/teacher/resources', element: <Users /> },
+            { path: '/teacher/assignment', element: <Users /> },
+            { path: '/teacher/chat', element: <Users /> },
+            { path: '/teacher/attendance', element: <Users /> },
+
+            //  Mentor Coordinator  
+            { path: '/mentor-coordinator/overview', element: <Users /> },
+            { path: '/mentor-coordinator/mentors', element: <Users /> },
+            { path: '/mentor-coordinator/group-schedule', element: <Users /> },
+            { path: '/mentor-coordinator/resources', element: <Users /> },
+            { path: '/mentor-coordinator/profile', element: <Users /> },
+
+            // Student  
+            { path: '/student/overview', element: <Users /> },
+            { path: '/student/goal', element: <Users /> },
+            { path: '/student/resources', element: <Users /> },
+            { path: '/student/assignment', element: <Users /> },
+            { path: '/student/mentor', element: <Users /> },
+            { path: '/student/events', element: <Users /> },
+            { path: '/student/chat', element: <Users /> },
+            { path: '/student/setting', element: <Users /> },
+            { path: '/student/profile', element: <Users /> },
+
+            // Mentor  
+            { path: '/mentor/overview', element: <Users /> },
+            { path: '/mentor/students', element: <Users /> },
+            { path: '/mentor/weekly-report', element: <Users /> },
+            { path: '/mentor/time-tracking', element: <Users /> },
+            { path: '/mentor/learning-materials', element: <Users /> },
+            { path: '/mentor/woops', element: <Users /> },
+            { path: '/mentor/chat', element: <Users /> },
+            { path: '/mentor/profile', element: <Users /> },
         ],
     },
     { path: '/login', element: <Login /> },

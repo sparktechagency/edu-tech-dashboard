@@ -15,8 +15,6 @@ const EditProfile: React.FC = () => {
     const [imgFile, setImageFile] = useState<File | null>(null);
     const [updateProfile, { isLoading, isSuccess, isError, error, data }] = useUpdateProfileMutation();
 
-  
-    
 
     useEffect(() => {
         if (user) {
