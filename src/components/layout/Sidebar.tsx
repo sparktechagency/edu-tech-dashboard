@@ -1,10 +1,43 @@
 import { Link, useLocation } from 'react-router-dom';
-import sidebarItems from '../../utils/sidebarItems';
+import { 
+    adminSidebarItems, 
+    teacherSidebarItems, 
+    mentorCoordinatorSidebarItems, 
+    studentSidebarItems, 
+    mentorSidebarItems 
+} from '../../utils/sidebarItems';
 import { TSidebarItem } from '../../utils/generateSidebarItems';
+import { useEffect, useState } from 'react';
 
 const Sidebar = () => {
     const location = useLocation();
-    console.log(location.pathname);
+    const [sidebarItems, setSidebarItems] = useState<TSidebarItem[]>([]);
+
+    useEffect(() => {
+        const role = localStorage.getItem('role') || 'student'; 
+
+        switch (role) {
+            case 'admin':
+                setSidebarItems(adminSidebarItems);
+                break;
+            case 'teacher':
+                setSidebarItems(teacherSidebarItems);
+                break;
+            case 'mentor_coordinator': 
+            case 'mentor-coordinator':
+                setSidebarItems(mentorCoordinatorSidebarItems);
+                break;
+            case 'student':
+                setSidebarItems(studentSidebarItems);
+                break;
+            case 'mentor':
+                setSidebarItems(mentorSidebarItems);
+                break;
+            default:
+                setSidebarItems(studentSidebarItems);
+                break;
+        }
+    }, []);
 
     const isActive = (path?: string) => {
         if (!path) return false;
