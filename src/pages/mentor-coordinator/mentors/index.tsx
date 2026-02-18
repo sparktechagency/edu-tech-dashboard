@@ -4,7 +4,7 @@ import type { ColumnsType } from 'antd/es/table';
 import { FilterOutlined, EyeOutlined, SearchOutlined } from '@ant-design/icons';
 import MentorDetailsModal from '../../../components/modals/mentor-coordinator/MentorDetailsModal';
 import StudentDetailsModal from '../../../components/modals/mentor-coordinator/StudentDetailsModal';
-import { initialMentorsData } from '../../../data/mentor-coordinator-data';
+import { initialMentorsData } from '../../../constants/mentor-coordinator-data';
 
 export interface Mentor {
   key: string;
