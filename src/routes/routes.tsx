@@ -9,6 +9,8 @@ import Users from '../pages/Users';
 import AdminOverview from '../pages/admin/overview';
 import MentorCoordinatorOverview from '../pages/mentor-coordinator/mentor-coordinator-overview';
 import MentorCoordinatorProfile from '../pages/mentor-coordinator/profile';
+import Mentors from '../pages/mentor-coordinator/mentors';
+import GroupSchedule from '../pages/mentor-coordinator/group-schedule';
 
 const router = createBrowserRouter([
     {
@@ -38,8 +40,8 @@ const router = createBrowserRouter([
 
             //  Mentor Coordinator  
             { path: '/mentor-coordinator/overview', element: <MentorCoordinatorOverview /> },
-            { path: '/mentor-coordinator/mentors', element: <Users /> },
-            { path: '/mentor-coordinator/group-schedule', element: <Users /> },
+            { path: '/mentor-coordinator/mentors', element: <Mentors /> },
+            { path: '/mentor-coordinator/group-schedule', element: <GroupSchedule /> },
             { path: '/mentor-coordinator/resources', element: <Users /> },
             { path: '/mentor-coordinator/profile', element: <MentorCoordinatorProfile /> },
 

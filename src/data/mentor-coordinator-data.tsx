@@ -1,5 +1,6 @@
 import { FaChalkboardTeacher, FaUserGraduate, FaUsers, FaBookOpen } from 'react-icons/fa';  
 import { FaGraduationCap } from 'react-icons/fa'; 
+import { Mentor } from '../pages/mentor-coordinator/mentors';
 
 const studentsData = [
   {
@@ -83,4 +84,70 @@ const recentActivityData = [
   },
 ]; 
 
-export {studentsData , statsData , recentActivityData };
+const initialMentorsData: Mentor[] = [
+  {
+    key: '1',
+    name: 'Rens Groot',
+    email: 'rens@mail.com',
+    company: 'ABN AMRO',
+    jobTitle: 'Data Analyst',
+    status: 'Active',
+  },
+  {
+    key: '2',
+    name: 'Rens Groot',
+    email: 'rens@mail.com',
+    company: 'ABN AMRO',
+    jobTitle: 'Data Analyst',
+    status: 'Active',
+  },
+  {
+    key: '3',
+    name: 'Rens Groot',
+    email: 'rens@mail.com',
+    company: 'ABN AMRO',
+    jobTitle: 'Data Analyst',
+    status: 'Active',
+  },
+  {
+    key: '4',
+    name: 'Rens Groot',
+    email: 'rens@mail.com',
+    company: 'ABN AMRO',
+    jobTitle: 'Data Analyst',
+    status: 'Active',
+  },
+  {
+    key: '5',
+    name: 'Rens Groot',
+    email: 'rens@mail.com',
+    company: 'ABN AMRO',
+    jobTitle: 'Data Analyst',
+    status: 'Active',
+  },
+  {
+    key: '6',
+    name: 'Rens Groot',
+    email: 'rens@mail.com',
+    company: 'ABN AMRO',
+    jobTitle: 'Data Analyst',
+    status: 'Active',
+  },
+  {
+    key: '7',
+    name: 'Rens Groot',
+    email: 'rens@mail.com',
+    company: 'ABN AMRO',
+    jobTitle: 'Data Analyst',
+    status: 'Active',
+  },
+  {
+    key: '8',
+    name: 'Rens Groot',
+    email: 'rens@mail.com',
+    company: 'ABN AMRO',
+    jobTitle: 'Data Analyst',
+    status: 'Active',
+  },
+];
+export {studentsData , statsData , recentActivityData , initialMentorsData };
