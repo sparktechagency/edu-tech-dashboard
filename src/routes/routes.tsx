@@ -7,6 +7,7 @@ import VerifyOtp from '../pages/authentication/VerifyOtp';
 import NewPassword from '../pages/authentication/NewPassword';
 import Users from '../pages/Users';
 import AdminOverview from '../pages/admin/overview';
+import MentorCoordinatorOverview from '../pages/mentor-coordinator/mentor-coordinator-overview';
 
 const router = createBrowserRouter([
     {
@@ -35,7 +36,7 @@ const router = createBrowserRouter([
             { path: '/teacher/attendance', element: <Users /> },
 
             //  Mentor Coordinator  
-            { path: '/mentor-coordinator/overview', element: <Users /> },
+            { path: '/mentor-coordinator/overview', element: <MentorCoordinatorOverview /> },
             { path: '/mentor-coordinator/mentors', element: <Users /> },
             { path: '/mentor-coordinator/group-schedule', element: <Users /> },
             { path: '/mentor-coordinator/resources', element: <Users /> },
