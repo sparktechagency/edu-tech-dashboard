@@ -7,6 +7,7 @@ import VerifyOtp from '../pages/authentication/VerifyOtp';
 import NewPassword from '../pages/authentication/NewPassword';
 import Users from '../pages/Users';
 import AdminOverview from '../pages/admin/overview';
+import MentorCoordinatorProfile from '../pages/mentor-coordinator/profile';
 
 const router = createBrowserRouter([
     {
@@ -14,8 +15,8 @@ const router = createBrowserRouter([
         // element: <PrivateRoute> <App /> </PrivateRoute>,
         element: <App />,
         errorElement: <ErrorPage />,
-        children: [ 
-            // Admin 
+        children: [
+            // Admin
             { path: '/admin/overview', element: <AdminOverview /> },
             { path: '/admin/student', element: <Users /> },
             { path: '/admin/mentors', element: <Users /> },
@@ -23,9 +24,9 @@ const router = createBrowserRouter([
             { path: '/admin/events', element: <Users /> },
             { path: '/admin/materials', element: <Users /> },
             { path: '/admin/schedule', element: <Users /> },
-            {path:"/admin/weekly-report",element:<Users/>}, 
+            { path: '/admin/weekly-report', element: <Users /> },
 
-             //Teacher   
+            //Teacher
             { path: '/teacher/overview', element: <Users /> },
             { path: '/teacher/my-student', element: <Users /> },
             { path: '/teacher/class-schedule', element: <Users /> },
@@ -34,14 +35,14 @@ const router = createBrowserRouter([
             { path: '/teacher/chat', element: <Users /> },
             { path: '/teacher/attendance', element: <Users /> },
 
-            //  Mentor Coordinator  
+            //  Mentor Coordinator
             { path: '/mentor-coordinator/overview', element: <Users /> },
             { path: '/mentor-coordinator/mentors', element: <Users /> },
             { path: '/mentor-coordinator/group-schedule', element: <Users /> },
             { path: '/mentor-coordinator/resources', element: <Users /> },
-            { path: '/mentor-coordinator/profile', element: <Users /> },
+            { path: '/mentor-coordinator/profile', element: <MentorCoordinatorProfile /> },
 
-            // Student  
+            // Student
             { path: '/student/overview', element: <Users /> },
             { path: '/student/goal', element: <Users /> },
             { path: '/student/resources', element: <Users /> },
@@ -52,7 +53,7 @@ const router = createBrowserRouter([
             { path: '/student/setting', element: <Users /> },
             { path: '/student/profile', element: <Users /> },
 
-            // Mentor  
+            // Mentor
             { path: '/mentor/overview', element: <Users /> },
             { path: '/mentor/students', element: <Users /> },
             { path: '/mentor/weekly-report', element: <Users /> },
@@ -67,7 +68,6 @@ const router = createBrowserRouter([
     { path: '/forget-password', element: <ForgetPassword /> },
     { path: '/verify-otp', element: <VerifyOtp /> },
     { path: '/new-password', element: <NewPassword /> },
-   
 ]);
 
 export default router;
