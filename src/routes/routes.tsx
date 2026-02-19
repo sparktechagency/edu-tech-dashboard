@@ -15,6 +15,8 @@ import CoordinatorResources from '../pages/mentor-coordinator/resources';
 import AttendanceTeacher from '../pages/teacher/attendance';
 import TeacherOverview from '../pages/teacher/overview';
 import MyStudent from '../pages/teacher/my-student';
+import ClassSchedule from '../pages/teacher/class-schedule';
+import Resources from '../pages/teacher/resources';
 
 const router = createBrowserRouter([
     {
@@ -36,8 +38,8 @@ const router = createBrowserRouter([
             //Teacher
             { path: '/teacher/overview', element: <TeacherOverview /> },
             { path: '/teacher/my-student', element: <MyStudent /> },
-            { path: '/teacher/class-schedule', element: <Users /> },
-            { path: '/teacher/resources', element: <Users /> },
+            { path: '/teacher/class-schedule', element: <ClassSchedule /> },
+            { path: '/teacher/resources', element: <Resources /> },
             { path: '/teacher/assignment', element: <Users /> },
             { path: '/teacher/chat', element: <Users /> },
             { path: '/teacher/attendance', element: <AttendanceTeacher /> },
