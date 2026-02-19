@@ -12,6 +12,7 @@ import MentorCoordinatorProfile from '../pages/mentor-coordinator/profile';
 import Mentors from '../pages/mentor-coordinator/mentors';
 import GroupSchedule from '../pages/mentor-coordinator/group-schedule';
 import CoordinatorResources from '../pages/mentor-coordinator/resources';
+import TeacherOverview from '../pages/teacher/overview';
 
 const router = createBrowserRouter([
     {
@@ -31,7 +32,7 @@ const router = createBrowserRouter([
             { path: '/admin/weekly-report', element: <Users /> },
 
             //Teacher
-            { path: '/teacher/overview', element: <Users /> },
+            { path: '/teacher/overview', element: <TeacherOverview /> },
             { path: '/teacher/my-student', element: <Users /> },
             { path: '/teacher/class-schedule', element: <Users /> },
             { path: '/teacher/resources', element: <Users /> },

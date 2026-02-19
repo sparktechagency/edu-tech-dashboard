@@ -11,7 +11,7 @@ export default function MentorCoordinatorProfile() {
 
     if (isEditing) {
         return (
-            <div className="p-6">
+            <div className="">
                 <div className="flex justify-between items-center mb-6">
                     <div>
                         <h2 className="text-xl font-semibold text-[#333333]">Edit Profile</h2>
@@ -36,7 +36,7 @@ export default function MentorCoordinatorProfile() {
     );
 
     return (
-        <div className="container mx-auto py-6 px-4">
+        <div className="">
             <div className="flex justify-between items-center mb-8">
                 <div>
                     <h2 className="text-2xl font-bold text-[#333333]">Profile</h2>
