@@ -20,28 +20,45 @@ interface LoginFormValues {
 
 const Login = () => {
     const navigate = useNavigate();
-    // api call 
-    const [login] = useLoginMutation()
+    // api call
+    const [login] = useLoginMutation();
+    const [form] = Form.useForm();
+
     const onFinish: FormProps<LoginFormValues>['onFinish'] = async (values) => {
-      
         try {
-toast.promise(
-    login(values).unwrap(),
-    {
-        loading: 'Logging in...',
-        success: (res)=>{
-            console.log(res);
-            localStorage.setItem('token', res?.data?.accessToken);
-            navigate('/');
-            return res.message || 'Login successful';
-        },
-        error: (err) => err.data.errorMessages[0].message || 'Login failed',
-    }
-);
-        }
-        catch (error) {
+            toast.promise(login(values).unwrap(), {
+                loading: 'Logging in...',
+                success: (res) => {
+                    console.log(res);
+                    localStorage.setItem('token', res?.data?.accessToken);
+                    navigate('/');
+                    return res.message || 'Login successful';
+                },
+                error: (err) => err.data.errorMessages[0].message || 'Login failed',
+            });
+        } catch (error) {
             const err = error as errorType;
             console.log(err.data.errorMessages[0].message);
+        }
+    };
+
+    const handleValuesChange = (changedValues: any) => {
+        if (changedValues.role) {
+            const roleCredentials: Record<string, { email: string }> = {
+                admin: { email: 'azizulsparktech@gmail.com' },
+                student: { email: 'segiba3385@gxuzi.com' },
+                mentor: { email: 'bonodej524@gamening.com' },
+                teacher: { email: 'teacher@gxuzi.com' },
+                'mentor-coordinator': { email: 'matin51126@codgal.com' },
+            };
+
+            const creds = roleCredentials[changedValues.role];
+            if (creds) {
+                form.setFieldsValue({
+                    email: creds.email,
+                    password: '12345678',
+                });
+            }
         }
     };
 
@@ -83,11 +100,13 @@ toast.promise(
                         </div>
 
                         <Form
+                            form={form}
                             name="normal_login"
                             className="login-form"
                             layout="vertical"
                             initialValues={{ remember: true }}
                             onFinish={onFinish}
+                            onValuesChange={handleValuesChange}
                         >
                             <Form.Item
                                 label={<span className="text-[#1E293B] font-semibold text-base">Select your role</span>}
