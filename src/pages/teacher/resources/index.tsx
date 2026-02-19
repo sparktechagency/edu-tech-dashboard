@@ -174,7 +174,7 @@ const Resources = () => {
             </div>
 
             <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-                <Table columns={columns} dataSource={data} pagination={{ pageSize: 5 }} className="custom-table" />
+                <Table columns={columns} dataSource={data} pagination={{ pageSize: 5 }} className="" />
             </div>
 
             <ResourceDetailsModal
