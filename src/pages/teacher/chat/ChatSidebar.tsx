@@ -1,0 +1,52 @@
+interface ChatSidebarProps {
+    messageId: string | null;
+    onSelect: (room: any) => void;
+    chatRooms: any[];
+}
+
+export function ChatSidebar({ messageId, onSelect, chatRooms }: ChatSidebarProps) {
+    return (
+        <div className="space-y-2 p-2">
+            <div className="p-2 mb-4">
+                <h2 className="text-xl font-bold text-gray-800">Messages</h2>
+            </div>
+            {chatRooms?.map((room) => (
+                <button
+                    key={room._id}
+                    onClick={() => onSelect(room)}
+                    className={`w-full flex items-center gap-4 p-4 rounded-xl transition-colors text-left group
+            ${messageId === room._id ? 'bg-[#055E6E]/10 border border-[#055E6E]/20' : 'hover:bg-gray-50 border border-transparent'}
+          `}
+                >
+                    <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0 bg-gray-100 border border-gray-200">
+                        <img
+                            src={room?.participants[0]?.image || '/assets/images/provider/no_user.png'}
+                            alt={room?.participants[0]?.name}
+                            className="w-full h-full object-cover"
+                        />
+                    </div>
+                    <div className="grow min-w-0">
+                        <div className="flex justify-between items-start mb-0.5">
+                            <h4
+                                className={`font-semibold text-gray-800 truncate text-[15px] ${messageId === room._id ? 'text-[#055E6E]' : ''}`}
+                            >
+                                {room?.participants[0]?.name}
+                            </h4>
+                            <span className="text-[11px] text-gray-400 font-medium whitespace-nowrap">{room.time}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                            <p className="text-[13px] text-gray-500 truncate mr-2">
+                                {room?.lastMessage?.text || 'No messages yet'}
+                            </p>
+                            {room.unread > 0 && (
+                                <span className="bg-[#055E6E] text-white text-[10px] font-bold min-w-[18px] h-[18px] flex items-center justify-center rounded-full">
+                                    {room.unread}
+                                </span>
+                            )}
+                        </div>
+                    </div>
+                </button>
+            ))}
+        </div>
+    );
+}

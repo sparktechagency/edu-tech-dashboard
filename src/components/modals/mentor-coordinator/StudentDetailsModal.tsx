@@ -1,81 +1,63 @@
-import React from 'react';
-import { Modal, Button, Avatar, Tag, List } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
+import { Modal, Avatar, Button } from "antd";
+import { Mentor } from "../../../pages/mentor-coordinator/mentors";
 
-interface StudentDetailsModalProps {
+
+interface Props {
   isOpen: boolean;
   onClose: () => void;
+  mentor: Mentor | null;
 }
 
-const mockStudents = [
-    {
-        id: '1',
-        name: 'Jhon Lura',
-        email: 'jhon@examplemail.com',
-        group: 'Skill Path',
-        track: 'Data',
-        avatar: 'https://i.pravatar.cc/150?u=1' 
-    },
-    {
-        id: '2',
-        name: 'Jhon Lura',
-        email: 'jhon@examplemail.com',
-        group: 'Skill Path',
-        track: 'Data',
-        avatar: 'https://i.pravatar.cc/150?u=2'
-    },
-    {
-        id: '3',
-        name: 'Jhon Lura',
-        email: 'jhon@examplemail.com',
-        group: 'Skill Path',
-        track: 'Data',
-        avatar: 'https://i.pravatar.cc/150?u=3'
-    }
-];
+const StudentDetailsModal = ({ isOpen, onClose, mentor }: Props) => {
+  const students = mentor?.assignedStudents || [];
 
-const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({ isOpen, onClose }) => {
   return (
     <Modal
-      title={<span className="text-xl font-semibold">Student Details</span>}
       open={isOpen}
       onCancel={onClose}
       footer={[
-        <Button key="back" onClick={onClose} className='h-10 px-6'>
+        <Button key="cancel" onClick={onClose}>
           Cancel
         </Button>,
       ]}
-      width={700} 
-      centered
+      title="Student Details"
+      width={600}
     >
-        <div className="mt-6">
-            <List
-                itemLayout="horizontal"
-                dataSource={mockStudents}
-                split={false}
-                renderItem={(item) => (
-                    <div className="flex items-center justify-between py-4 mb-2">
-                        <div className="flex items-center">
-                            <Avatar size={48} src={item.avatar} icon={<UserOutlined />} className="mr-4" />
-                            <div>
-                                <h4 className="text-base font-medium m-0">{item.name}</h4>
-                                <p className="text-gray-500 m-0">{item.email}</p>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-6">
-                            <div className='flex items-center gap-2'>
-                                <span className="text-gray-800 font-medium">Group:</span>
-                                <Tag color="green" className="border-0 rounded-full px-3 m-0 bg-green-100 text-green-700">{item.group}</Tag>
-                            </div>
-                            <div className='flex items-center gap-2'>
-                                <span className="text-gray-800 font-medium">Track:</span>
-                                <Tag className="border-0 bg-gray-100 rounded-full px-3 m-0 text-gray-600">{item.track}</Tag>
-                            </div>
-                        </div>
-                    </div>
-                )}
-            />
-        </div>
+      {students.length === 0 ? (
+        <p className="text-gray-500 text-center py-6">
+          No students assigned.
+        </p>
+      ) : (
+        students.map((student) => (
+          <div
+            key={student._id}
+            className="flex items-center justify-between mb-4 p-3 border rounded-lg"
+          >
+            <div className="flex items-center gap-4">
+              <Avatar src={student.profile} size={50} />
+              <div>
+                <p className="font-medium">
+                  {student.firstName} {student.lastName}
+                </p>
+                <p className="text-gray-500 text-sm">
+                  {student.email}
+                </p>
+              </div>
+            </div>
+
+            {/* Optional extra info */}
+            <div className="text-sm text-gray-600">
+              <p>
+                <span className="font-medium">Group:</span>{" "}
+                Skill Path
+              </p>
+              <p>
+                <span className="font-medium">Track:</span> Data
+              </p>
+            </div>
+          </div>
+        ))
+      )}
     </Modal>
   );
 };
