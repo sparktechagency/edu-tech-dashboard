@@ -10,6 +10,7 @@ import AdminOverview from '../pages/admin/overview';
 import MentorCoordinatorOverview from '../pages/mentor-coordinator/mentor-coordinator-overview';
 import MentorCoordinatorProfile from '../pages/mentor-coordinator/profile';
 import CoordinatorResources from '../pages/mentor-coordinator/resources';
+import AttendanceTeacher from '../pages/teacher/attendance';
 
 const router = createBrowserRouter([
     {
@@ -35,7 +36,7 @@ const router = createBrowserRouter([
             { path: '/teacher/resources', element: <Users /> },
             { path: '/teacher/assignment', element: <Users /> },
             { path: '/teacher/chat', element: <Users /> },
-            { path: '/teacher/attendance', element: <Users /> },
+            { path: '/teacher/attendance', element: <AttendanceTeacher /> },
 
             //  Mentor Coordinator
             { path: '/mentor-coordinator/overview', element: <MentorCoordinatorOverview /> },
