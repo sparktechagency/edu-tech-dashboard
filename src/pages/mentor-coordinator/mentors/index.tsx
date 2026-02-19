@@ -5,6 +5,7 @@ import { FilterOutlined, EyeOutlined, SearchOutlined } from '@ant-design/icons';
 import MentorDetailsModal from '../../../components/modals/mentor-coordinator/MentorDetailsModal';
 import StudentDetailsModal from '../../../components/modals/mentor-coordinator/StudentDetailsModal';
 import { initialMentorsData } from '../../../constants/mentor-coordinator-data';
+import HeaderTitle from '../../../components/shared/HeaderTitle';
 
 export interface Mentor {
   key: string;
@@ -99,12 +100,21 @@ const Mentors = () => {
 
     return (
         <div className="">
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold text-gray-800">Mentors</h1>
-                
+                   <div className="flex justify-between items-center mb-4">
+                <HeaderTitle title="Mentors" /> 
                 <div className="flex gap-4"> 
-                    <Input placeholder="Search" prefix={<SearchOutlined className='text-gray-500 text-lg' size={18}/>} />
-                     <Button icon={<FilterOutlined />}>Filter</Button>
+                    <Input 
+                        placeholder="Search student" 
+                        prefix={<SearchOutlined className='text-gray-400 text-lg' />} 
+                        className="w-72 rounded-lg border-gray-200"
+                        style={{ height: '42px' }}
+                    />
+                    <Button 
+                        icon={<FilterOutlined />} 
+                        className="flex items-center gap-2 h-[42px] px-6 rounded-lg border-gray-200 font-medium"
+                    >
+                        Filter
+                    </Button>
                 </div>
             </div>
 
@@ -112,9 +122,9 @@ const Mentors = () => {
                 <Table 
                     columns={columns} 
                     dataSource={initialMentorsData} 
-                    pagination={false}
                     className="w-full"
-                    rowClassName="hover:bg-gray-50"
+                    rowClassName="hover:bg-gray-50" 
+                    pagination={{ pageSize: 10 }}
                 />
             </div> 
 
