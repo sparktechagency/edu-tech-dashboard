@@ -1,11 +1,9 @@
 import React from 'react';
 import { Modal, Button } from 'antd';
-import { GroupSchedule } from '../../../constants/mentor-coordinator-data';
-
 interface GroupScheduleModalProps {
     isOpen: boolean;
     onClose: () => void;
-    schedule: GroupSchedule | undefined;
+    schedule: any;
 }
 
 const GroupScheduleModal: React.FC<GroupScheduleModalProps> = ({ isOpen, onClose, schedule }) => {
@@ -58,19 +56,19 @@ const GroupScheduleModal: React.FC<GroupScheduleModalProps> = ({ isOpen, onClose
                     <div className="w-2/3 p-4 bg-white text-gray-700">{schedule.location}</div>
                 </div>
 
-                <div className="flex border-b border-gray-100 last:border-b-0">
+                {/* <div className="flex border-b border-gray-100 last:border-b-0">
                     <div className="w-1/3 p-4 bg-gray-50 text-gray-400 font-medium">Sources</div>
                     <div className="w-2/3 p-4 bg-white text-gray-700">{schedule.sources}</div>
-                </div>
+                </div> */}
 
-                <div className="flex border-b border-gray-100 last:border-b-0">
+                {/* <div className="flex border-b border-gray-100 last:border-b-0">
                     <div className="w-1/3 p-4 bg-gray-50 text-gray-400 font-medium">Status</div>
                     <div className="w-2/3 p-4 bg-white">
                         <p className="border-0 text-[#387742] bg-[#D0F3D5] rounded-full px-4 py-1 w-fit font-medium text-xs">
                             {schedule.status}
                         </p>
                     </div>
-                </div>
+                </div> */}
             </div>
         </Modal>
     );

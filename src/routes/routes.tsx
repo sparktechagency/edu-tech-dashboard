@@ -19,6 +19,7 @@ import MessageCenter from '../pages/teacher/chat';
 import ClassSchedule from '../pages/teacher/class-schedule';
 import Resources from '../pages/teacher/resources';
 import Assignment from '../pages/teacher/assignment';
+import StudentOverview from '../pages/student/overview';
 
 const router = createBrowserRouter([
     {
@@ -54,7 +55,7 @@ const router = createBrowserRouter([
             { path: '/mentor-coordinator/profile', element: <MentorCoordinatorProfile /> },
 
             // Student
-            { path: '/student/overview', element: <Users /> },
+            { path: '/student/overview', element: <StudentOverview /> },
             { path: '/student/goal', element: <Users /> },
             { path: '/student/resources', element: <Users /> },
             { path: '/student/assignment', element: <Users /> },
