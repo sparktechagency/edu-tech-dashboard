@@ -1,5 +1,18 @@
 import { FaChalkboardTeacher, FaUserGraduate, FaUsers, FaBookOpen } from 'react-icons/fa';  
 import { FaGraduationCap } from 'react-icons/fa'; 
+import { Mentor } from '../pages/mentor-coordinator/mentors';
+
+export interface GroupSchedule {
+  key: string;
+  title: string;
+  date: string;
+  time: string;
+  group: string;
+  track: string;
+  location: string;
+  status: 'Active' | 'Inactive';
+  sources: string;
+}
 
 const studentsData = [
   {
@@ -83,4 +96,150 @@ const recentActivityData = [
   },
 ]; 
 
-export {studentsData , statsData , recentActivityData };
+const initialMentorsData: Mentor[] = [
+  {
+    key: '1',
+    name: 'Rens Groot',
+    email: 'rens@mail.com',
+    company: 'ABN AMRO',
+    jobTitle: 'Data Analyst',
+    status: 'Active',
+  },
+  {
+    key: '2',
+    name: 'Rens Groot',
+    email: 'rens@mail.com',
+    company: 'ABN AMRO',
+    jobTitle: 'Data Analyst',
+    status: 'Active',
+  },
+  {
+    key: '3',
+    name: 'Rens Groot',
+    email: 'rens@mail.com',
+    company: 'ABN AMRO',
+    jobTitle: 'Data Analyst',
+    status: 'Active',
+  },
+  {
+    key: '4',
+    name: 'Rens Groot',
+    email: 'rens@mail.com',
+    company: 'ABN AMRO',
+    jobTitle: 'Data Analyst',
+    status: 'Active',
+  },
+  {
+    key: '5',
+    name: 'Rens Groot',
+    email: 'rens@mail.com',
+    company: 'ABN AMRO',
+    jobTitle: 'Data Analyst',
+    status: 'Active',
+  },
+  {
+    key: '6',
+    name: 'Rens Groot',
+    email: 'rens@mail.com',
+    company: 'ABN AMRO',
+    jobTitle: 'Data Analyst',
+    status: 'Active',
+  },
+  {
+    key: '7',
+    name: 'Rens Groot',
+    email: 'rens@mail.com',
+    company: 'ABN AMRO',
+    jobTitle: 'Data Analyst',
+    status: 'Active',
+  },
+  {
+    key: '8',
+    name: 'Rens Groot',
+    email: 'rens@mail.com',
+    company: 'ABN AMRO',
+    jobTitle: 'Data Analyst',
+    status: 'Active',
+  },
+];
+const initialGroupScheduleData: GroupSchedule[] = [
+  {
+    key: '1',
+    title: 'Computer Basic Skill',
+    date: '11/12/2025',
+    time: '08:12 am',
+    group: 'Skill Path',
+    track: 'Data',
+    location: '12 central street road',
+    status: 'Active',
+    sources: 'No sources attached',
+  },
+  {
+    key: '2',
+    title: 'Computer Basic Skill',
+    date: '11/12/2025',
+    time: '08:12 am',
+    group: 'Skill Path',
+    track: 'Data',
+    location: '12 central street road',
+    status: 'Active',
+    sources: 'No sources attached',
+  },
+  {
+    key: '3',
+    title: 'Computer Basic Skill',
+    date: '11/12/2025',
+    time: '08:12 am',
+    group: 'Skill Path',
+    track: 'Data',
+    location: '12 central street road',
+    status: 'Active',
+    sources: 'No sources attached',
+  },
+  {
+    key: '4',
+    title: 'Computer Basic Skill',
+    date: '11/12/2025',
+    time: '08:12 am',
+    group: 'Skill Path',
+    track: 'Data',
+    location: '12 central street road',
+    status: 'Active',
+    sources: 'No sources attached',
+  },
+  {
+    key: '5',
+    title: 'Computer Basic Skill',
+    date: '11/12/2025',
+    time: '08:12 am',
+    group: 'Skill Path',
+    track: 'Data',
+    location: '12 central street road',
+    status: 'Active',
+    sources: 'No sources attached',
+  },
+  {
+    key: '6',
+    title: 'Computer Basic Skill',
+    date: '11/12/2025',
+    time: '08:12 am',
+    group: 'Skill Path',
+    track: 'Data',
+    location: '12 central street road',
+    status: 'Active',
+    sources: 'No sources attached',
+  },
+  {
+    key: '7',
+    title: 'Computer Basic Skill',
+    date: '11/12/2025',
+    time: '08:12 am',
+    group: 'Skill Path',
+    track: 'Data',
+    location: '12 central street road',
+    status: 'Active',
+    sources: 'No sources attached',
+  },
+];
+
+export {studentsData , statsData , recentActivityData , initialMentorsData, initialGroupScheduleData };

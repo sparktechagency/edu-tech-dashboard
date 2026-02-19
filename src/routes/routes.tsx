@@ -9,8 +9,11 @@ import Users from '../pages/Users';
 import AdminOverview from '../pages/admin/overview';
 import MentorCoordinatorOverview from '../pages/mentor-coordinator/mentor-coordinator-overview';
 import MentorCoordinatorProfile from '../pages/mentor-coordinator/profile';
+import Mentors from '../pages/mentor-coordinator/mentors';
+import GroupSchedule from '../pages/mentor-coordinator/group-schedule';
 import CoordinatorResources from '../pages/mentor-coordinator/resources';
 import AttendanceTeacher from '../pages/teacher/attendance';
+import TeacherOverview from '../pages/teacher/overview';
 
 const router = createBrowserRouter([
     {
@@ -30,7 +33,7 @@ const router = createBrowserRouter([
             { path: '/admin/weekly-report', element: <Users /> },
 
             //Teacher
-            { path: '/teacher/overview', element: <Users /> },
+            { path: '/teacher/overview', element: <TeacherOverview /> },
             { path: '/teacher/my-student', element: <Users /> },
             { path: '/teacher/class-schedule', element: <Users /> },
             { path: '/teacher/resources', element: <Users /> },
@@ -40,8 +43,8 @@ const router = createBrowserRouter([
 
             //  Mentor Coordinator
             { path: '/mentor-coordinator/overview', element: <MentorCoordinatorOverview /> },
-            { path: '/mentor-coordinator/mentors', element: <Users /> },
-            { path: '/mentor-coordinator/group-schedule', element: <Users /> },
+            { path: '/mentor-coordinator/mentors', element: <Mentors /> },
+            { path: '/mentor-coordinator/group-schedule', element: <GroupSchedule /> },
             { path: '/mentor-coordinator/resources', element: <CoordinatorResources /> },
             { path: '/mentor-coordinator/profile', element: <MentorCoordinatorProfile /> },
 

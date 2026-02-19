@@ -1,6 +1,8 @@
 import { Button, Checkbox, ConfigProvider, Form, FormProps, Input, Select } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthSidebar from '../../components/ui/AuthSidebar';
+import { useLoginMutation } from '../../redux/apiSlices/authSlice';
+import { toast } from 'sonner';
 
 export type errorType = {
     data: {
@@ -18,12 +20,29 @@ interface LoginFormValues {
 
 const Login = () => {
     const navigate = useNavigate();
+    // api call 
+    const [login] = useLoginMutation()
     const onFinish: FormProps<LoginFormValues>['onFinish'] = async (values) => {
-        console.log(values);
-        if (values.role) {
-            localStorage.setItem('role', values.role);
+      
+        try {
+toast.promise(
+    login(values).unwrap(),
+    {
+        loading: 'Logging in...',
+        success: (res)=>{
+            console.log(res);
+            localStorage.setItem('token', res?.data?.accessToken);
+            navigate('/');
+            return res.message || 'Login successful';
+        },
+        error: (err) => err.data.errorMessages[0].message || 'Login failed',
+    }
+);
         }
-        navigate('/');
+        catch (error) {
+            const err = error as errorType;
+            console.log(err.data.errorMessages[0].message);
+        }
     };
 
     return (
