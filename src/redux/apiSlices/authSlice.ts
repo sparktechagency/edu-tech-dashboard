@@ -19,7 +19,7 @@ const authSlice = api.injectEndpoints({
             query: (data) => {
                 return {
                     method: "POST",
-                    url: "/auth/login",
+                    url: "/auth/email-login",
                     body: data
                 }
             },

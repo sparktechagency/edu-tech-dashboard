@@ -3,11 +3,12 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
  
 const token  = localStorage.getItem("token");
+console.log("Token from localStorage:", token);
 
 export const api = createApi({
     reducerPath: "api",
     baseQuery: fetchBaseQuery({
-        baseUrl: "http://147.93.121.222:5002/api/v1",
+        baseUrl: "http://10.10.7.72:8000/api/v1",
         headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -18,5 +19,4 @@ export const api = createApi({
 
 // export const imageUrl = "http://206.189.231.81:5000";
 // export const imageUrl = "http://10.10.7.72:5000";
-export const imageUrl = "http://147.93.121.222:5002";
-
+export const imageUrl = "http://10.10.7.72:8000";
