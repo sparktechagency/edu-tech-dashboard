@@ -121,6 +121,7 @@ const MyStudent = () => {
                 <div className="flex gap-4">
                     <Input
                         placeholder="Search student"
+                        onChange={(e) => setSearchText(e.target.value)}
                         prefix={<SearchOutlined className="text-gray-400 text-lg" />}
                         className="w-72 rounded-lg border-gray-200"
                         style={{ height: '42px' }}
