@@ -8,8 +8,8 @@ const iconMap: Record<string, React.ReactNode> = {
 const RecentActivity = () => {
     return (
         <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-50 mt-4">
-            <h2 className="text-xl font-semibold text-gray-600 mb-2 font-heading">Recent Activity</h2>
-            <div className="space-y-3">
+            <h2 className="text-lg font-semibold text-gray-600 mb-2 font-heading">Recent Activity</h2>
+            <div className="space-y-2">
                 {teacherRecentActivityData.map((activity) => (
                     <div
                         key={activity.id}
@@ -19,7 +19,7 @@ const RecentActivity = () => {
                             {iconMap[activity.iconType] || null}
                         </div>
                         <div>
-                            <h3 className="font-bold text-gray-800 text-sm">{activity.title}</h3>
+                            <h3 className="font-medium text-gray-800 text-sm">{activity.title}</h3>
                             <p className="text-gray-400 text-xs mt-0.5">{activity.subTitle}</p>
                         </div>
                     </div>
