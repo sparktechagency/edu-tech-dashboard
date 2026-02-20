@@ -1,12 +1,20 @@
 import { TSidebarItem } from './generateSidebarItems';
 
-import { LuLayoutDashboard, LuBookOpen, LuCalendarDays, LuSettings, LuUser, LuUsers, LuFileText, LuMessageSquare } from 'react-icons/lu';
+import {
+    LuLayoutDashboard,
+    LuBookOpen,
+    LuCalendarDays,
+    LuSettings,
+    LuUser,
+    LuUsers,
+    LuFileText,
+    LuMessageSquare,
+} from 'react-icons/lu';
 import { PiStudent, PiChalkboardTeacher } from 'react-icons/pi';
 import { GiTeacher } from 'react-icons/gi';
 import { MdOutlineEventNote, MdOutlineAssignment } from 'react-icons/md';
 import { TbReportAnalytics } from 'react-icons/tb';
 import { AiOutlineSchedule } from 'react-icons/ai';
-
 
 export const adminSidebarItems: TSidebarItem[] = [
     {
@@ -130,11 +138,11 @@ export const mentorCoordinatorSidebarItems: TSidebarItem[] = [
         icon: <LuBookOpen size={24} />,
     },
     {
-        key:'profile',
-        label:'Profile',
-        path:'mentor-coordinator/profile',
-        icon:<LuUser size={24} />
-    }
+        key: 'profile',
+        label: 'Profile',
+        path: 'mentor-coordinator/profile',
+        icon: <LuUser size={24} />,
+    },
 ];
 
 export const studentSidebarItems: TSidebarItem[] = [
@@ -181,10 +189,10 @@ export const studentSidebarItems: TSidebarItem[] = [
         icon: <LuMessageSquare size={24} />,
     },
     {
-        key: 'setting',
-        label: 'Setting',
-        path: 'student/setting',
-        icon: <LuSettings size={24} />,
+        key: 'profile',
+        label: 'Profile',
+        path: 'student/profile',
+        icon: <LuUser size={24} />,
     },
 ];
 

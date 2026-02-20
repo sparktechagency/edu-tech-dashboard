@@ -150,3 +150,34 @@ body {
 .animate-fadeIn {
     animation: fadeIn 0.4s ease-out forwards;
 }
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #e2e8f0;
+    border-radius: 10px;
+}
+
+.assignment-tabs .ant-tabs-tab {
+    padding: 16px 40px !important;
+    margin: 0 !important;
+    font-weight: 600 !important;
+    color: #94a3b8 !important;
+    transition: all 0.3s ease;
+}
+.assignment-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
+    color: #8b5cf6 !important;
+}
+.assignment-tabs .ant-tabs-ink-bar {
+    background: #8b5cf6 !important;
+    height: 4px !important;
+    border-radius: 4px 4px 0 0;
+}
+.assignment-tabs .ant-tabs-nav-list {
+    width: 100%;
+    justify-content: space-around;
+}

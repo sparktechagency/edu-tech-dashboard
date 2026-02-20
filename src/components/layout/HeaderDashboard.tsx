@@ -1,9 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import { FiLogOut } from 'react-icons/fi';
 import { toast } from 'sonner';
+import { useDispatch } from 'react-redux';
+import { api } from '../../redux/api/baseApi';
 
 const HeaderDashboard = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     return (
         <div className="container  bg-transparent flex items-center justify-between text-white h-[80px]">
@@ -22,6 +25,7 @@ const HeaderDashboard = () => {
                 <button
                     onClick={() => {
                         localStorage.removeItem('token');
+                        dispatch(api.util.resetApiState());
                         toast.success('Logged out successfully');
                         navigate('/login');
                     }}

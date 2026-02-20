@@ -20,6 +20,11 @@ import ClassSchedule from '../pages/teacher/class-schedule';
 import Resources from '../pages/teacher/resources';
 import Assignment from '../pages/teacher/assignment';
 import StudentOverview from '../pages/student/overview';
+import StudentProfile from '../pages/student/settings';
+import StudentChat from '../pages/student/chat';
+import StudentEvents from '../pages/student/events';
+import Mentor from '../pages/student/mentor';
+import StudentAssignment from '../pages/student/assignment';
 
 const router = createBrowserRouter([
     {
@@ -58,12 +63,12 @@ const router = createBrowserRouter([
             { path: '/student/overview', element: <StudentOverview /> },
             { path: '/student/goal', element: <Users /> },
             { path: '/student/resources', element: <Users /> },
-            { path: '/student/assignment', element: <Users /> },
-            { path: '/student/mentor', element: <Users /> },
-            { path: '/student/events', element: <Users /> },
-            { path: '/student/chat', element: <Users /> },
-            { path: '/student/setting', element: <Users /> },
-            { path: '/student/profile', element: <Users /> },
+            { path: '/student/assignment', element: <StudentAssignment /> },
+            { path: '/student/mentor', element: <Mentor /> },
+            { path: '/student/events', element: <StudentEvents /> },
+            { path: '/student/chat', element: <StudentChat /> },
+            { path: '/student/profile', element: <StudentProfile /> },
+            // { path: '/student/profile', element: <Users /> },
 
             // Mentor
             { path: '/mentor/overview', element: <Users /> },

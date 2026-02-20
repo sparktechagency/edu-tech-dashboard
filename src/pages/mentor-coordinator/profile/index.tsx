@@ -1,13 +1,13 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { Button, Avatar } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
-import { UserContext } from '../../../provider/User';
-import { imageUrl } from '../../../redux/api/baseApi';
+import { useUser } from '../../../provider/User';
 import EditProfile from './components/EditProfile';
 
 export default function MentorCoordinatorProfile() {
-    const user = useContext(UserContext);
+    const { user } = useUser();
     const [isEditing, setIsEditing] = useState(false);
+    console.log(user, 'profile');
 
     if (isEditing) {
         return (
@@ -23,8 +23,6 @@ export default function MentorCoordinatorProfile() {
             </div>
         );
     }
-
-    const profilePic = user?.profilePic?.startsWith('http') ? user?.profilePic : `${imageUrl}${user?.profilePic}`;
 
     const infoItem = (label: string, value: string | undefined) => (
         <div className="mb-4">
@@ -56,7 +54,7 @@ export default function MentorCoordinatorProfile() {
                 <Avatar
                     shape="square"
                     size={80}
-                    src={user?.profilePic ? profilePic : undefined}
+                    src={user?.profile ? `${user?.profile}` : undefined}
                     className="rounded-lg shadow-sm"
                 />
                 <div>

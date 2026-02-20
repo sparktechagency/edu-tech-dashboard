@@ -1,43 +1,41 @@
 import { Link, useLocation } from 'react-router-dom';
-import { 
-    adminSidebarItems, 
-    teacherSidebarItems, 
-    mentorCoordinatorSidebarItems, 
-    studentSidebarItems, 
-    mentorSidebarItems 
+import {
+    adminSidebarItems,
+    teacherSidebarItems,
+    mentorCoordinatorSidebarItems,
+    studentSidebarItems,
+    mentorSidebarItems,
 } from '../../utils/sidebarItems';
 import { TSidebarItem } from '../../utils/generateSidebarItems';
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
+import { useProfileQuery } from '../../redux/apiSlices/authSlice';
+import Spinner from '../shared/Spinner';
 
 const Sidebar = () => {
     const location = useLocation();
-    const [sidebarItems, setSidebarItems] = useState<TSidebarItem[]>([]);
+    const { data: userData, isLoading, isFetching } = useProfileQuery({});
 
-    useEffect(() => {
-        const role = localStorage.getItem('role') || 'student'; 
+    const sidebarItems = useMemo(() => {
+        if (!userData?.data?.role) return [];
 
-        switch (role) {
-            case 'admin':
-                setSidebarItems(adminSidebarItems);
-                break;
-            case 'teacher':
-                setSidebarItems(teacherSidebarItems);
-                break;
-            case 'mentor_coordinator': 
-            case 'mentor-coordinator':
-                setSidebarItems(mentorCoordinatorSidebarItems);
-                break;
-            case 'student':
-                setSidebarItems(studentSidebarItems);
-                break;
-            case 'mentor':
-                setSidebarItems(mentorSidebarItems);
-                break;
+        switch (userData?.data?.role) {
+            case 'ADMIN':
+                return adminSidebarItems;
+            case 'TEACHER':
+                return teacherSidebarItems;
+            case 'COORDINATOR':
+                return mentorCoordinatorSidebarItems;
+            case 'STUDENT':
+                return studentSidebarItems;
+            case 'MENTOR':
+                return mentorSidebarItems;
             default:
-                setSidebarItems(studentSidebarItems);
-                break;
+                return [];
         }
-    }, []);
+    }, [userData]);
+
+    if (isLoading || isFetching) return <Spinner />;
+    if (!userData) return null;
 
     const isActive = (path?: string) => {
         if (!path) return false;
@@ -46,34 +44,31 @@ const Sidebar = () => {
     };
 
     const renderMenuItem = (item: TSidebarItem) => {
-        const active = isActive(item.path); 
-        
+        const active = isActive(item.path);
+
         return (
-            <li
-                key={item.key}
-                className="relative group h-full flex items-center"
-            >
+            <li key={item.key} className="relative group h-full flex items-center">
                 <Link
                     to={`/${item.path}`}
                     className={`flex items-center gap-2 px-4 py-2 transition-all duration-300 rounded-lg text-sm font-semibold
-                        ${active
-                            ? 'text-[#3BB77E] bg-[#3BB77E]/10 border border-[#3BB77E]'
-                            : 'text-[#7A7D85] hover:text-[#3BB77E] hover:bg-[#3BB77E]/10 border border-transparent'
+                        ${
+                            active
+                                ? 'text-[#3BB77E] bg-[#3BB77E]/10 border border-[#3BB77E]'
+                                : 'text-[#7A7D85] hover:text-[#3BB77E] hover:bg-[#3BB77E]/10 border border-transparent'
                         }`}
                 >
                     {item.icon}
                     <span>{item.label}</span>
                 </Link>
-
             </li>
         );
     };
 
     return (
-        <div className='container py-5 px-1.5'>
+        <div className="container py-5 px-1.5">
             <nav className="w-full bg-white rounded-xl">
                 <ul className="flex flex-wrap items-center gap-2 custom-sidebar-menu">
-                    {sidebarItems.map((item) => renderMenuItem(item))}
+                    {sidebarItems?.map((item) => renderMenuItem(item))}
                 </ul>
             </nav>
         </div>
