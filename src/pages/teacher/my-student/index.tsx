@@ -1,18 +1,19 @@
 import { useState } from 'react';
-import { Table, Input, Button, Avatar, Select } from 'antd';
+import { Table, Input, Button, Avatar } from 'antd';
 import { IoEyeOutline } from 'react-icons/io5';
 import { FilterOutlined, SearchOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import StudentDetailsModal from '../../../components/modals/teacher/StudentDetailsModal';
 import HeaderTitle from '../../../components/shared/HeaderTitle';
+import { useGetMyStudentsQuery } from '../../../redux/apiSlices/teacher/homeSlice';
 
-interface StudentData {
+export interface StudentData {
     key: string;
     name: string;
     email: string;
     contact: string;
-    group: string;
-    track: string;
+    group: { name: string }[];
+    track: string | null;
     joined: string;
     status: string;
     avatar: string;
@@ -20,24 +21,26 @@ interface StudentData {
 
 const MyStudent = () => {
     const [searchText, setSearchText] = useState('');
+    const [page, setPage] = useState(1);
+    const { data, isLoading, isFetching } = useGetMyStudentsQuery({ page: page, limit: 10, searchTerm: searchText });
     const [selectedStudent, setSelectedStudent] = useState<StudentData | null>(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
 
-    const mockData: StudentData[] = Array(8)
-        .fill(null)
-        .map((_, index) => ({
-            key: index.toString(),
-            name: 'Jhon lura',
-            email: 'jhon@mail.com',
-            contact: '+99 5489 8721',
-            group: 'Skill Path',
-            track: 'Data',
-            joined: '12/09/2025',
-            status: 'Active',
-            avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Jhon',
-        }));
+    
+    
+    const mockData = data?.data.map((student) => ({
+        key: student._id,
+        name: student.name,
+        email: student.email,
+        contact: student.mobileNumber,
+        group: student.userGroup,
+        track: student.userGroupTrack?.name || null,
+        joined: student.createdAt,
+        status: student.verified ? 'Active' : 'Inactive',
+        avatar: student.profile || 'https://via.placeholder.com/150',
+    })) || [];
 
-    const columns: ColumnsType<StudentData> = [
+    const columns: ColumnsType = [
         {
             title: 'STUDENT NAME',
             dataIndex: 'name',
@@ -56,54 +59,79 @@ const MyStudent = () => {
             title: 'CONTACT',
             dataIndex: 'contact',
             key: 'contact',
-            render: (text) => <span className="text-gray-600 font-medium">{text}</span>,
+            render: (text) => <span className="text-gray-600 font-medium">{text || 'N/A'}</span>,
         },
         {
             title: 'GROUP',
             dataIndex: 'group',
             key: 'group',
-            render: (text) => (
-                <span className="px-3 py-1 rounded-full text-xs font-medium bg-[#E6F9F0] text-[#22C55E]">{text}</span>
-            ),
+            render: (text) => {
+                const groupName = Array.isArray(text) && text.length > 0 ? text:[];
+                
+                return groupName?.length ? groupName.map((group: any, index: number) => (
+                    <span
+                        key={index}
+                        className="px-3 py-1 rounded-full text-xs font-medium bg-[#F3F4F6] text-[#6B7280]"
+                    >
+                        {group?.name}
+                    </span>
+                )) : (
+                    <span className="text-gray-400 text-xs">N/A</span>
+                )
+              
+            },
         },
         {
             title: 'TRACK',
             dataIndex: 'track',
             key: 'track',
-            render: (text) => (
-                <span className="px-3 py-1 rounded-full text-xs font-medium bg-[#F3F4F6] text-[#6B7280]">{text}</span>
-            ),
+            render: (text) => {
+                const trackName = text ? text : null;
+        
+                
+                return trackName ? (
+                    <span
+                        className="px-3 py-1 rounded-full text-xs font-medium bg-[#E0F2FE] text-[#0284C7]"
+                    >
+                        {trackName}
+                    </span>
+                ) : (
+                    <span className="text-gray-400 text-xs">N/A</span>
+                );
+            },
         },
         {
             title: 'JOINED',
             dataIndex: 'joined',
             key: 'joined',
-            render: (text) => <span className="text-gray-600 font-medium">{text}</span>,
+            render: (text) => <span className="text-gray-600 font-medium">{new Date(text).toLocaleDateString()}</span>,
         },
-        {
-            title: 'STATUS',
-            dataIndex: 'status',
-            key: 'status',
-            render: (status: string) => (
-                <Select
-                    defaultValue={status}
-                    style={{ width: 100 }}
-                    options={[
-                        { value: 'Active', label: 'Active' },
-                        { value: 'Inactive', label: 'Inactive' },
-                    ]}
-                    className={status === 'Active' ? 'text-green-600' : 'text-red-600'}
-                />
-            ),
-        },
+        // {
+        //     title: 'STATUS',
+        //     dataIndex: 'status',
+        //     key: 'status',
+        //     render: (status: string) => (
+        //         <Select
+        //             defaultValue={status}
+        //             style={{ width: 100 }}
+        //             options={[
+        //                 { value: 'Active', label: 'Active' },
+        //                 { value: 'Inactive', label: 'Inactive' },
+        //             ]}
+        //             className={status === 'Active' ? 'text-green-600' : 'text-red-600'}
+        //         />
+        //     ),
+        // },
         {
             title: 'ACTION',
             key: 'action',
             render: (_, record) => (
+
+                
                 <Button
                     icon={<IoEyeOutline size={16} />}
                     onClick={() => {
-                        setSelectedStudent(record);
+                        setSelectedStudent(record as any);
                         setIsModalVisible(true);
                     }}
                     className="flex items-center gap-2 border-gray-200 text-gray-600 px-4 h-9 rounded-lg hover:text-gray-900"
@@ -138,12 +166,9 @@ const MyStudent = () => {
             <div className="bg-white rounded-lg border border-gray-100  overflow-hidden shadow-sm">
                 <Table
                     columns={columns}
-                    dataSource={mockData.filter(
-                        (student) =>
-                            student.name.toLowerCase().includes(searchText.toLowerCase()) ||
-                            student.email.toLowerCase().includes(searchText.toLowerCase()),
-                    )}
-                    pagination={{ pageSize: 7 }}
+                    loading={isLoading || isFetching}
+                    dataSource={mockData}
+                    pagination={{ pageSize: 10, onChange: (page) => setPage(page),total:data?.pagination.total,current:data?.pagination.page, }}
                     className="student-table"
                     rowClassName="hover:bg-gray-50/50 transition-colors"
                     onRow={() => ({
@@ -155,7 +180,7 @@ const MyStudent = () => {
             <StudentDetailsModal
                 visible={isModalVisible}
                 onClose={() => setIsModalVisible(false)}
-                student={selectedStudent}
+                student={selectedStudent }
             />
         </div>
     );

@@ -1,13 +1,15 @@
 import { Modal, Avatar, Button } from 'antd';
 import { IoCloseOutline } from 'react-icons/io5';
+import { StudentData } from '../../../pages/teacher/my-student';
 
 interface StudentDetailsModalProps {
     visible: boolean;
     onClose: () => void;
-    student: any;
+    student: StudentData | null;
 }
 
 const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({ visible, onClose, student }) => {
+    
     if (!student) return null;
 
     const details = [
@@ -49,13 +51,13 @@ const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({ visible, onCl
                         <div className="w-1/2 px-6 py-4 text-gray-800">
                             {item.isTag ? (
                                 <span
-                                    className="px-3 py-1 rounded-full text-sm font-medium"
+                                    className="px-3 py-1 rounded-full text-xs font-medium"
                                     style={{ backgroundColor: item.tagColor, color: item.textColor }}
                                 >
-                                    {item.value}
+                                    {Array.isArray(item.value) ? item.value.map(val => val.name).join(', ') : item.value}
                                 </span>
                             ) : (
-                                item.value
+                                Array.isArray(item.value) ? item.value.map(val => val.name).join(', ') : item.value || 'N/A'
                             )}
                         </div>
                     </div>

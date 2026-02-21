@@ -7,9 +7,10 @@ interface CreateClassModalProps {
     onClose: () => void;
     onSave: (values: any) => void;
     initialValues?: any;
+    isLoading: boolean;
 }
 
-const CreateClassModal: React.FC<CreateClassModalProps> = ({ visible, onClose, onSave, initialValues }) => {
+const CreateClassModal: React.FC<CreateClassModalProps> = ({ visible, onClose, onSave, initialValues,isLoading }) => {
     const [form] = Form.useForm();
 
     const handleOk = () => {
@@ -24,7 +25,7 @@ const CreateClassModal: React.FC<CreateClassModalProps> = ({ visible, onClose, o
     if (visible && initialValues) {
         form.setFieldsValue({
             ...initialValues,
-            date: initialValues.date ? dayjs(initialValues.date, 'DD/MM/YYYY') : null,
+            date: initialValues.date ? dayjs(new Date(initialValues.date)) : null,
         });
     }
 
@@ -90,6 +91,7 @@ const CreateClassModal: React.FC<CreateClassModalProps> = ({ visible, onClose, o
                     <Button
                         type="primary"
                         onClick={handleOk}
+                        loading={isLoading}
                         className="bg-[#22C55E] hover:bg-[#16a34a] border-none px-8 h-[42px] rounded-lg font-semibold"
                     >
                         {initialValues ? 'Save Changes' : 'Create Class'}
