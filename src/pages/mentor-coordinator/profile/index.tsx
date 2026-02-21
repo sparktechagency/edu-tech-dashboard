@@ -3,6 +3,7 @@ import { Button, Avatar } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 import { useUser } from '../../../provider/User';
 import EditProfile from './components/EditProfile';
+import { imageUrl } from '../../../redux/api/baseApi';
 
 export default function MentorCoordinatorProfile() {
     const { user } = useUser();
@@ -54,7 +55,7 @@ export default function MentorCoordinatorProfile() {
                 <Avatar
                     shape="square"
                     size={80}
-                    src={user?.profile ? `${user?.profile}` : undefined}
+                    src={user?.profile ? `${imageUrl}${user?.profile}` : undefined}
                     className="rounded-lg shadow-sm"
                 />
                 <div>
