@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
-import { Input, Button, Image as AntdImage, Popover } from 'antd';
-import { SmileOutlined, CloseCircleFilled } from '@ant-design/icons';
+import { Input, Button, Popover } from 'antd';
+import { SmileOutlined } from '@ant-design/icons';
 import { Paperclip, Send, X } from 'lucide-react';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 

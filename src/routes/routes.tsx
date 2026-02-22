@@ -27,6 +27,13 @@ import Mentor from '../pages/student/mentor';
 import StudentAssignment from '../pages/student/assignment';
 import StudentResources from '../pages/student/resources';
 import Goal from '../pages/student/goal';
+import MentorOverview from '../pages/mentor/overview';
+import Students from '../pages/mentor/students';
+import MentorChat from '../pages/mentor/chat';
+import MentorSetting from '../pages/mentor/setting';
+import WeeklyReport from '../pages/mentor/weekly-report';
+import TimeTracking from '../pages/mentor/time-tracking';
+import LearningMaterials from '../pages/mentor/learning-materials';
 
 const router = createBrowserRouter([
     {
@@ -73,14 +80,14 @@ const router = createBrowserRouter([
             // { path: '/student/profile', element: <Users /> },
 
             // Mentor
-            { path: '/mentor/overview', element: <Users /> },
-            { path: '/mentor/students', element: <Users /> },
-            { path: '/mentor/weekly-report', element: <Users /> },
-            { path: '/mentor/time-tracking', element: <Users /> },
-            { path: '/mentor/learning-materials', element: <Users /> },
+            { path: '/mentor/overview', element: <MentorOverview /> },
+            { path: '/mentor/students', element: <Students /> },
+            { path: '/mentor/weekly-report', element: <WeeklyReport /> },
+            { path: '/mentor/time-tracking', element: <TimeTracking /> },
+            { path: '/mentor/learning-materials', element: <LearningMaterials /> },
             { path: '/mentor/woops', element: <Users /> },
-            { path: '/mentor/chat', element: <Users /> },
-            { path: '/mentor/profile', element: <Users /> },
+            { path: '/mentor/chat', element: <MentorChat /> },
+            { path: '/mentor/profile', element: <MentorSetting /> },
         ],
     },
     { path: '/login', element: <Login /> },

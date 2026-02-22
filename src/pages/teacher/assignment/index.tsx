@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Button, Input, Typography, ConfigProvider } from 'antd';
+import { Button, Input, ConfigProvider } from 'antd';
 import { SearchOutlined, FilterOutlined, PlusOutlined } from '@ant-design/icons';
 
 // Modular Components
@@ -10,8 +10,6 @@ import AssignmentTable from './components/AssignmentTable';
 import SubmissionTable from './components/SubmissionTable';
 import { initialAssignments, initialSubmissions } from '../../../constants/assignmentData';
 import HeaderTitle from '../../../components/shared/HeaderTitle';
-
-const { Title } = Typography;
 
 function Assignment() {
     const [activeTab, setActiveTab] = useState<'assignment' | 'submission'>('assignment');
@@ -76,9 +74,9 @@ function Assignment() {
     return (
         <div className=" min-h-screen">
             {/* Header section */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8"> 
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <HeaderTitle title="Assignment" />
-            
+
                 <div className="flex flex-wrap items-center gap-3">
                     <Input
                         prefix={<SearchOutlined className="text-gray-400" />}
