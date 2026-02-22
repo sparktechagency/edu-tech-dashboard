@@ -1,4 +1,5 @@
 import { Modal, Avatar, Button } from "antd";
+
 import { Mentor } from "../../../pages/mentor-coordinator/mentors";
 
 
@@ -28,7 +29,7 @@ const StudentDetailsModal = ({ isOpen, onClose, mentor }: Props) => {
           No students assigned.
         </p>
       ) : (
-        students.map((student) => (
+        students.map((student: any) => (
           <div
             key={student._id}
             className="flex items-center justify-between mb-4 p-3 border rounded-lg"

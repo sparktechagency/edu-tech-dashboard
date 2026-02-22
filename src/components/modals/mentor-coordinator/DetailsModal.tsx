@@ -1,101 +1,82 @@
-import { Button, Modal, Tag } from 'antd';
-import { EyeOutlined, LinkOutlined } from '@ant-design/icons';
-import { Resource } from '../../../constants/mockResources';
+import { Modal, Spin, Tag, Button } from "antd";
+import { useGetResourceByIdQuery } from "../../../redux/apiSlices/coordinator/resources";
 
-interface CoordinatorDetailsModalProps {
-    selectedResource: Resource | null;
-    isModalVisible: boolean;
-    setIsModalVisible: (visible: boolean) => void;
-    handleLinkClick: (url: string) => void;
+interface Props {
+  resourceId: string | null;
+  onClose: () => void;
 }
 
-export default function CoordinatorDetailsModal({
-    selectedResource,
-    isModalVisible,
-    setIsModalVisible,
-    handleLinkClick,
-}: CoordinatorDetailsModalProps) {
-    return (
-        <Modal
-            title={null}
-            open={isModalVisible}
-            onCancel={() => setIsModalVisible(false)}
-            footer={null}
-            width={650}
-            centered
-            className="resource-modal"
-        >
-            <>
-                <div className="flex items-center gap-3 py-2">
-                    <div className="p-2 bg-primary/10 rounded-lg">
-                        <EyeOutlined className="text-primary text-xl" />
-                    </div>
-                    <div>
-                        <div className="text-lg font-bold text-[#333333]">{selectedResource?.title}</div>
-                        <div className="text-xs font-normal text-gray-400 uppercase tracking-widest">
-                            {selectedResource?.type} Material
-                        </div>
-                    </div>
-                </div>
-                {selectedResource && (
-                    <div className="py-4">
-                        <div className="mb-6">
-                            <h4 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">
-                                Description
-                            </h4>
-                            <p className="text-gray-700 leading-relaxed text-base">{selectedResource.description}</p>
-                        </div>
-                        <div className="grid grid-cols-3 gap-6 pt-4 border-t border-gray-50">
-                            <div>
-                                <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">
-                                    Target
-                                </h4>
-                                <Tag
-                                    color={selectedResource.for === 'Mentor' ? 'green' : 'blue'}
-                                    className="px-4 py-0.5 rounded-full border-none font-bold"
-                                >
-                                    {selectedResource.for}
-                                </Tag>
-                            </div>
-                            <div>
-                                <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">
-                                    Group
-                                </h4>
-                                <Tag color="purple" className="px-4 py-0.5 rounded-full border-none font-bold">
-                                    {selectedResource.group}
-                                </Tag>
-                            </div>
-                            <div>
-                                <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">
-                                    Track
-                                </h4>
-                                <Tag color="magenta" className="px-4 py-0.5 rounded-full border-none font-bold">
-                                    {selectedResource.track}
-                                </Tag>
-                            </div>
-                        </div>
-                    </div>
-                )}
-                <div className="flex justify-end mt-6 gap-3">
-                    <Button
-                        key="back"
-                        onClick={() => setIsModalVisible(false)}
-                        className="h-10 px-6 rounded-lg font-medium"
-                    >
-                        Close
-                    </Button>
+const CoordinatorDetailsModal: React.FC<Props> = ({
+  resourceId,
+  onClose,
+}) => {
+  const { data, isLoading } = useGetResourceByIdQuery(
+    resourceId as string,
+    {
+      skip: !resourceId,
+    }
+  );
 
-                    <Button
-                        key="link"
-                        type="primary"
-                        icon={<LinkOutlined />}
-                        onClick={() => selectedResource && handleLinkClick(selectedResource.link)}
-                        className="h-10 px-6 rounded-lg font-bold shadow-md"
-                    >
-                        Visit Link
-                    </Button>
-                </div>
-            </>
-        </Modal>
-    );
-}
+  const resource = data?.data;
+
+  return (
+    <Modal
+      open={!!resourceId}
+      onCancel={onClose}
+      footer={null}
+      centered
+      width={600}
+      title="Resource Details"
+    >
+      {isLoading ? (
+        <div className="flex justify-center p-8">
+          <Spin />
+        </div>
+      ) : resource ? (
+        <div className="space-y-4">
+          <p><strong>Title:</strong> {resource.title}</p>
+          <p><strong>Type:</strong> {resource.type}</p>
+
+          <p>
+            <strong>Target:</strong>{" "}
+            <Tag color="blue">
+              {resource.targeteAudience}
+            </Tag>
+          </p>
+
+          <p>
+            <strong>Group:</strong>{" "}
+            <Tag color="purple">
+              {resource.targertGroup?.name}
+            </Tag>
+          </p>
+
+          <p>
+            <strong>Status:</strong>{" "}
+            <Tag color={resource.markAsAssigned ? "green" : "red"}>
+              {resource.markAsAssigned
+                ? "Assigned"
+                : "Not Assigned"}
+            </Tag>
+          </p>
+
+          <p>
+            <strong>Upload Date:</strong>{" "}
+            {new Date(resource.createdAt).toLocaleString()}
+          </p>
+
+          <Button
+            type="primary"
+            onClick={() =>
+              window.open(resource.contentUrl, "_blank")
+            }
+          >
+            Open Resource
+          </Button>
+        </div>
+      ) : null}
+    </Modal>
+  );
+};
+
+export default CoordinatorDetailsModal;

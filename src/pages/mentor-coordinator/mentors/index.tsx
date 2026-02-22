@@ -33,24 +33,36 @@ export interface Mentor {
 
 
 const Mentors = () => {
-  const { data, isLoading } = useGetAllMentorsQuery(undefined);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [status, setStatus] = useState("");
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const { data, isLoading } = useGetAllMentorsQuery({
+    page, 
+    limit, 
+    searchTerm, 
+    status
+  });
 
+  const [isFetching] = useState(false);
   const [isViewStudentsModalOpen, setIsViewStudentsModalOpen] =
     useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [selectedMentor, setSelectedMentor] = useState<Mentor | null>(null);
 
   const mentorsData: Mentor[] =
-    data?.data?.map((mentor: any) => ({
-      key: mentor._id,
-      name: `${mentor.firstName} ${mentor.lastName}`,
-      email: mentor.email,
-      company: mentor.company || "N/A",
-      jobTitle: mentor.jobTitle || "N/A",
-      location: mentor.address || "N/A",
-      status: mentor.verified ? "Active" : "Inactive",
-      assignedStudents: mentor.assignedStudents || [],
-    })) || [];
+  data?.data?.mentors?.map((mentor: any) => ({
+    key: mentor._id,
+    name: mentor.firstName 
+      ? `${mentor.firstName} ${mentor.lastName || ''}`.trim()
+      : (mentor.name || "N/A"),
+    email: mentor.email,
+    company: mentor.company || mentor.professionalTitle || "N/A",
+    jobTitle: mentor.professionalTitle || "N/A",
+    location: mentor.address || "N/A",
+    status: mentor.verified ? "Active" : "Inactive",
+    assignedStudents: mentor.assignedStudents || [],
+  })) || [];
 
 
   const handleViewStudents = (mentor: Mentor) => {
@@ -139,38 +151,58 @@ const Mentors = () => {
   return (
     <div>
       {/* ===== Header ===== */}
-      <div className="flex justify-between items-center mb-4">
+  <div className="flex justify-between items-center mb-4">
         <HeaderTitle title="Mentors" />
-
         <div className="flex gap-4">
           <Input
-            placeholder="Search mentor"
-            prefix={
-              <SearchOutlined className="text-gray-400 text-lg" />
-            }
-            className="w-72 rounded-lg border-gray-200"
+            placeholder="Search mentor..."
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setPage(1);
+            }}
+            allowClear
+            prefix={<SearchOutlined />}
             style={{ height: "42px" }}
+            className="w-72 rounded-lg"
           />
 
-          <Button
-            icon={<FilterOutlined />}
-            className="flex items-center gap-2 h-[42px] px-6 rounded-lg border-gray-200 font-medium"
-          >
-            Filter
-          </Button>
+          <Select
+            placeholder="Filter by status"
+            style={{ height: "42px", width: 150 }}
+            allowClear
+            onChange={(value) => {
+              setStatus(value || "");
+              setPage(1);
+            }}
+            suffixIcon={
+                <FilterOutlined className="text-gray-400" />
+              }
+            options={[
+              { value: "Active", label: "Active" },
+              { value: "Inactive", label: "Inactive" },
+            ]}
+          />
         </div>
       </div>
 
       {/* ===== Table ===== */}
       <div className="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-100">
-        <Table
-          columns={columns}
-          dataSource={mentorsData}
-          loading={isLoading}
-          rowKey="key"
-          pagination={{ pageSize: 10 }}
-          rowClassName="hover:bg-gray-50"
-        />
+<Table
+        columns={columns}
+        dataSource={mentorsData}
+        loading={isLoading}
+        rowKey="key"
+        pagination={{
+          current: page,
+          pageSize: limit,
+          total: data?.data?.pagination?.total || 0,
+          onChange: (newPage, newLimit) => {
+            setPage(newPage);
+            setLimit(newLimit);
+          },
+        }}
+      />
       </div>
 
       {/* ===== Mentor Details Modal ===== */}
