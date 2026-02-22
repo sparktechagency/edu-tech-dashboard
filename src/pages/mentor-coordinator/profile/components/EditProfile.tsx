@@ -1,6 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Form, Input, Divider } from 'antd';
-import { UserContext } from '../../../../provider/User';
 import { imageUrl } from '../../../../redux/api/baseApi';
 import { errorType } from '../../../authentication/Login';
 import { useUpdateProfileMutation } from '../../../../redux/apiSlices/authSlice';
@@ -10,11 +9,11 @@ import Swal from 'sweetalert2';
 const { TextArea } = Input;
 
 interface EditProfileProps {
+    user: any;
     onCancel: () => void;
 }
 
-const EditProfile: React.FC<EditProfileProps> = ({ onCancel }) => {
-    const user = useContext(UserContext);
+const EditProfile: React.FC<EditProfileProps> = ({ user, onCancel }) => {
     const [profileForm] = Form.useForm();
     const [imgURL, setImgURL] = useState('');
     const [imgFile, setImageFile] = useState<File | null>(null);
@@ -23,42 +22,48 @@ const EditProfile: React.FC<EditProfileProps> = ({ onCancel }) => {
     useEffect(() => {
         if (user) {
             profileForm.setFieldsValue({
-                name: user?.name,
+                fullName: user?.name || `${user?.firstName || ''} ${user?.lastName || ''}`.trim(),
                 email: user?.email,
-                contact: user?.contact,
+                contact: user?.contactNumber || user?.contact,
                 professionalTitle: user?.professionalTitle,
-                preferredGroup: user?.preferredGroup,
-                availableHours: user?.availableHours,
-                aboutMe: user?.aboutMe,
-                linkedin: user?.linkedin,
-                github: user?.github,
-                personalWebsite: user?.personalWebsite,
-                city: user?.city,
-                zipCode: user?.zipCode,
-                streetAddress: user?.streetAddress,
+                preferredGroup: user?.preferedGroup || user?.preferredGroup,
+                availableHours: user?.aviliableHours || user?.availableHours,
+                aboutMe: user?.about || user?.aboutMe,
+                linkedinProfile: user?.linkedInProfile,
+                githubProfile: user?.githubProfile,
+                portfolioWebsite: user?.PortfolioWebsite,
+                city: user?.address?.city,
+                zipCode: user?.address?.zipCode,
+                streetAddress: user?.address?.streetAddress,
             });
-            setImgURL(user?.profilePic?.startsWith('http') ? user?.profilePic : `${imageUrl}${user?.profilePic}`);
+            setImgURL(
+                user?.profile?.startsWith('http')
+                    ? user?.profile
+                    : user?.profile
+                    ? `${imageUrl}${user?.profile}`
+                    : 'https://via.placeholder.com/150'
+            );
         }
     }, [profileForm, user]);
 
     useEffect(() => {
-        if (isSuccess) {
-            if (data) {
-                Swal.fire({
-                    text: data?.message,
-                    icon: 'success',
-                    timer: 1500,
-                    showConfirmButton: false,
-                }).then(() => {
-                    onCancel();
-                    window.location.reload();
-                });
-            }
+        if (isSuccess && data) {
+            Swal.fire({
+                text: data?.message,
+                icon: 'success',
+                timer: 1500,
+                showConfirmButton: false,
+            }).then(() => {
+                onCancel();
+                window.location.reload();
+            });
         }
 
         if (isError) {
             const errorMessage = (error as errorType)?.data?.errorMessages
-                ? (error as errorType)?.data?.errorMessages.map((msg: { message: string }) => msg?.message).join('\n')
+                ? (error as errorType)?.data?.errorMessages
+                      .map((msg: { message: string }) => msg?.message)
+                      .join('\n')
                 : (error as errorType)?.data?.message || 'Something went wrong. Please try again.';
             Swal.fire({
                 text: errorMessage,
@@ -67,12 +72,10 @@ const EditProfile: React.FC<EditProfileProps> = ({ onCancel }) => {
         }
     }, [isSuccess, isError, error, data, onCancel]);
 
-    const onChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-
         if (file) {
-            const imgUrl = URL.createObjectURL(file);
-            setImgURL(imgUrl);
+            setImgURL(URL.createObjectURL(file));
             setImageFile(file);
         }
     };
@@ -82,6 +85,14 @@ const EditProfile: React.FC<EditProfileProps> = ({ onCancel }) => {
 
         if (imgFile) {
             formData.append('image', imgFile);
+        }
+
+        // Split fullName into firstName + lastName for the backend
+        if (values.fullName) {
+            const parts = values.fullName.trim().split(' ');
+            formData.append('firstName', parts[0] || '');
+            formData.append('lastName', parts.slice(1).join(' ') || '');
+            delete values.fullName;
         }
 
         Object.keys(values).forEach((key) => {
@@ -147,7 +158,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ onCancel }) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 mb-8">
                     <Form.Item
                         label={<span className="font-semibold text-gray-700">Full Name</span>}
-                        name="name"
+                        name="fullName"
                         rules={[{ required: true, message: 'Please input your full name!' }]}
                     >
                         <Input className="h-12 rounded-lg" placeholder="Alex Michael Johnson" />
@@ -175,7 +186,10 @@ const EditProfile: React.FC<EditProfileProps> = ({ onCancel }) => {
                     >
                         <Input className="h-12 rounded-lg" placeholder="Expedition" />
                     </Form.Item>
-                    <Form.Item label={<span className="font-semibold text-gray-700">Phone</span>} name="contact">
+                    <Form.Item
+                        label={<span className="font-semibold text-gray-700">Phone</span>}
+                        name="contact"
+                    >
                         <Input className="h-12 rounded-lg" placeholder="+31 6123456789" />
                     </Form.Item>
                     <Form.Item
@@ -191,19 +205,19 @@ const EditProfile: React.FC<EditProfileProps> = ({ onCancel }) => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-2 mb-8">
                     <Form.Item
                         label={<span className="font-semibold text-gray-700">Linkedin Profile</span>}
-                        name="linkedin"
+                        name="linkedinProfile"
                     >
                         <Input className="h-12 rounded-lg" placeholder="https://linkedin.com/..." />
                     </Form.Item>
                     <Form.Item
                         label={<span className="font-semibold text-gray-700">GitHub Profile</span>}
-                        name="github"
+                        name="githubProfile"
                     >
                         <Input className="h-12 rounded-lg" placeholder="https://github.com/..." />
                     </Form.Item>
                     <Form.Item
                         label={<span className="font-semibold text-gray-700">Personal Website</span>}
-                        name="personalWebsite"
+                        name="portfolioWebsite"
                     >
                         <Input className="h-12 rounded-lg" placeholder="https://..." />
                     </Form.Item>
@@ -212,10 +226,16 @@ const EditProfile: React.FC<EditProfileProps> = ({ onCancel }) => {
                 {/* Address Information */}
                 {sectionTitle('Address Information')}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-2 mb-8">
-                    <Form.Item label={<span className="font-semibold text-gray-700">City</span>} name="city">
+                    <Form.Item
+                        label={<span className="font-semibold text-gray-700">City</span>}
+                        name="city"
+                    >
                         <Input className="h-12 rounded-lg" placeholder="Rotterdam" />
                     </Form.Item>
-                    <Form.Item label={<span className="font-semibold text-gray-700">Zip Code</span>} name="zipCode">
+                    <Form.Item
+                        label={<span className="font-semibold text-gray-700">Zip Code</span>}
+                        name="zipCode"
+                    >
                         <Input className="h-12 rounded-lg" placeholder="3225 CD" />
                     </Form.Item>
                     <Form.Item

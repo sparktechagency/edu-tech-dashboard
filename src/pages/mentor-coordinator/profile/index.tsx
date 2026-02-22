@@ -1,26 +1,34 @@
 import { useState } from 'react';
-import { Button, Avatar } from 'antd';
+import { Button, Avatar, Spin } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
-import { useUser } from '../../../provider/User';
 import EditProfile from './components/EditProfile';
 import { imageUrl } from '../../../redux/api/baseApi';
+import { useProfileQuery as useGetProfileQuery } from '../../../redux/apiSlices/authSlice';
 
 export default function MentorCoordinatorProfile() {
-    const { user } = useUser();
+    const { data, isLoading } = useGetProfileQuery({});
+
+    const user = data?.data?.data ?? data?.data ?? data;
+
     const [isEditing, setIsEditing] = useState(false);
-    console.log(user, 'profile');
+
+    if (isLoading) {
+        return <div className="flex justify-center mt-10"><Spin size="large" /></div>;
+    }
 
     if (isEditing) {
         return (
-            <div className="">
+            <div>
                 <div className="flex justify-between items-center mb-6">
                     <div>
                         <h2 className="text-xl font-semibold text-[#333333]">Edit Profile</h2>
-                        <p className="text-gray-500 text-sm">Update your professional information and mentor profile</p>
+                        <p className="text-gray-500 text-sm">
+                            Update your professional information and mentor profile
+                        </p>
                     </div>
                     <Button onClick={() => setIsEditing(false)}>Back to Profile</Button>
                 </div>
-                <EditProfile onCancel={() => setIsEditing(false)} />
+                <EditProfile user={user} onCancel={() => setIsEditing(false)} />
             </div>
         );
     }
@@ -34,12 +42,26 @@ export default function MentorCoordinatorProfile() {
         </div>
     );
 
+    const displayName =
+        user?.name ||
+        `${user?.firstName || ''} ${user?.lastName || ''}`.trim() ||
+        'N/A';
+
+    // Resolve profile image URL safely
+    const profileSrc = user?.profile
+        ? user.profile.startsWith('http')
+            ? user.profile
+            : `${imageUrl}${user.profile}`
+        : undefined;
+
     return (
-        <div className="">
+        <div>
             <div className="flex justify-between items-center mb-8">
                 <div>
                     <h2 className="text-2xl font-bold text-[#333333]">Profile</h2>
-                    <p className="text-gray-500 text-sm">Manage your professional information and mentor profile</p>
+                    <p className="text-gray-500 text-sm">
+                        Manage your professional information and mentor profile
+                    </p>
                 </div>
                 <Button
                     icon={<EditOutlined />}
@@ -50,16 +72,16 @@ export default function MentorCoordinatorProfile() {
                 </Button>
             </div>
 
-            {/* Profile Summary Card */}
+            {/* Profile Summary */}
             <div className="bg-white p-5 rounded-xl border border-gray-200 inline-flex items-center gap-5 mb-10 shadow-sm min-w-[320px]">
                 <Avatar
                     shape="square"
                     size={80}
-                    src={user?.profile ? `${imageUrl}${user?.profile}` : undefined}
+                    src={profileSrc}
                     className="rounded-lg shadow-sm"
                 />
                 <div>
-                    <h3 className="text-lg font-bold text-[#333333]">{user?.name}</h3>
+                    <h3 className="text-lg font-bold text-[#333333]">{displayName}</h3>
                     <p className="text-gray-500 text-sm">{user?.email}</p>
                     <span className="text-green-600 font-semibold text-sm mt-1 block px-3 py-0.5 bg-green-50 rounded-full w-fit border border-green-100">
                         {user?.role}
@@ -70,50 +92,26 @@ export default function MentorCoordinatorProfile() {
             {/* About Me */}
             <div className="mb-10">
                 <h3 className="text-lg font-bold text-[#333333] mb-4">About Me</h3>
-                <div className="bg-white p-8 rounded-xl border border-gray-200 min-h-[140px] flex items-center justify-center shadow-sm">
-                    {user?.aboutMe ? (
-                        <p className="text-gray-700 leading-relaxed text-left w-full">{user.aboutMe}</p>
+                <div className="bg-white p-8 rounded-xl border border-gray-200 min-h-[140px] shadow-sm">
+                    {user?.aboutMe || user?.about ? (
+                        <p className="text-gray-700 leading-relaxed">{user?.aboutMe || user?.about}</p>
                     ) : (
                         <p className="text-gray-400 italic">No bio Available</p>
                     )}
                 </div>
             </div>
 
-            {/* Basic Information */}
+            {/* Basic Info */}
             <div className="mb-10">
                 <h3 className="text-lg font-bold text-[#333333] mb-4">Basic Information</h3>
                 <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-sm">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-2">
-                        {infoItem('Full Name', user?.name)}
+                        {infoItem('Full Name', displayName)}
                         {infoItem('Email', user?.email)}
                         {infoItem('Professional Title', user?.professionalTitle)}
-                        {infoItem('Preferred Group', user?.preferredGroup)}
-                        {infoItem('Phone', user?.contact)}
-                        {infoItem('Available Hours', user?.availableHours)}
-                    </div>
-                </div>
-            </div>
-
-            {/* Links */}
-            <div className="mb-10">
-                <h3 className="text-lg font-bold text-[#333333] mb-4">Links</h3>
-                <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-sm">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-2">
-                        {infoItem('Linkedin Profile', user?.linkedin)}
-                        {infoItem('GitHub Profile', user?.github)}
-                        {infoItem('Personal Website', user?.personalWebsite)}
-                    </div>
-                </div>
-            </div>
-
-            {/* Address Information */}
-            <div className="mb-10">
-                <h3 className="text-lg font-bold text-[#333333] mb-4">Address Information</h3>
-                <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-sm">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-2">
-                        {infoItem('City', user?.city)}
-                        {infoItem('Zip Code', user?.zipCode)}
-                        {infoItem('Street Address', user?.streetAddress)}
+                        {infoItem('Preferred Group', user?.preferredGroup || user?.preferedGroup)}
+                        {infoItem('Phone', user?.contact || user?.contactNumber)}
+                        {infoItem('Available Hours', user?.availableHours || user?.aviliableHours)}
                     </div>
                 </div>
             </div>
