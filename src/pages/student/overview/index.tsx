@@ -7,6 +7,7 @@ import { mockMentor } from '../../../constants/student/mentor';
 import { mockEvents } from '../../../constants/student/events';
 import { mockAssignments } from '../../../constants/student/assignments';
 import { PiBookOpenTextLight, PiCalendarBlankLight, PiUsersLight, PiTargetLight } from 'react-icons/pi';
+import HeaderTitle from '../../../components/shared/HeaderTitle';
 
 const StudentOverview = () => {
     const stats = [
@@ -55,8 +56,8 @@ const StudentOverview = () => {
 
             {/* Upcoming Events */}
             <div>
-                <h2 className="text-2xl font-bold text-[#1E1E1E] mb-6">Upcoming Events</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <HeaderTitle title="Upcoming Events" />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-3">
                     {mockEvents?.map((event) => (
                         <EventCard key={event.id} event={event} />
                     ))}
@@ -65,8 +66,8 @@ const StudentOverview = () => {
 
             {/* Active Assignments */}
             <div>
-                <h2 className="text-2xl font-bold text-[#1E1E1E] mb-6">Active Assignments</h2>
-                <div className="space-y-4">
+                <HeaderTitle title="Active Assignments" />
+                <div className="space-y-4 pt-3">
                     {activeAssignments.length > 0 ? (
                         activeAssignments.map((assignment) => (
                             <ActiveAssignmentCard key={assignment.id} assignment={assignment} />

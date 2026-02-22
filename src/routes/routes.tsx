@@ -26,6 +26,7 @@ import StudentEvents from '../pages/student/events';
 import Mentor from '../pages/student/mentor';
 import StudentAssignment from '../pages/student/assignment';
 import StudentResources from '../pages/student/resources';
+import Goal from '../pages/student/goal';
 
 const router = createBrowserRouter([
     {
@@ -62,7 +63,7 @@ const router = createBrowserRouter([
 
             // Student
             { path: '/student/overview', element: <StudentOverview /> },
-            { path: '/student/goal', element: <Users /> },
+            { path: '/student/goal', element: <Goal /> },
             { path: '/student/resources', element: <StudentResources /> },
             { path: '/student/assignment', element: <StudentAssignment /> },
             { path: '/student/mentor', element: <Mentor /> },
