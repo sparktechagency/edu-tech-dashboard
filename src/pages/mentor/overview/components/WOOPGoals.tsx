@@ -1,4 +1,9 @@
+import { useGetUpcomingEventsQuery } from '../../../../redux/apiSlices/mentor/mentorOverviewApi';
+
 const WOOPGoals = () => {
+    const { data } = useGetUpcomingEventsQuery(undefined);
+    const WOOPGoals = data?.data?.woopsGoals || [];
+    console.log(WOOPGoals);
     return (
         <div className="rounded-xl border border-gray-100 shadow-sm h-full bg-white p-6">
             <h3 className="text-[22px] font-semibold text-gray-800 pb-4">WOOP Goals</h3>
@@ -6,32 +11,22 @@ const WOOPGoals = () => {
                 <div className="space-y-8">
                     <div>
                         <h4 className="text-lg font-semibold text-gray-800 mb-2">Wish</h4>
-                        <p className="text-gray-400 text-[13px] leading-relaxed italic">
-                            WOOP (Wish, Outcome, Obstacle, Plan) is a science-based mental strategy that helps people
-                            achieve their goals.
-                        </p>
+                        <p className="text-gray-400 text-[13px] leading-relaxed italic">{WOOPGoals?.wish?.detail}</p>
                     </div>
                     <div>
                         <h4 className="text-lg font-bold text-gray-800 mb-2">Obstacle</h4>
-                        <p className="text-gray-500 text-sm leading-relaxed">
-                            Limited portfolio projects and interview anxiety
-                        </p>
+                        <p className="text-gray-500 text-sm leading-relaxed">{WOOPGoals?.obstacle?.detail}</p>
                     </div>
                 </div>
 
                 <div className="space-y-8">
                     <div>
                         <h4 className="text-lg font-bold text-gray-800 mb-2">Outcome</h4>
-                        <p className="text-gray-500 text-sm leading-relaxed">
-                            Limited portfolio projects and interview anxiety
-                        </p>
+                        <p className="text-gray-500 text-sm leading-relaxed">{WOOPGoals?.outcome?.detail}</p>
                     </div>
                     <div>
                         <h4 className="text-lg font-bold text-gray-800 mb-2">Plan</h4>
-                        <p className="text-gray-500 text-sm leading-relaxed">
-                            Build 3 substantial projects showcasing different skills and practice mock interviews weekly
-                            with peers
-                        </p>
+                        <p className="text-gray-500 text-sm leading-relaxed">{WOOPGoals?.plan?.detail}</p>
                     </div>
                 </div>
             </div>

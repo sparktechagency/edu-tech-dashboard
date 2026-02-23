@@ -50,9 +50,10 @@ export default function MentorCoordinatorProfile() {
     // Resolve profile image URL safely
     const profileSrc = user?.profile
         ? user.profile.startsWith('http')
-            ? user.profile
+            ? user?.profile
             : `${imageUrl}${user.profile}`
         : undefined;
+        console.log('User Profile Data:', profileSrc);
 
     return (
         <div>

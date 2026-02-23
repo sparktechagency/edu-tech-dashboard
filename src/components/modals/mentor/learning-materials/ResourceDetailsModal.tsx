@@ -1,17 +1,7 @@
 import { Modal, Button } from 'antd';
 
-interface ResourceDetailsModalProps {
-    open: boolean;
-    onCancel: () => void;
-    resource?: {
-        title: string;
-        type: string;
-        category: string;
-        link: string;
-    };
-}
-
-const ResourceDetailsModal = ({ open, onCancel, resource }: ResourceDetailsModalProps) => {
+const ResourceDetailsModal = ({ open, onCancel, resource }: any) => {
+    console.log(resource);
     return (
         <Modal
             title={<span className="text-xl font-bold">Resources Details</span>}
@@ -25,22 +15,47 @@ const ResourceDetailsModal = ({ open, onCancel, resource }: ResourceDetailsModal
             <div className="mt-6 border border-gray-100 rounded-xl overflow-hidden">
                 <div className="grid grid-cols-2 border-b border-gray-100">
                     <div className="bg-gray-50/50 p-4 font-semibold text-gray-500 text-sm">Resource Title</div>
-                    <div className="p-4 text-gray-700 text-sm">{resource?.title || 'Basic Computer'}</div>
+                    <div className="p-4 text-gray-700 text-sm">{resource?.title || 'N/A'}</div>
                 </div>
                 <div className="grid grid-cols-2 border-b border-gray-100">
                     <div className="bg-gray-50/50 p-4 font-semibold text-gray-500 text-sm">Type</div>
-                    <div className="p-4 text-gray-700 text-sm">{resource?.type || 'PDF'}</div>
+                    <div className="p-4 text-gray-700 text-sm">{resource?.type || 'N/A'}</div>
                 </div>
                 <div className="grid grid-cols-2 border-b border-gray-100">
-                    <div className="bg-gray-50/50 p-4 font-semibold text-gray-500 text-sm">Category</div>
-                    <div className="p-4 text-gray-700 text-sm">{resource?.category || 'Learning Materials'}</div>
+                    <div className="bg-gray-50/50 p-4 font-semibold text-gray-500 text-sm">Category / Group</div>
+                    <div className="p-4 text-gray-700 text-sm">{resource?.targertGroup?.name || 'N/A'}</div>
+                </div>
+                <div className="grid grid-cols-2 border-b border-gray-100">
+                    <div className="bg-gray-50/50 p-4 font-semibold text-gray-500 text-sm">Target Audience</div>
+                    <div className="p-4 text-gray-700 text-sm">{resource?.targeteAudience || 'N/A'}</div>
+                </div>
+                <div className="grid grid-cols-2 border-b border-gray-100">
+                    <div className="bg-gray-50/50 p-4 font-semibold text-gray-500 text-sm">Created By</div>
+                    <div className="p-4 text-gray-700 text-sm">
+                        {resource?.createdBy?.firstName} {resource?.createdBy?.lastName}
+                    </div>
+                </div>
+                <div className="grid grid-cols-2 border-b border-gray-100">
+                    <div className="bg-gray-50/50 p-4 font-semibold text-gray-500 text-sm">Created At</div>
+                    <div className="p-4 text-gray-700 text-sm">
+                        {resource?.createdAt ? new Date(resource.createdAt).toLocaleString() : 'N/A'}
+                    </div>
                 </div>
                 <div className="grid grid-cols-2">
-                    <div className="bg-gray-50/50 p-4 font-semibold text-gray-500 text-sm">Link URL</div>
+                    <div className="bg-gray-50/50 p-4 font-semibold text-gray-500 text-sm">Resource URL</div>
                     <div className="p-4">
-                        <a href={resource?.link || '#'} className="text-primary hover:underline text-sm font-medium">
-                            View Link
-                        </a>
+                        {resource?.contentUrl ? (
+                            <a
+                                href={resource.contentUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-primary hover:underline text-sm font-medium"
+                            >
+                                View Resource
+                            </a>
+                        ) : (
+                            <span className="text-gray-400">N/A</span>
+                        )}
                     </div>
                 </div>
             </div>

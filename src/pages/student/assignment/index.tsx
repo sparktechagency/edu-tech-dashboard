@@ -24,7 +24,6 @@ export default function StudentAssignment() {
 
     return (
         <section className="space-y-6">
-            {/* Tabs Navigation */}
             <div className="bg-white px-2 rounded-2xl border border-gray-100 shadow-sm">
                 <Tabs
                     activeKey={activeTab}
@@ -34,7 +33,6 @@ export default function StudentAssignment() {
                 />
             </div>
 
-            {/* Assignment List */}
             <div className="grid grid-cols-1 gap-6">
                 {filteredAssignments.length > 0 ? (
                     filteredAssignments.map((assignment) => (

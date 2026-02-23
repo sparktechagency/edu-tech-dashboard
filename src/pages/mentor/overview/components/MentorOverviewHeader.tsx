@@ -1,4 +1,5 @@
 import { Button } from 'antd';
+import { Link } from 'react-router-dom';
 
 const MentorOverviewHeader = () => {
     return (
@@ -10,9 +11,11 @@ const MentorOverviewHeader = () => {
                     generation of tech professionals. Together, we're building a stronger, more connected learning
                     community.
                 </p>
-                <Button type="primary" className="bg-primary px-5 h-12 rounded-lg flex items-center">
-                    Upgrade Profile
-                </Button>
+                <Link to="/mentor/profile">
+                    <Button type="primary" className="bg-primary px-5 h-12 rounded-lg flex items-center">
+                        Upgrade Profile
+                    </Button>
+                </Link>
             </div>
 
             <div className="flex flex-col items-end">

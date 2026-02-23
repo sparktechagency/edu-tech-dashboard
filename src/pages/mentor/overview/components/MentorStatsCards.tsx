@@ -1,7 +1,11 @@
 import { Card, Progress } from 'antd';
 import { Users, Target, Calendar } from 'lucide-react';
+import { useGetMentorOverviewQuery } from '../../../../redux/apiSlices/mentor/mentorOverviewApi';
 
 const MentorStatsCards = () => {
+    const { data } = useGetMentorOverviewQuery(undefined);
+    const mentorData = data?.data || [];
+    console.log(mentorData);
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             {/* Assigned Students */}
@@ -9,7 +13,7 @@ const MentorStatsCards = () => {
                 <div className="flex justify-between items-start">
                     <div>
                         <p className="text-gray-400 text-sm font-medium mb-1">Assigned Students</p>
-                        <h3 className="text-3xl font-bold text-gray-800">1</h3>
+                        <h3 className="text-3xl font-bold text-gray-800">{mentorData?.assignedStudents?.length}</h3>
                     </div>
                     <div className="bg-blue-50 p-2 rounded-lg text-blue-500">
                         <Users size={24} />

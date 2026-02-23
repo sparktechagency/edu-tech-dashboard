@@ -1,6 +1,7 @@
 import { Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useGetAllMentorsQuery } from "../../../../redux/apiSlices/coordinator/overViewSlice";
+import { Mentor } from "../../mentors";
 
 interface MentorData {
   key: string;
@@ -11,16 +12,18 @@ interface MentorData {
 }
 
 const MentorsTable = () => {
-  const { data, isLoading } = useGetAllMentorsQuery(undefined);
+  const { data, isLoading } = useGetAllMentorsQuery({});
 
-  const mentorsData: MentorData[] =
-    data?.data?.map((mentor: any) => ({
-      key: mentor._id,
-      name: `${mentor.firstName} ${mentor.lastName}`,
-      email: mentor.email,
-      company: mentor.company || "N/A",
-      jobTitle: mentor.jobTitle || "N/A",
-    })) || [];
+  const mentorsData: Mentor[] =
+  data?.data?.mentors?.map((mentor: any) => ({
+    key: mentor._id,
+    name: mentor.firstName 
+      ? `${mentor.firstName} ${mentor.lastName || ''}`.trim()
+      : (mentor.name || "N/A"),
+    email: mentor.email,
+    company: mentor.company || mentor.professionalTitle || "N/A",
+    jobTitle: mentor.professionalTitle || "N/A",
+  })) || [];
 
   const columns: ColumnsType<MentorData> = [
     {

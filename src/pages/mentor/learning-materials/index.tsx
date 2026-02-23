@@ -4,71 +4,15 @@ import { Eye, Trash2, Plus } from 'lucide-react';
 import AddResourceModal from '../../../components/modals/mentor/learning-materials/AddResourceModal';
 import ResourceDetailsModal from '../../../components/modals/mentor/learning-materials/ResourceDetailsModal';
 import RemoveResourceModal from '../../../components/modals/mentor/learning-materials/RemoveResourceModal';
+import { useGetLearningMaterialsQuery } from '../../../redux/apiSlices/mentor/learningApi';
 
 const LearningMaterials = () => {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
     const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
-    const [selectedResource, setSelectedResource] = useState<any>(null);
-
-    const dataSource = [
-        {
-            key: '1',
-            title: 'Basic Computer',
-            type: 'PDF',
-            category: 'Learning Materials',
-            dateAdded: '10-01-2026',
-            link: 'https://example.com/basic-computer',
-        },
-        {
-            key: '2',
-            title: 'Science Lab Procedures',
-            type: 'DOCX',
-            category: 'Training',
-            dateAdded: '14-01-2026',
-            link: 'https://example.com/science-lab',
-        },
-        {
-            key: '3',
-            title: 'Algebra Study Guide',
-            type: 'DOCX',
-            category: 'Learning Materials',
-            dateAdded: '26-01-2026',
-            link: 'https://example.com/algebra',
-        },
-        {
-            key: '4',
-            title: 'Essay Writing Template',
-            type: 'PDF',
-            category: 'Training',
-            dateAdded: '10-01-2026',
-            link: 'https://example.com/essay',
-        },
-        {
-            key: '5',
-            title: '20-01-2026',
-            type: 'DOCX',
-            category: 'Learning Materials',
-            dateAdded: '10-01-2026',
-            link: 'https://example.com/res5',
-        },
-        {
-            key: '6',
-            title: '20-01-2026',
-            type: 'PDF',
-            category: 'Training',
-            dateAdded: '10-01-2026',
-            link: 'https://example.com/res6',
-        },
-        {
-            key: '7',
-            title: '20-01-2026',
-            type: 'PDF',
-            category: 'Learning Materials',
-            dateAdded: '10-01-2026',
-            link: 'https://example.com/res7',
-        },
-    ];
+    const [selectedResource, setSelectedResource] = useState();
+    const { data, refetch } = useGetLearningMaterialsQuery(undefined);
+    const materialsData = data?.data?.resources || [];
 
     const columns = [
         {
@@ -85,15 +29,16 @@ const LearningMaterials = () => {
         },
         {
             title: 'Category',
-            dataIndex: 'category',
             key: 'category',
-            render: (text: string) => <span className="text-gray-500">{text}</span>,
+            render: (_: any, record: any) => (
+                <span className="text-gray-500">{record.targertGroup?.name || 'N/A'}</span>
+            ),
         },
         {
             title: 'Date added',
-            dataIndex: 'dateAdded',
+            dataIndex: 'createdAt',
             key: 'dateAdded',
-            render: (text: string) => <span className="text-gray-500">{text}</span>,
+            render: (text: string) => <span className="text-gray-500">{new Date(text).toLocaleDateString()}</span>,
         },
         {
             title: 'Action',
@@ -144,10 +89,16 @@ const LearningMaterials = () => {
             </div>
 
             <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-                <Table dataSource={dataSource} columns={columns} pagination={false} className="custom-table" />
+                <Table
+                    dataSource={materialsData}
+                    columns={columns}
+                    rowKey="_id"
+                    pagination={{ pageSize: 7, hideOnSinglePage: true }}
+                    className="custom-table"
+                />
             </div>
 
-            <AddResourceModal open={isAddModalOpen} onCancel={() => setIsAddModalOpen(false)} />
+            <AddResourceModal open={isAddModalOpen} onCancel={() => setIsAddModalOpen(false)} refetch={refetch} />
 
             <ResourceDetailsModal
                 open={isDetailsModalOpen}
@@ -158,11 +109,8 @@ const LearningMaterials = () => {
             <RemoveResourceModal
                 open={isRemoveModalOpen}
                 onCancel={() => setIsRemoveModalOpen(false)}
-                onRemove={() => {
-                    console.log('Removing:', selectedResource?.title);
-                    setIsRemoveModalOpen(false);
-                }}
-                resourceName={selectedResource?.title}
+                onRemove={refetch}
+                resource={selectedResource}
             />
         </section>
     );

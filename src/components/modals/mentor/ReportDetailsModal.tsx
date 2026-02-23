@@ -7,14 +7,21 @@ interface ReportDetailsModalProps {
 }
 
 const ReportDetailsModal = ({ open, onCancel, data }: ReportDetailsModalProps) => {
-    const skillProgressData = [
-        { key: '1', skill: 'HTML', progress: '100%' },
-        { key: '2', skill: 'CSS', progress: '90%' },
-    ];
+    const skillProgressData = data?.goalSheet
+        ? [
+              {
+                  key: '1',
+                  skill: data.goalSheet.skillName,
+                  planned: `${data.goalSheet.plannedProgress}%`,
+                  actual: `${data.goalSheet.actualProgress}%`,
+              },
+          ]
+        : [];
 
     const skillColumns = [
         { title: 'Skill Name', dataIndex: 'skill', key: 'skill' },
-        { title: 'Progress', dataIndex: 'progress', key: 'progress', align: 'right' as const },
+        { title: 'Planned Progress', dataIndex: 'planned', key: 'planned', align: 'right' as const },
+        { title: 'Actual Progress', dataIndex: 'actual', key: 'actual', align: 'right' as const },
     ];
 
     return (
@@ -36,33 +43,55 @@ const ReportDetailsModal = ({ open, onCancel, data }: ReportDetailsModalProps) =
                                     <td className="px-4 py-3 bg-gray-50 font-medium text-gray-600 w-1/3">
                                         Student Name
                                     </td>
-                                    <td className="px-4 py-3 text-gray-800">
-                                        {data?.studentName || 'Labeeb Ahmad Tahir'}
-                                    </td>
+                                    <td className="px-4 py-3 text-gray-800">{data?.studentId?.name || 'N/A'}</td>
                                 </tr>
                                 <tr>
                                     <td className="px-4 py-3 bg-gray-50 font-medium text-gray-600">Duration</td>
                                     <td className="px-4 py-3 text-gray-800">
-                                        {data?.duration || '20/12/2025 - 20/12/2025'}
+                                        {data?.weekStartDate
+                                            ? `${new Date(data.weekStartDate).toLocaleDateString()} - ${new Date(data.weekEndDate).toLocaleDateString()}`
+                                            : 'N/A'}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td className="px-4 py-3 bg-gray-50 font-medium text-gray-600">Attendance</td>
-                                    <td className="px-4 py-3 text-green-500 font-semibold">
-                                        {data?.attendance || 'Present'}
+                                    <td
+                                        className={`px-4 py-3 font-semibold ${data?.isPresent ? 'text-green-500' : 'text-red-500'}`}
+                                    >
+                                        {data?.isPresent ? 'Present' : 'Absent'}
                                     </td>
                                 </tr>
                                 <tr>
                                     <td className="px-4 py-3 bg-gray-50 font-medium text-gray-600">Hard Outcomes</td>
-                                    <td className="px-4 py-3 text-gray-800">{data?.hardOutcomes || 2}</td>
+                                    <td className="px-4 py-3 text-gray-800">
+                                        <div className="flex flex-wrap gap-1">
+                                            {data?.achievedHardOutcomes?.map((outcome: string, idx: number) => (
+                                                <span
+                                                    key={idx}
+                                                    className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded text-xs"
+                                                >
+                                                    {outcome}
+                                                </span>
+                                            )) || 'None'}
+                                        </div>
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td className="px-4 py-3 bg-gray-50 font-medium text-gray-600">Improvement</td>
-                                    <td className="px-4 py-3 text-gray-800">{data?.improvements || 3}</td>
-                                </tr>
-                                <tr>
-                                    <td className="px-4 py-3 bg-gray-50 font-medium text-gray-600">Skill Tracked</td>
-                                    <td className="px-4 py-3 text-gray-800">3</td>
+                                    <td className="px-4 py-3 bg-gray-50 font-medium text-gray-600">
+                                        Soft Skill Improvements
+                                    </td>
+                                    <td className="px-4 py-3 text-gray-800">
+                                        <div className="flex flex-wrap gap-1">
+                                            {data?.softSkillImprovements?.map((skill: string, idx: number) => (
+                                                <span
+                                                    key={idx}
+                                                    className="bg-purple-50 text-purple-600 px-2 py-0.5 rounded text-xs"
+                                                >
+                                                    {skill}
+                                                </span>
+                                            )) || 'None'}
+                                        </div>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -82,10 +111,47 @@ const ReportDetailsModal = ({ open, onCancel, data }: ReportDetailsModalProps) =
                     </div>
                 </section>
 
+                <section className="grid grid-cols-2 gap-4">
+                    <div>
+                        <h3 className="text-sm font-semibold mb-2 text-gray-800">Work This Week</h3>
+                        <div className="p-3 bg-gray-50 rounded-xl border border-gray-100 text-sm text-gray-600">
+                            {data?.whatDidYouWorkOnThisWeek || 'No data provided'}
+                        </div>
+                    </div>
+                    <div>
+                        <h3 className="text-sm font-semibold mb-2 text-gray-800">Student Progress</h3>
+                        <div className="p-3 bg-gray-50 rounded-xl border border-gray-100 text-sm text-gray-600">
+                            {data?.whatProgressDidTheStudentMake || 'No data provided'}
+                        </div>
+                    </div>
+                </section>
+
                 <section>
-                    <h3 className="text-lg font-semibold mb-2 text-gray-800">Concerns & Comments</h3>
-                    <div className="p-4 bg-gray-50 rounded-xl min-h-[100px] border border-gray-200">
-                        <p className="text-gray-500 text-sm italic">No concerns or comments provided.</p>
+                    <h3 className="text-sm font-semibold mb-2 text-gray-800">Achievements & Improvements</h3>
+                    <div className="p-3 bg-gray-50 rounded-xl border border-gray-100 text-sm text-gray-600">
+                        {data?.highLightAchivementsAndImprove || 'No data provided'}
+                    </div>
+                </section>
+
+                <section className="grid grid-cols-2 gap-4">
+                    <div>
+                        <h3 className="text-sm font-semibold mb-2 text-gray-800">Plan For Next Week</h3>
+                        <div className="p-3 bg-gray-50 rounded-xl border border-gray-100 text-sm text-gray-600">
+                            {data?.planForNextWeek || 'No data provided'}
+                        </div>
+                    </div>
+                    <div>
+                        <h3 className="text-sm font-semibold mb-2 text-gray-800">Objectives</h3>
+                        <div className="p-3 bg-gray-50 rounded-xl border border-gray-100 text-sm text-gray-600">
+                            {data?.objectives || 'No data provided'}
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3 className="text-sm font-semibold mb-2 text-gray-800">Comments</h3>
+                    <div className="p-3 bg-gray-50 rounded-xl border border-gray-100 text-sm text-gray-600 min-h-[60px]">
+                        {data?.comments || <p className="text-gray-400 italic">No comments provided.</p>}
                     </div>
                 </section>
             </div>

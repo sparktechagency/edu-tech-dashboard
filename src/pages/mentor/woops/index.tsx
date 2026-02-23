@@ -50,10 +50,10 @@ const Woops = () => {
                         <span>• Plan</span>
                     </p>
                 </div>
-                <button className="bg-[#7C3AED] text-white px-5 py-2 rounded-lg flex items-center gap-2 font-semibold">
+                {/* <button className="bg-[#7C3AED] text-white px-5 py-2 rounded-lg flex items-center gap-2 font-semibold">
                     <FiEdit2 />
                     Edit woops
-                </button>
+                </button> */}
             </div>
 
             {/* Stepper */}

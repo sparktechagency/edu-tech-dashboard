@@ -1,55 +1,68 @@
 import { useState } from 'react';
 import { Table, Button } from 'antd';
 import { Eye, Plus } from 'lucide-react';
-import { weeklyReports } from '../../../constants/mentor-data';
 import AddReportModal from '../../../components/modals/mentor/AddReportModal';
 import ReportDetailsModal from '../../../components/modals/mentor/ReportDetailsModal';
 import HeaderTitle from '../../../components/shared/HeaderTitle';
+import { useGetWeeklyReportsQuery } from '../../../redux/apiSlices/mentor/weeklyReportApi';
+import { useProfileQuery } from '../../../redux/apiSlices/authSlice';
 
 const WeeklyReport = () => {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
     const [selectedReport, setSelectedReport] = useState<any>(null);
+    const { data, refetch } = useGetWeeklyReportsQuery(undefined);
+    const weeklyReportsData = data?.data?.reports || [];
+    // console.log(weeklyReportsData);
+    const { data: profileData } = useProfileQuery(undefined);
+    const assignedStudent = profileData?.data?.assignedStudents;
 
     const columns = [
         {
             title: 'Student Name',
-            dataIndex: 'studentName',
+            dataIndex: ['studentId', 'name'],
             key: 'studentName',
             render: (text: string) => <span className="text-gray-600 font-medium">{text}</span>,
         },
         {
             title: 'Duration',
-            dataIndex: 'duration',
             key: 'duration',
-            render: (text: string) => <span className="text-gray-500">{text}</span>,
+            render: (_: any, record: any) => (
+                <span className="text-gray-500">
+                    {new Date(record.weekStartDate).toLocaleDateString()} -{' '}
+                    {new Date(record.weekEndDate).toLocaleDateString()}
+                </span>
+            ),
         },
         {
             title: 'Attendance',
-            dataIndex: 'attendance',
+            dataIndex: 'isPresent',
             key: 'attendance',
-            render: (text: string) => <span className="text-gray-600">{text}</span>,
+            render: (isPresent: boolean) => (
+                <span className={isPresent ? 'text-green-500 font-medium' : 'text-red-500 font-medium'}>
+                    {isPresent ? 'Present' : 'Absent'}
+                </span>
+            ),
         },
         {
             title: 'Hard Outcomes',
-            dataIndex: 'hardOutcomes',
+            dataIndex: 'achievedHardOutcomes',
             key: 'hardOutcomes',
             align: 'center' as const,
-            render: (val: number) => <span className="text-gray-600 font-semibold">{val}</span>,
+            render: (val: string[]) => <span className="text-gray-600 font-semibold">{val?.length || 0}</span>,
         },
         {
-            title: 'Improvements',
-            dataIndex: 'improvements',
+            title: 'Soft Skills',
+            dataIndex: 'softSkillImprovements',
             key: 'improvements',
             align: 'center' as const,
-            render: (val: number) => <span className="text-gray-600 font-semibold">{val}</span>,
+            render: (val: string[]) => <span className="text-gray-600 font-semibold">{val?.length || 0}</span>,
         },
         {
-            title: 'Skills Tracked',
-            dataIndex: 'skillsTracked',
+            title: 'Skill Tracked',
+            dataIndex: ['goalSheet', 'skillName'],
             key: 'skillsTracked',
-            align: 'center' as const,
-            render: (val: number) => <span className="text-gray-600 font-semibold">{val}</span>,
+            render: (val: string) => <span className="text-gray-600">{val || 'N/A'}</span>,
         },
         {
             title: 'Action',
@@ -89,13 +102,19 @@ const WeeklyReport = () => {
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                 <Table
                     columns={columns}
-                    dataSource={weeklyReports}
+                    dataSource={weeklyReportsData}
+                    rowKey="_id"
                     pagination={{ pageSize: 7, hideOnSinglePage: true }}
                     className=""
                 />
             </div>
 
-            <AddReportModal open={isAddModalOpen} onCancel={() => setIsAddModalOpen(false)} />
+            <AddReportModal
+                open={isAddModalOpen}
+                onCancel={() => setIsAddModalOpen(false)}
+                assignedStudent={assignedStudent}
+                refetch={refetch}
+            />
 
             <ReportDetailsModal
                 open={isDetailsModalOpen}
