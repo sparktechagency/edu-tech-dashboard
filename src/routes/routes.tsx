@@ -34,6 +34,7 @@ import MentorSetting from '../pages/mentor/setting';
 import WeeklyReport from '../pages/mentor/weekly-report';
 import TimeTracking from '../pages/mentor/time-tracking';
 import LearningMaterials from '../pages/mentor/learning-materials';
+import Woops from '../pages/mentor/woops';
 
 const router = createBrowserRouter([
     {
@@ -85,7 +86,7 @@ const router = createBrowserRouter([
             { path: '/mentor/weekly-report', element: <WeeklyReport /> },
             { path: '/mentor/time-tracking', element: <TimeTracking /> },
             { path: '/mentor/learning-materials', element: <LearningMaterials /> },
-            { path: '/mentor/woops', element: <Users /> },
+            { path: '/mentor/woops', element: <Woops /> },
             { path: '/mentor/chat', element: <MentorChat /> },
             { path: '/mentor/profile', element: <MentorSetting /> },
         ],
