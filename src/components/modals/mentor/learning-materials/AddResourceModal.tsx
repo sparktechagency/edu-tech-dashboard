@@ -1,17 +1,32 @@
 import { Modal, Form, Input, Select, Button } from 'antd';
+import { useAddMaterialsMutation } from '../../../../redux/apiSlices/mentor/learningApi';
+import { toast } from 'sonner';
 
 interface AddResourceModalProps {
     open: boolean;
     onCancel: () => void;
+    refetch: () => void;
 }
 
-const AddResourceModal = ({ open, onCancel }: AddResourceModalProps) => {
+const AddResourceModal = ({ open, onCancel, refetch }: AddResourceModalProps) => {
     const [form] = Form.useForm();
+    const [addMaterials] = useAddMaterialsMutation();
 
-    const onFinish = (values: any) => {
-        console.log('Add Resource Values:', values);
-        form.resetFields();
-        onCancel();
+    const onFinish = async (values: any) => {
+        try {
+            toast.promise(addMaterials(values).unwrap(), {
+                loading: 'Adding resource...',
+                success: (res) => {
+                    form.resetFields();
+                    refetch();
+                    onCancel();
+                    return res.message || 'Resource added successfully';
+                },
+                error: (err) => err.data?.message || 'Failed to add resource',
+            });
+        } catch (error) {
+            console.error('Add Resource Error:', error);
+        }
     };
 
     return (
@@ -43,31 +58,34 @@ const AddResourceModal = ({ open, onCancel }: AddResourceModalProps) => {
                         rules={[{ required: true, message: 'Please select type' }]}
                     >
                         <Select placeholder="Select option" className="h-11 rounded-lg custom-select-height">
-                            <Select.Option value="pdf">PDF</Select.Option>
-                            <Select.Option value="docx">DOCX</Select.Option>
-                            <Select.Option value="video">Video</Select.Option>
+                            <Select.Option value="PDF">PDF</Select.Option>
+                            <Select.Option value="DOCX">DOCX</Select.Option>
+                            <Select.Option value="VIDEO">Video</Select.Option>
+                            <Select.Option value="LINK">Link</Select.Option>
                         </Select>
                     </Form.Item>
 
                     <Form.Item
-                        name="category"
-                        label={<span className="font-semibold text-gray-700">Category</span>}
-                        rules={[{ required: true, message: 'Please select category' }]}
+                        name="targeteAudience"
+                        label={<span className="font-semibold text-gray-700">Target Audience</span>}
+                        rules={[{ required: true, message: 'Please select audience' }]}
+                        initialValue="STUDENT"
                     >
                         <Select placeholder="Select option" className="h-11 rounded-lg custom-select-height">
-                            <Select.Option value="learning_materials">Learning Materials</Select.Option>
-                            <Select.Option value="training">Training</Select.Option>
+                            <Select.Option value="STUDENT">Student</Select.Option>
+                            <Select.Option value="MENTOR">Mentor</Select.Option>
                         </Select>
                     </Form.Item>
                 </div>
 
                 <Form.Item
-                    name="link"
+                    name="contentUrl"
                     label={
                         <span className="font-semibold text-gray-700">
-                            Link / URL <span className="text-gray-400 font-normal">(Optional)</span>
+                            Link / URL <span className="text-gray-400 font-normal">(Required)</span>
                         </span>
                     }
+                    rules={[{ required: true, message: 'Please enter content URL' }]}
                 >
                     <Input placeholder="https://...." className="h-11 rounded-lg" />
                 </Form.Item>
