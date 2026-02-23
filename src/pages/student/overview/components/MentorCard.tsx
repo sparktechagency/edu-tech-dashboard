@@ -12,7 +12,7 @@ const MentorCard = ({ mentor }: MentorCardProps) => {
             to={'/student/mentor'}
             className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-6"
         >
-            <Avatar src={mentor.avatar} size={80} className="border-4 border-gray-50 flex-shrink-0" />
+            <Avatar src={mentor.profile} size={80} className="border-4 border-gray-50 flex-shrink-0" />
             <div className="flex-1">
                 <div className="flex items-center gap-2">
                     <h2 className="text-xl font-bold text-[#1E1E1E]">{mentor.name}</h2>
