@@ -19,7 +19,7 @@ const Sidebar = () => {
         if (!userData?.data?.role) return [];
 
         switch (userData?.data?.role) {
-            case 'ADMIN':
+            case 'SUPER_ADMIN':
                 return adminSidebarItems;
             case 'TEACHER':
                 return teacherSidebarItems;
