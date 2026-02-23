@@ -21,7 +21,7 @@ const analatysSlice = api.injectEndpoints({
 
 
         getAllMentors: build.query<any, getMentorsParams>({
-        query: ({ page = 1, limit = 10, searchTerm = "", status = "" }) => ({
+        query: ({ page, limit = 10, searchTerm = "", status = "" }) => ({
             url: "/coordinator/mentors",
             method: "GET",
             params: { 
