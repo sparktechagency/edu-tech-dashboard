@@ -14,8 +14,9 @@ const ResourceDetailsModal: React.FC<ResourceDetailsModalProps> = ({ visible, on
         { label: 'Title', value: resource.title },
         { label: 'Description', value: resource.description },
         { label: 'Type', value: resource.type },
-        { label: 'Target', value: 'Fullstack', isTag: true, tagColor: '#F3F4F6', textColor: '#374151' },
-        { label: 'Upload Date', value: resource.uploadDate },
+        { label: 'Target Audience', value: resource.targetAudience },
+        { label: 'Target', value: resource.targets, isTag: true, tagColor: '#F3F4F6', textColor: '#374151' },
+        { label: 'Upload Date', value: new Date(resource.uploadDate).toLocaleDateString() },
         { label: 'Status', value: resource.status, isTag: true, tagColor: '#E6F9F0', textColor: '#22C55E' },
     ];
 
