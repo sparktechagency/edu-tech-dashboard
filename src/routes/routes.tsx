@@ -35,10 +35,6 @@ import WeeklyReport from '../pages/mentor/weekly-report';
 import TimeTracking from '../pages/mentor/time-tracking';
 import LearningMaterials from '../pages/mentor/learning-materials';
 import Woops from '../pages/mentor/woops';
-import AdminEvents from '../pages/admin/events';
-import AdminLearningMaterials from '../pages/admin/materials';
-import AdminSchedule from '../pages/admin/schdule';
-import AdminWeeklyReport from '../pages/admin/weekly-report';
 
 const router = createBrowserRouter([
     {
