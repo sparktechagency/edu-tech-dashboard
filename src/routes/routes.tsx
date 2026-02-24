@@ -5,7 +5,6 @@ import ErrorPage from '../components/ui/error/ErrorPage';
 import ForgetPassword from '../pages/authentication/ForgetPassword';
 import VerifyOtp from '../pages/authentication/VerifyOtp';
 import NewPassword from '../pages/authentication/NewPassword';
-import Users from '../pages/Users';
 import AdminOverview from '../pages/admin/overview';
 import MentorCoordinatorOverview from '../pages/mentor-coordinator/mentor-coordinator-overview';
 import MentorCoordinatorProfile from '../pages/mentor-coordinator/profile';
@@ -36,6 +35,9 @@ import AdminSchedule from '../pages/admin/schdule';
 import AdminLearningMaterials from '../pages/admin/materials';
 import AdminEvents from '../pages/admin/events';
 import AdminWeeklyReport from '../pages/admin/weekly-report';
+import AdminTeachers from '../pages/admin/teachers';
+import AdminMentors from '../pages/admin/mentors';
+import AdminStudents from '../pages/admin/students';
 import ChatLayout from '../components/shared/chat';
 
 const router = createBrowserRouter([
@@ -47,9 +49,9 @@ const router = createBrowserRouter([
         children: [
             // Admin
             { path: '/admin/overview', element: <AdminOverview /> },
-            { path: '/admin/student', element: <Users /> },
-            { path: '/admin/mentors', element: <Users /> },
-            { path: '/admin/teacher', element: <Users /> },
+            { path: '/admin/student', element: <AdminStudents /> },
+            { path: '/admin/mentors', element: <AdminMentors /> },
+            { path: '/admin/teacher', element: <AdminTeachers /> },
             { path: '/admin/events', element: <AdminEvents /> },
             { path: '/admin/materials', element: <AdminLearningMaterials /> },
             { path: '/admin/schedule', element: <AdminSchedule /> },

@@ -64,15 +64,17 @@ export default function StudentResources() {
                                     {/* <span>
                                         {new Date(resource.dueDate).toLocaleDateString()}
                                     </span> */}
-                                    <span>
-                                   Due: {new Date(resource.dueDate).toLocaleString("en-US", {
-                                        day: "numeric",
-                                        month: "long",
-                                        year: "numeric",
-                                        hour: "numeric",
-                                        hour12: true,
-                                    })}
-                                    </span>
+                              <span>
+                                Due:{" "}
+                                {new Date(resource.dueDate || resource.createdAt).toLocaleString("en-US", {
+                                    day: "numeric",
+                                    month: "long",
+                                    year: "numeric",
+                                    hour: "numeric",
+                                    minute: "2-digit",
+                                    hour12: true,
+                                })}
+                                </span>
                                 </div>
                             </div>
                         </div>
