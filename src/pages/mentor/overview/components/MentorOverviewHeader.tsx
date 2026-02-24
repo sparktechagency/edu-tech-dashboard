@@ -1,11 +1,16 @@
 import { Button } from 'antd';
 import { Link } from 'react-router-dom';
+import { useProfileQuery } from '../../../../redux/apiSlices/authSlice';
 
 const MentorOverviewHeader = () => {
+    const { data: userData } = useProfileQuery({});
+    const user = userData?.data;
     return (
         <div className="bg-white p-6 rounded-xl flex justify-between items-start mb-6">
             <div className="max-w-3xl">
-                <h1 className="text-2xl font-bold mb-2">Hi Alex !</h1>
+                <h1 className="text-2xl font-bold mb-2">
+                    Hi {user?.firstName} {user?.lastName} !
+                </h1>
                 <p className="text-gray-600 mb-6 leading-relaxed">
                     Thanks for being a mentor! Your guidance and expertise make a real difference in shaping the next
                     generation of tech professionals. Together, we're building a stronger, more connected learning
