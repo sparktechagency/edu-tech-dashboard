@@ -24,6 +24,7 @@ export default function MentorChat() {
         socket.on(`newChat`, (data) => {
             refetch();
             console.log(data, 'socket chat room');
+
             // setMessages((prev) => [...prev, { ...data, sender: { _id: data?.sender?._id } }]);
         });
     }, [socket, user?._id]);
