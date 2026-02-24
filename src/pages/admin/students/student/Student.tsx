@@ -1,27 +1,22 @@
 import { useState } from 'react';
 import { Table, Button, Input, Tag, Avatar } from 'antd';
-import {
-    Search,
-    Filter,
-    Download as DownloadIcon,
-    Plus,
-    Eye,
-    Edit2,
-    Trash2,
-    Link,
-    Calendar,
-    Star,
-    GraduationCap,
-} from 'lucide-react';
+import { Search, Eye, Edit2, Trash2, Link, Calendar, Star, GraduationCap } from 'lucide-react';
 import { studentsData } from '../../../../contents/admin-data/students';
 import ImportExcelModal from '../../../../components/modals/admin/ImportExcelModal';
 import StudentDetailsModal from '../../../../components/modals/admin/StudentDetailsModal';
 import EditStudentModal from '../../../../components/modals/admin/EditStudentModal';
+import AssignMentorModal from '../../../../components/modals/admin/AssignMentorModal';
+import AssignIndividualClassModal from '../../../../components/modals/admin/AssignIndividualClassModal';
+import ReviewModal from '../../../../components/modals/admin/ReviewModal';
+import HeaderTitle from '../../../../components/shared/HeaderTitle';
 
 const Student = () => {
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+    const [isClassModalOpen, setIsClassModalOpen] = useState(false);
+    const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
     const [selectedStudent, setSelectedStudent] = useState<any>(null);
 
     const columns = [
@@ -123,16 +118,28 @@ const Student = () => {
                     <Button
                         icon={<Link size={14} />}
                         className="flex items-center gap-2 border-gray-200 text-gray-500 rounded-md h-8"
+                        onClick={() => {
+                            setSelectedStudent(record);
+                            setIsAssignModalOpen(true);
+                        }}
                     >
                         Assign
                     </Button>
                     <Button
                         icon={<Calendar size={14} />}
+                        onClick={() => {
+                            setSelectedStudent(record);
+                            setIsClassModalOpen(true);
+                        }}
                         className="flex items-center gap-2 border-gray-200 text-gray-500 rounded-md h-8"
                     >
                         Class
                     </Button>
                     <Button
+                        onClick={() => {
+                            setSelectedStudent(record);
+                            setIsReviewModalOpen(true);
+                        }}
                         icon={<Star size={14} />}
                         className="flex items-center gap-2 border-gray-200 text-gray-500 rounded-md h-8"
                     >
@@ -151,36 +158,12 @@ const Student = () => {
     return (
         <div className="py-6">
             <div className="flex justify-between items-center mb-8">
-                <h1 className="text-2xl font-bold text-gray-800">Student Management</h1>
-                <div className="flex items-center gap-4">
-                    <Button
-                        icon={<Filter size={16} />}
-                        className="flex items-center gap-2 h-10 border-gray-100 bg-white text-gray-600 rounded-md"
-                    >
-                        Filter
-                    </Button>
-                    <Button
-                        icon={<DownloadIcon size={16} />}
-                        className="flex items-center gap-2 h-10 border-gray-100 bg-white text-gray-600 rounded-md"
-                        onClick={() => setIsImportModalOpen(true)}
-                    >
-                        Import Excel
-                    </Button>
-                    <div className="relative">
-                        <Input
-                            placeholder="Search student"
-                            prefix={<Search size={16} className="text-gray-400" />}
-                            className="h-10 w-64 border-gray-100 bg-white rounded-md"
-                        />
-                    </div>
-                    <Button
-                        type="primary"
-                        icon={<Plus size={16} />}
-                        className="flex items-center gap-2 h-10 bg-[#52c41a] border-none hover:bg-[#73d13d] rounded-md font-semibold"
-                    >
-                        Add Student
-                    </Button>
-                </div>
+                <HeaderTitle title="Student Management" />
+                <Input
+                    placeholder="Search student"
+                    prefix={<Search size={16} className="text-gray-400" />}
+                    className="h-10 w-64 border-gray-100 bg-white rounded-md"
+                />
             </div>
 
             <div className="border border-gray-100 rounded-xl overflow-hidden shadow-sm bg-white">
@@ -203,6 +186,21 @@ const Student = () => {
             <EditStudentModal
                 open={isEditModalOpen}
                 onCancel={() => setIsEditModalOpen(false)}
+                student={selectedStudent}
+            />
+            <AssignMentorModal
+                open={isAssignModalOpen}
+                onCancel={() => setIsAssignModalOpen(false)}
+                student={selectedStudent}
+            />
+            <AssignIndividualClassModal
+                open={isClassModalOpen}
+                onCancel={() => setIsClassModalOpen(false)}
+                student={selectedStudent}
+            />
+            <ReviewModal
+                open={isReviewModalOpen}
+                onCancel={() => setIsReviewModalOpen(false)}
                 student={selectedStudent}
             />
         </div>
