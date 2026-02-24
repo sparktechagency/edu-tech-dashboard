@@ -15,13 +15,11 @@ import CoordinatorResources from '../pages/mentor-coordinator/resources';
 import AttendanceTeacher from '../pages/teacher/attendance';
 import TeacherOverview from '../pages/teacher/overview';
 import MyStudent from '../pages/teacher/my-student';
-import MessageCenter from '../pages/teacher/chat';
 import ClassSchedule from '../pages/teacher/class-schedule';
 import Resources from '../pages/teacher/resources';
 import Assignment from '../pages/teacher/assignment';
 import StudentOverview from '../pages/student/overview';
 import StudentProfile from '../pages/student/settings';
-import StudentChat from '../pages/student/chat';
 import StudentEvents from '../pages/student/events';
 import Mentor from '../pages/student/mentor';
 import StudentAssignment from '../pages/student/assignment';
@@ -29,7 +27,6 @@ import StudentResources from '../pages/student/resources';
 import Goal from '../pages/student/goal';
 import MentorOverview from '../pages/mentor/overview';
 import Students from '../pages/mentor/students';
-import MentorChat from '../pages/mentor/chat';
 import MentorSetting from '../pages/mentor/setting';
 import WeeklyReport from '../pages/mentor/weekly-report';
 import TimeTracking from '../pages/mentor/time-tracking';
@@ -39,6 +36,7 @@ import AdminSchedule from '../pages/admin/schdule';
 import AdminLearningMaterials from '../pages/admin/materials';
 import AdminEvents from '../pages/admin/events';
 import AdminWeeklyReport from '../pages/admin/weekly-report';
+import ChatLayout from '../components/shared/chat';
 
 const router = createBrowserRouter([
     {
@@ -63,7 +61,7 @@ const router = createBrowserRouter([
             { path: '/teacher/class-schedule', element: <ClassSchedule /> },
             { path: '/teacher/resources', element: <Resources /> },
             { path: '/teacher/assignment', element: <Assignment /> },
-            { path: '/teacher/chat', element: <MessageCenter /> },
+            { path: '/teacher/chat', element: <ChatLayout /> },
             { path: '/teacher/attendance', element: <AttendanceTeacher /> },
 
             //  Mentor Coordinator
@@ -80,9 +78,8 @@ const router = createBrowserRouter([
             { path: '/student/assignment', element: <StudentAssignment /> },
             { path: '/student/mentor', element: <Mentor /> },
             { path: '/student/events', element: <StudentEvents /> },
-            { path: '/student/chat', element: <StudentChat /> },
+            { path: '/student/chat', element: <ChatLayout /> },
             { path: '/student/profile', element: <StudentProfile /> },
-            // { path: '/student/profile', element: <Users /> },
 
             // Mentor
             { path: '/mentor/overview', element: <MentorOverview /> },
@@ -91,7 +88,7 @@ const router = createBrowserRouter([
             { path: '/mentor/time-tracking', element: <TimeTracking /> },
             { path: '/mentor/learning-materials', element: <LearningMaterials /> },
             { path: '/mentor/woops', element: <Woops /> },
-            { path: '/mentor/chat', element: <MentorChat /> },
+            { path: '/mentor/chat', element: <ChatLayout /> },
             { path: '/mentor/profile', element: <MentorSetting /> },
         ],
     },

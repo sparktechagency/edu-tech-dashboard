@@ -8,7 +8,7 @@ import { socketUrl } from '../../../redux/api/baseApi';
 import { io } from 'socket.io-client';
 import { useProfileQuery } from '../../../redux/apiSlices/authSlice';
 
-export default function MentorChat() {
+export default function ChatLayout() {
     const { data: userData } = useProfileQuery({});
     const user = userData?.data;
     const { lg } = Grid.useBreakpoint();
