@@ -26,7 +26,16 @@ export const chatSlice = api.injectEndpoints({
             }),
             invalidatesTags: ['Chat-Messages'],
         }),
+        createChatRoom: builder.mutation({
+            query: (data) => ({
+                url: '/chat',
+                method: 'POST',
+                body: data,
+            }),
+            invalidatesTags: ['Chat-Rooms'],
+        }),
     }),
 });
 
-export const { useGetChatRoomsQuery, useGetMessagesQuery, useSendMessageMutation } = chatSlice;
+export const { useGetChatRoomsQuery, useGetMessagesQuery, useSendMessageMutation, useCreateChatRoomMutation } =
+    chatSlice;

@@ -155,11 +155,18 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onCancel }) => {
                 {sectionTitle('Basic Information')}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 mb-8">
                     <Form.Item
-                        label={<span className="font-semibold text-gray-700">Full Name</span>}
-                        name="fullName"
-                        rules={[{ required: true, message: 'Please input your full name!' }]}
+                        label={<span className="font-semibold text-gray-700">First Name</span>}
+                        name="firstName"
+                        rules={[{ required: true, message: 'Please input your first name!' }]}
                     >
-                        <Input className="h-12 rounded-lg" placeholder="Alex Michael Johnson" />
+                        <Input className="h-12 rounded-lg" placeholder="Michael" />
+                    </Form.Item>
+                    <Form.Item
+                        label={<span className="font-semibold text-gray-700">Last Name</span>}
+                        name="lastName"
+                        rules={[{ required: true, message: 'Please input your last name!' }]}
+                    >
+                        <Input className="h-12 rounded-lg" placeholder="Johnson" />
                     </Form.Item>
                     <Form.Item
                         label={<span className="font-semibold text-gray-700">Email</span>}

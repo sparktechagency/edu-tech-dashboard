@@ -12,18 +12,9 @@ export function ChatConversation({ messageId, activeUser }: { messageId: any; ac
     const { data: userData } = useProfileQuery({});
     const user = userData?.data;
     const containerRef = useRef<HTMLDivElement>(null);
-    const { data, isLoading, refetch } = useGetMessagesQuery(messageId);
-    const [messages, setMessages] = useState<any[]>([]);
-    console.log(data);
+    const { data, refetch } = useGetMessagesQuery(messageId);
     const [sendMessage] = useSendMessageMutation();
-
     const socket = useMemo(() => io(socketUrl), []);
-
-    useEffect(() => {
-        if (data?.data?.messages) {
-            setMessages(data?.data?.messages);
-        }
-    }, [messageId]);
 
     useEffect(() => {
         socket.on(`getMessage::${messageId}`, (data) => {
@@ -71,7 +62,11 @@ export function ChatConversation({ messageId, activeUser }: { messageId: any; ac
             {/* Header */}
             <div className="p-4 flex items-center justify-between border-b border-gray-50">
                 <div className="flex items-center gap-3">
-                    <Avatar size={44} src={activeUser?.participants[0]?.profile} className="border border-gray-100" />
+                    <Avatar
+                        size={44}
+                        src={imageUrl + activeUser?.participants[0]?.profile}
+                        className="border border-gray-100"
+                    />
                     <div>
                         <h3 className="font-bold text-gray-800 text-[16px] leading-tight">
                             {activeUser?.participants[0]?.firstName + ' ' + activeUser?.participants[0]?.lastName}
@@ -96,7 +91,7 @@ export function ChatConversation({ messageId, activeUser }: { messageId: any; ac
                                 {!isMe && (
                                     <Avatar
                                         size={32}
-                                        src={activeUser?.participants[0]?.profile}
+                                        src={imageUrl + activeUser?.participants[0]?.profile}
                                         className="mb-1 shrink-0"
                                     />
                                 )}

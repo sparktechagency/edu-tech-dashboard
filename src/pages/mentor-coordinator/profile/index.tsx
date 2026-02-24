@@ -44,7 +44,7 @@ export default function MentorCoordinatorProfile() {
         </div>
     );
 
-    const displayName = user?.name || `${user?.firstName || ''} ${user?.lastName || ''}`.trim() || 'N/A';
+    const displayName = user?.firstName + ' ' + user?.lastName || 'N/A';
 
     // Resolve profile image URL safely
     const profileSrc = user?.profile
