@@ -1,39 +1,36 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { Image as AntdImage, Avatar, Typography } from 'antd';
 import MessageInput from './MessageInput';
+import { io } from 'socket.io-client';
+import { imageUrl, socketUrl } from '../../../redux/api/baseApi';
+import { useGetMessagesQuery, useSendMessageMutation } from '../../../redux/apiSlices/chatSlice';
+import { useProfileQuery } from '../../../redux/apiSlices/authSlice';
 
 const { Text } = Typography;
 
 export function ChatConversation({ messageId, activeUser }: { messageId: any; activeUser: any }) {
-    const [messages, setMessages] = useState<any[]>([]);
+    const { data: userData } = useProfileQuery({});
+    const user = userData?.data;
     const containerRef = useRef<HTMLDivElement>(null);
+    const { data, isLoading, refetch } = useGetMessagesQuery(messageId);
+    const [messages, setMessages] = useState<any[]>([]);
+    console.log(data);
+    const [sendMessage] = useSendMessageMutation();
 
-    // Mock initial messages for the room
+    const socket = useMemo(() => io(socketUrl), []);
+
     useEffect(() => {
-        if (messageId) {
-            // In a real app, this would be an API call: useGetMessagesQuery(messageId)
-            setMessages([
-                {
-                    _id: 'm1',
-                    sender: 'u1',
-                    text: 'Hello! I need some help with the layout.',
-                    createdAt: new Date(Date.now() - 3600000).toISOString(),
-                },
-                {
-                    _id: 'm2',
-                    sender: 'me',
-                    text: 'Sure, what exactly is the issue?',
-                    createdAt: new Date(Date.now() - 3000000).toISOString(),
-                },
-                {
-                    _id: 'm2',
-                    sender: 'u1',
-                    text: 'I miss You',
-                    createdAt: new Date(Date.now() - 3000000).toISOString(),
-                },
-            ]);
+        if (data?.data?.messages) {
+            setMessages(data?.data?.messages);
         }
     }, [messageId]);
+
+    useEffect(() => {
+        socket.on(`getMessage::${messageId}`, (data) => {
+            console.log(data, 'socket msg');
+            refetch();
+        });
+    }, [messageId, socket]);
 
     const scrollToBottom = () => {
         const el = containerRef.current;
@@ -44,18 +41,21 @@ export function ChatConversation({ messageId, activeUser }: { messageId: any; ac
 
     useEffect(() => {
         scrollToBottom();
-    }, [messages]);
+    }, [data?.data?.messages]);
 
     const handleSendMessage = async (text: string, mediaFiles: File[]) => {
         // Mock sending message
-        const newMessage = {
-            _id: Math.random().toString(),
-            sender: 'me',
-            text: text,
-            createdAt: new Date().toISOString(),
-            image: mediaFiles.length > 0 ? URL.createObjectURL(mediaFiles[0]) : null,
-        };
-        setMessages((prev) => [...prev, newMessage]);
+
+        const formData = new FormData();
+
+        formData.append('text', text);
+        formData.append('chatId', messageId);
+
+        mediaFiles.forEach((file) => {
+            formData.append('image', file);
+        });
+        const res = await sendMessage(formData).unwrap();
+        console.log(res);
     };
 
     if (!messageId || !activeUser) {
@@ -71,10 +71,10 @@ export function ChatConversation({ messageId, activeUser }: { messageId: any; ac
             {/* Header */}
             <div className="p-4 flex items-center justify-between border-b border-gray-50">
                 <div className="flex items-center gap-3">
-                    <Avatar size={44} src={activeUser?.participants[0]?.image} className="border border-gray-100" />
+                    <Avatar size={44} src={activeUser?.participants[0]?.profile} className="border border-gray-100" />
                     <div>
                         <h3 className="font-bold text-gray-800 text-[16px] leading-tight">
-                            {activeUser?.participants[0]?.name}
+                            {activeUser?.participants[0]?.firstName + ' ' + activeUser?.participants[0]?.lastName}
                         </h3>
                         <Text type="secondary" className="text-[12px]">
                             Online
@@ -85,9 +85,9 @@ export function ChatConversation({ messageId, activeUser }: { messageId: any; ac
 
             {/* Messages */}
             <div className="flex-1 overflow-y-auto bg-[#F9FAFB] px-6 py-6" ref={containerRef}>
-                <div className="flex flex-col justify-end min-h-full gap-4">
-                    {messages?.map((msg: any) => {
-                        const isMe = msg.sender === 'me';
+                <div className="flex flex-col-reverse justify-end min-h-full gap-4">
+                    {data?.data?.messages?.map((msg: any) => {
+                        const isMe = msg?.sender?._id === user?._id;
                         return (
                             <div
                                 key={msg._id}
@@ -96,7 +96,7 @@ export function ChatConversation({ messageId, activeUser }: { messageId: any; ac
                                 {!isMe && (
                                     <Avatar
                                         size={32}
-                                        src={activeUser?.participants[0]?.image}
+                                        src={activeUser?.participants[0]?.profile}
                                         className="mb-1 shrink-0"
                                     />
                                 )}
@@ -108,11 +108,16 @@ export function ChatConversation({ messageId, activeUser }: { messageId: any; ac
                                                 : 'bg-white text-gray-800 rounded-bl-none border border-gray-100 '
                                         }`}
                                     >
-                                        {msg.image && (
-                                            <div className="mb-2 rounded-lg overflow-hidden border border-gray-100/20">
-                                                <AntdImage src={msg.image} width={200} className="object-cover" />
-                                            </div>
-                                        )}
+                                        {msg.images &&
+                                            msg.images?.map((img: any) => (
+                                                <div className="mb-2 rounded-lg overflow-hidden border border-gray-100/20">
+                                                    <AntdImage
+                                                        src={imageUrl + img}
+                                                        width={200}
+                                                        className="object-cover"
+                                                    />
+                                                </div>
+                                            ))}
                                         {msg.text && <p className="m-0 leading-relaxed font-medium">{msg.text}</p>}
                                     </div>
                                     <div

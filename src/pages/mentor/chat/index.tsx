@@ -1,59 +1,38 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ChatSidebar } from './ChatSidebar';
 import { Grid } from 'antd';
 import { ChatConversation } from './ChatConversation';
-
-const demoChatRooms = [
-    {
-        _id: '1',
-        participants: [
-            {
-                _id: 'u1',
-                name: 'Omor Faruk',
-                image: 'https://i.ibb.co.com/B5bpqrSF/IMG-20251222-172138-1.jpg',
-            },
-        ],
-        status: true,
-        lastMessage: {
-            _id: 'm1',
-            sender: 'u1',
-            text: 'Hey teacher, I have a question about the assignment.',
-            createdAt: new Date().toISOString(),
-        },
-        unread: 2,
-        time: '12:45 PM',
-    },
-    {
-        _id: '2',
-        participants: [
-            {
-                _id: 'u2',
-                name: 'Jane Smith',
-                image: 'https://i.ibb.co.com/B5bpqrSF/IMG-20251222-172138-1.jpg',
-            },
-        ],
-        status: true,
-        lastMessage: {
-            _id: 'm2',
-            sender: 'u2',
-            text: 'Thank you for the session today!',
-            createdAt: new Date().toISOString(),
-        },
-        unread: 0,
-        time: 'Yesterday',
-    },
-];
+import { useGetChatRoomsQuery } from '../../../redux/apiSlices/chatSlice';
+import Spinner from '../../../components/shared/Spinner';
+import { socketUrl } from '../../../redux/api/baseApi';
+import { io } from 'socket.io-client';
+import { useProfileQuery } from '../../../redux/apiSlices/authSlice';
 
 export default function MentorChat() {
+    const { data: userData } = useProfileQuery({});
+    const user = userData?.data;
     const { lg } = Grid.useBreakpoint();
     const [activeRoom, setActiveRoom] = useState<any>(null);
     const [messageId, setMessageId] = useState<string | null>(null);
+    const { data, isLoading, refetch } = useGetChatRoomsQuery(undefined);
+    const chatRooms = data?.data || [];
+    console.log(chatRooms);
+
+    const socket = useMemo(() => io(`${socketUrl}?userId=${user?._id}`), []);
+
+    useEffect(() => {
+        socket.on(`newChat`, (data) => {
+            refetch();
+            console.log(data, 'socket chat room');
+            // setMessages((prev) => [...prev, { ...data, sender: { _id: data?.sender?._id } }]);
+        });
+    }, [socket, user?._id]);
 
     // Default to the first room on desktop
     useEffect(() => {
-        if (lg && !messageId && demoChatRooms.length > 0) {
-            setActiveRoom(demoChatRooms[0]);
-            setMessageId(demoChatRooms[0]._id);
+        if (lg && !messageId && chatRooms.length > 0) {
+            setActiveRoom(chatRooms[0]);
+            setMessageId(chatRooms[0]._id);
         }
     }, [lg, messageId]);
 
@@ -62,10 +41,14 @@ export default function MentorChat() {
         setMessageId(room._id);
     };
 
+    if (isLoading) {
+        return <Spinner />;
+    }
+
     // Mobile view logic
     if (!lg) {
         if (messageId) {
-            const selectedRoom = demoChatRooms.find((r) => r._id === messageId) || demoChatRooms[0];
+            const selectedRoom = chatRooms.find((r: any) => r._id === messageId) || chatRooms[0];
             return (
                 <div className="h-[calc(100vh-120px)] flex flex-col p-4">
                     <button
@@ -82,7 +65,7 @@ export default function MentorChat() {
         }
         return (
             <div className="p-4">
-                <ChatSidebar messageId={null} onSelect={selectRoom} chatRooms={demoChatRooms} />
+                <ChatSidebar messageId={null} onSelect={selectRoom} chatRooms={chatRooms} />
             </div>
         );
     }
@@ -91,7 +74,7 @@ export default function MentorChat() {
     return (
         <div className="flex gap-6 h-[calc(100vh-210px)] ">
             <div className="w-[320px] shrink-0 bg-white rounded-2xl border border-gray-100 shadow-sm overflow-y-auto">
-                <ChatSidebar messageId={messageId} onSelect={selectRoom} chatRooms={demoChatRooms} />
+                <ChatSidebar messageId={messageId} onSelect={selectRoom} chatRooms={chatRooms} />
             </div>
             <div className="grow">
                 <ChatConversation messageId={messageId} activeUser={activeRoom} />
