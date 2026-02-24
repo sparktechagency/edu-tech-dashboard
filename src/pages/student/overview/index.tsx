@@ -103,7 +103,6 @@ mentor={{
   name: profileData?.data?.mentorId?.firstName
     ? `${profileData.data.mentorId.firstName} ${profileData.data.mentorId.lastName}`
     : "Mentor",
-
   role: "Mentor",
   subtext: "Guiding you towards success",
   location: profileData?.data?.location || "",

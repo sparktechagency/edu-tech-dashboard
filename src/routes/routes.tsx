@@ -35,10 +35,10 @@ import WeeklyReport from '../pages/mentor/weekly-report';
 import TimeTracking from '../pages/mentor/time-tracking';
 import LearningMaterials from '../pages/mentor/learning-materials';
 import Woops from '../pages/mentor/woops';
-import AdminWeeklyReport from '../pages/admin/weekly-report';
-import AdminSchedule from '../pages/admin/schdule';
-import AdminLearningMaterials from '../pages/admin/materials';
 import AdminEvents from '../pages/admin/events';
+import AdminLearningMaterials from '../pages/admin/materials';
+import AdminSchedule from '../pages/admin/schdule';
+import AdminWeeklyReport from '../pages/admin/weekly-report';
 
 const router = createBrowserRouter([
     {
@@ -62,7 +62,7 @@ const router = createBrowserRouter([
             { path: '/teacher/my-student', element: <MyStudent /> },
             { path: '/teacher/class-schedule', element: <ClassSchedule /> },
             { path: '/teacher/resources', element: <Resources /> },
-            { path: '/teacher/assignment', element: <Assignment /> },
+            { path: '/teacher/assignment', element: <Users /> },
             { path: '/teacher/chat', element: <MessageCenter /> },
             { path: '/teacher/attendance', element: <AttendanceTeacher /> },
 
@@ -74,25 +74,25 @@ const router = createBrowserRouter([
             { path: '/mentor-coordinator/profile', element: <MentorCoordinatorProfile /> },
 
             // Student
-            { path: '/student/overview', element: <StudentOverview /> },
-            { path: '/student/goal', element: <Goal /> },
-            { path: '/student/resources', element: <StudentResources /> },
-            { path: '/student/assignment', element: <StudentAssignment /> },
-            { path: '/student/mentor', element: <Mentor /> },
-            { path: '/student/events', element: <StudentEvents /> },
-            { path: '/student/chat', element: <StudentChat /> },
-            { path: '/student/profile', element: <StudentProfile /> },
-            // { path: '/student/profile', element: <Users /> },
+            { path: '/student/overview', element: <Users /> },
+            { path: '/student/goal', element: <Users /> },
+            { path: '/student/resources', element: <Users /> },
+            { path: '/student/assignment', element: <Users /> },
+            { path: '/student/mentor', element: <Users /> },
+            { path: '/student/events', element: <Users /> },
+            { path: '/student/chat', element: <Users /> },
+            { path: '/student/setting', element: <Users /> },
+            { path: '/student/profile', element: <Users /> },
 
             // Mentor
-            { path: '/mentor/overview', element: <MentorOverview /> },
-            { path: '/mentor/students', element: <Students /> },
-            { path: '/mentor/weekly-report', element: <WeeklyReport /> },
-            { path: '/mentor/time-tracking', element: <TimeTracking /> },
-            { path: '/mentor/learning-materials', element: <LearningMaterials /> },
-            { path: '/mentor/woops', element: <Woops /> },
-            { path: '/mentor/chat', element: <MentorChat /> },
-            { path: '/mentor/profile', element: <MentorSetting /> },
+            { path: '/mentor/overview', element: <Users /> },
+            { path: '/mentor/students', element: <Users /> },
+            { path: '/mentor/weekly-report', element: <Users /> },
+            { path: '/mentor/time-tracking', element: <Users /> },
+            { path: '/mentor/learning-materials', element: <Users /> },
+            { path: '/mentor/woops', element: <Users /> },
+            { path: '/mentor/chat', element: <Users /> },
+            { path: '/mentor/profile', element: <Users /> },
         ],
     },
     { path: '/login', element: <Login /> },
