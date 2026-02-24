@@ -1,6 +1,4 @@
 import { LuClock } from 'react-icons/lu';
-import { PiMathOperationsBold } from 'react-icons/pi';
-import { MdOutlineScience, MdHistoryEdu } from 'react-icons/md';
 import { Assignment } from '../../../../constants/student/assignments';
 
 interface AssignmentCardProps {
@@ -8,18 +6,6 @@ interface AssignmentCardProps {
     onClick: (assignment: Assignment) => void;
 }
 
-const getSubjectIcon = (subject: string) => {
-    switch (subject.toUpperCase()) {
-        case 'MATHEMATICS':
-            return <PiMathOperationsBold size={24} className="text-[#3BB77E]" />;
-        case 'CHEMISTRY':
-            return <MdOutlineScience size={24} className="text-[#3BB77E]" />;
-        case 'HISTORY':
-            return <MdHistoryEdu size={24} className="text-[#3BB77E]" />;
-        default:
-            return <PiMathOperationsBold size={24} className="text-[#3BB77E]" />;
-    }
-};
 
 export const AssignmentCard = ({ assignment, onClick }: AssignmentCardProps) => {
     return (
@@ -33,7 +19,7 @@ export const AssignmentCard = ({ assignment, onClick }: AssignmentCardProps) => 
                     style={{ backgroundColor: assignment.color }}
                     className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
                 >
-                    {getSubjectIcon(assignment.subject)}
+                    {/* {getSubjectIcon(assignment?.subject)} */}
                 </div>
 
                 {/* Content */}
