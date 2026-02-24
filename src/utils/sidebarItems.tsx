@@ -241,7 +241,7 @@ export const mentorSidebarItems: TSidebarItem[] = [
     },
     {
         key: 'setting',
-        label: 'Setting',
+        label: 'Settings',
         path: 'mentor/profile', // Mapped to profile based on route provided for setting/profile
         icon: <LuSettings size={24} />,
     },

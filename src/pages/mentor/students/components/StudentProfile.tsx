@@ -20,20 +20,22 @@ const StudentProfile = () => {
     const [createChatRoom] = useCreateChatRoomMutation();
 
     const handleChat = async (id: string) => {
-        const chatRoom = {
-            participants: [id],
-        };
-
-        toast.promise(createChatRoom({ data: chatRoom }), {
-            loading: 'Creating chat room...',
-            success: () => {
-                navigate(`/mentor/chat`);
-                return 'Chat room created successfully';
+        toast.promise(
+            createChatRoom({
+                participants: [id],
+            }),
+            {
+                loading: 'Creating chat room...',
+                success: (res) => {
+                    console.log(res);
+                    navigate(`/mentor/chat`);
+                    return res?.data?.message || 'Chat room created successfully';
+                },
+                error: (err) => {
+                    return err?.data?.message || 'Failed to create chat room';
+                },
             },
-            error: (err) => {
-                return err?.data?.message || 'Failed to create chat room';
-            },
-        });
+        );
     };
 
     return (

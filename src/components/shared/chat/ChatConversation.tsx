@@ -103,16 +103,18 @@ export function ChatConversation({ messageId, activeUser }: { messageId: any; ac
                                                 : 'bg-white text-gray-800 rounded-bl-none border border-gray-100 '
                                         }`}
                                     >
-                                        {msg.images &&
-                                            msg.images?.map((img: any) => (
-                                                <div className="mb-2 rounded-lg overflow-hidden border border-gray-100/20">
-                                                    <AntdImage
-                                                        src={imageUrl + img}
-                                                        width={200}
-                                                        className="object-cover"
-                                                    />
-                                                </div>
-                                            ))}
+                                        <div className="flex flex-row flex-wrap">
+                                            {msg.images &&
+                                                msg.images?.map((img: any) => (
+                                                    <div key={img._id} className="mb-2 rounded-lg overflow-hidden">
+                                                        <AntdImage
+                                                            src={imageUrl + img}
+                                                            width={200}
+                                                            className="object-cover"
+                                                        />
+                                                    </div>
+                                                ))}
+                                        </div>
                                         {msg.text && <p className="m-0 leading-relaxed font-medium">{msg.text}</p>}
                                     </div>
                                     <div

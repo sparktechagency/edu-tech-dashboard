@@ -1,25 +1,44 @@
 import { useState } from 'react';
-import { Tabs } from 'antd';
-import { mockAssignments, type Assignment, AssignmentStatus } from '../../../constants/student/assignments';
+import { Tabs, Spin } from 'antd';
 import { AssignmentCard } from './components/AssignmentCard';
 import { AssignmentDetailsModal } from './components/AssignmentDetailsModal';
+import { useGetAssignmentsStudentQuery } from '../../../redux/apiSlices/students/assignmentsSlice';
+import { Assignment, AssignmentStatus } from '../../../constants/student/assignments';
 
 export default function StudentAssignment() {
-    const [activeTab, setActiveTab] = useState<AssignmentStatus>('Pending');
+    const [activeTab, setActiveTab] = useState<AssignmentStatus>('PENDING');
     const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const { data, isLoading, isError , refetch} = useGetAssignmentsStudentQuery( {
+        status: activeTab
+    });
 
     const handleCardClick = (assignment: Assignment) => {
         setSelectedAssignment(assignment);
         setIsModalOpen(true);
     };
 
-    const filteredAssignments = mockAssignments.filter((assignment) => assignment.status === activeTab);
+    const assignments: Assignment[] = data?.data.map((item: any) => ({
+        id: item._id,
+        title: item.title,
+        description: item.description,
+        dueDate: item.dueDate,
+        openDate: item.createdAt,
+        status: item.status,
+        subject: item.title.split(' ')[0], 
+        color: '#DCFCE7',
+        attachment: item.attachment,
+        submitAssignment: item.submitAssignment,
+    })) || [];
+
+    const filteredAssignments = assignments.filter(
+        (assignment) => assignment.status === activeTab
+    );
 
     const tabItems = [
-        { key: 'Pending', label: 'Pending' },
-        { key: 'In Process', label: 'In Process' },
-        { key: 'Completed', label: 'Completed' },
+        { key: 'PENDING', label: 'Pending' },
+        { key: 'COMPLETED', label: 'Completed' },
     ];
 
     return (
@@ -33,26 +52,42 @@ export default function StudentAssignment() {
                 />
             </div>
 
-            <div className="grid grid-cols-1 gap-6">
-                {filteredAssignments.length > 0 ? (
-                    filteredAssignments.map((assignment) => (
-                        <AssignmentCard key={assignment.id} assignment={assignment} onClick={handleCardClick} />
-                    ))
-                ) : (
-                    <div className="bg-white p-12 rounded-2xl border border-gray-100 text-center">
-                        <p className="text-[#94A3B8] text-lg font-medium">
-                            No {activeTab.toLowerCase()} assignments found.
-                        </p>
-                    </div>
-                )}
-            </div>
+            {isLoading ? (
+                <div className="flex justify-center items-center h-48">
+                    <Spin size="large" />
+                </div>
+            ) : isError ? (
+                <div className="bg-white p-12 rounded-2xl border border-gray-100 text-center">
+                    <p className="text-red-500 text-lg font-medium">Failed to load assignments.</p>
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 gap-6">
+                    {filteredAssignments.length > 0 ? (
+                        filteredAssignments.map((assignment) => (
+                            <AssignmentCard
+                                key={assignment.id}
+                                assignment={assignment}
+                                onClick={handleCardClick}
+                            />
+                        ))
+                    ) : (
+                        <div className="bg-white p-12 rounded-2xl border border-gray-100 text-center">
+                            <p className="text-[#94A3B8] text-lg font-medium">
+                                No {activeTab.toLowerCase()} assignments found.
+                            </p>
+                        </div>
+                    )}
+                </div>
+            )}
 
             {/* Details & Submission Modal */}
             <AssignmentDetailsModal
                 isOpen={isModalOpen}
                 onCancel={() => setIsModalOpen(false)}
                 assignment={selectedAssignment}
+                refetch={refetch}
             />
         </section>
     );
 }
+
