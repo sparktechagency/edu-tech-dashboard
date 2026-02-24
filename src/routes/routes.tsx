@@ -35,6 +35,10 @@ import WeeklyReport from '../pages/mentor/weekly-report';
 import TimeTracking from '../pages/mentor/time-tracking';
 import LearningMaterials from '../pages/mentor/learning-materials';
 import Woops from '../pages/mentor/woops';
+import AdminSchedule from '../pages/admin/schdule';
+import AdminLearningMaterials from '../pages/admin/materials';
+import AdminEvents from '../pages/admin/events';
+import AdminWeeklyReport from '../pages/admin/weekly-report';
 
 const router = createBrowserRouter([
     {
@@ -48,10 +52,10 @@ const router = createBrowserRouter([
             { path: '/admin/student', element: <Users /> },
             { path: '/admin/mentors', element: <Users /> },
             { path: '/admin/teacher', element: <Users /> },
-            { path: '/admin/events', element: <Users /> },
-            { path: '/admin/materials', element: <Users /> },
-            { path: '/admin/schedule', element: <Users /> },
-            { path: '/admin/weekly-report', element: <Users /> },
+            { path: '/admin/events', element: <AdminEvents /> },
+            { path: '/admin/materials', element: <AdminLearningMaterials /> },
+            { path: '/admin/schedule', element: <AdminSchedule /> },
+            { path: '/admin/weekly-report', element: <AdminWeeklyReport /> },
 
             //Teacher
             { path: '/teacher/overview', element: <TeacherOverview /> },
