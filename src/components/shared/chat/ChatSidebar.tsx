@@ -1,3 +1,5 @@
+import { imageUrl } from '../../../redux/api/baseApi';
+
 interface ChatSidebarProps {
     messageId: string | null;
     onSelect: (room: any) => void;
@@ -10,7 +12,7 @@ export function ChatSidebar({ messageId, onSelect, chatRooms }: ChatSidebarProps
             <div className="p-2 mb-4">
                 <h2 className="text-xl font-bold text-gray-800">Messages</h2>
             </div>
-            {chatRooms?.map((room) => (
+            {chatRooms?.map((room: any) => (
                 <button
                     key={room._id}
                     onClick={() => onSelect(room)}
@@ -20,8 +22,12 @@ export function ChatSidebar({ messageId, onSelect, chatRooms }: ChatSidebarProps
                 >
                     <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0 bg-gray-100 border border-gray-200">
                         <img
-                            src={room?.participants[0]?.image || '/assets/images/provider/no_user.png'}
-                            alt={room?.participants[0]?.name}
+                            src={
+                                room?.participants[0]?.profile
+                                    ? imageUrl + room?.participants[0]?.profile
+                                    : '/assets/images/provider/no_user.png'
+                            }
+                            alt={room?.participants[0]?.firstName + ' ' + room?.participants[0]?.lastName}
                             className="w-full h-full object-cover"
                         />
                     </div>
@@ -30,9 +36,16 @@ export function ChatSidebar({ messageId, onSelect, chatRooms }: ChatSidebarProps
                             <h4
                                 className={`font-semibold text-gray-800 truncate text-[15px] ${messageId === room._id ? 'text-[#055E6E]' : ''}`}
                             >
-                                {room?.participants[0]?.name}
+                                {room?.participants[0]?.firstName + ' ' + room?.participants[0]?.lastName}
                             </h4>
-                            <span className="text-[11px] text-gray-400 font-medium whitespace-nowrap">{room.time}</span>
+                            <span className="text-[11px] text-gray-400 font-medium whitespace-nowrap">
+                                {room?.lastMessage?.createdAt &&
+                                    new Date(room.lastMessage.createdAt).toLocaleTimeString([], {
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                        hour12: true,
+                                    })}
+                            </span>
                         </div>
                         <div className="flex justify-between items-center">
                             <p className="text-[13px] text-gray-500 truncate mr-2">

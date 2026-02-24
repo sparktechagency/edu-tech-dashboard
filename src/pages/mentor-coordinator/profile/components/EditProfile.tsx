@@ -24,7 +24,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onCancel }) => {
             profileForm.setFieldsValue({
                 fullName: user?.name || `${user?.firstName || ''} ${user?.lastName || ''}`.trim(),
                 email: user?.email,
-                contact: user?.contactNumber || user?.contact,
+                mobileNumber: user?.contactNumber || user?.contact,
                 professionalTitle: user?.professionalTitle,
                 preferredGroup: user?.preferedGroup || user?.preferredGroup,
                 availableHours: user?.aviliableHours || user?.availableHours,
@@ -40,8 +40,8 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onCancel }) => {
                 user?.profile?.startsWith('http')
                     ? user?.profile
                     : user?.profile
-                    ? `${imageUrl}${user?.profile}`
-                    : 'https://via.placeholder.com/150'
+                      ? `${imageUrl}${user?.profile}`
+                      : 'https://via.placeholder.com/150',
             );
         }
     }, [profileForm, user]);
@@ -61,9 +61,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onCancel }) => {
 
         if (isError) {
             const errorMessage = (error as errorType)?.data?.errorMessages
-                ? (error as errorType)?.data?.errorMessages
-                      .map((msg: { message: string }) => msg?.message)
-                      .join('\n')
+                ? (error as errorType)?.data?.errorMessages.map((msg: { message: string }) => msg?.message).join('\n')
                 : (error as errorType)?.data?.message || 'Something went wrong. Please try again.';
             Swal.fire({
                 text: errorMessage,
@@ -157,11 +155,18 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onCancel }) => {
                 {sectionTitle('Basic Information')}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 mb-8">
                     <Form.Item
-                        label={<span className="font-semibold text-gray-700">Full Name</span>}
-                        name="fullName"
-                        rules={[{ required: true, message: 'Please input your full name!' }]}
+                        label={<span className="font-semibold text-gray-700">First Name</span>}
+                        name="firstName"
+                        rules={[{ required: true, message: 'Please input your first name!' }]}
                     >
-                        <Input className="h-12 rounded-lg" placeholder="Alex Michael Johnson" />
+                        <Input className="h-12 rounded-lg" placeholder="Michael" />
+                    </Form.Item>
+                    <Form.Item
+                        label={<span className="font-semibold text-gray-700">Last Name</span>}
+                        name="lastName"
+                        rules={[{ required: true, message: 'Please input your last name!' }]}
+                    >
+                        <Input className="h-12 rounded-lg" placeholder="Johnson" />
                     </Form.Item>
                     <Form.Item
                         label={<span className="font-semibold text-gray-700">Email</span>}
@@ -186,10 +191,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onCancel }) => {
                     >
                         <Input className="h-12 rounded-lg" placeholder="Expedition" />
                     </Form.Item>
-                    <Form.Item
-                        label={<span className="font-semibold text-gray-700">Phone</span>}
-                        name="contact"
-                    >
+                    <Form.Item label={<span className="font-semibold text-gray-700">Phone</span>} name="contact">
                         <Input className="h-12 rounded-lg" placeholder="+31 6123456789" />
                     </Form.Item>
                     <Form.Item
@@ -226,16 +228,10 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onCancel }) => {
                 {/* Address Information */}
                 {sectionTitle('Address Information')}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-2 mb-8">
-                    <Form.Item
-                        label={<span className="font-semibold text-gray-700">City</span>}
-                        name="city"
-                    >
+                    <Form.Item label={<span className="font-semibold text-gray-700">City</span>} name="city">
                         <Input className="h-12 rounded-lg" placeholder="Rotterdam" />
                     </Form.Item>
-                    <Form.Item
-                        label={<span className="font-semibold text-gray-700">Zip Code</span>}
-                        name="zipCode"
-                    >
+                    <Form.Item label={<span className="font-semibold text-gray-700">Zip Code</span>} name="zipCode">
                         <Input className="h-12 rounded-lg" placeholder="3225 CD" />
                     </Form.Item>
                     <Form.Item
