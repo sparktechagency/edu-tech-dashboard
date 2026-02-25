@@ -19,10 +19,10 @@ const EditProfile: React.FC = () => {
     useEffect(() => {
         if (user) {
             profileForm.setFieldsValue({
-                name: user?.name,
+                name: user?.firstName,
                 email: user?.email,
             });
-            setImgURL(user?.profilePic?.startsWith("http") ? user?.profilePic : `${imageUrl}${user?.profilePic}`)
+            setImgURL(user?.profile?.startsWith("http") ? user?.profile : `${imageUrl}${user?.profile}`)
         }
     }, [profileForm, user]);
 

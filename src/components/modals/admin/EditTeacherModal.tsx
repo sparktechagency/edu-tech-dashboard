@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Modal, Button, Form, Input, Select, Checkbox, Row, Col, Tag } from 'antd';
 import { X, Plus } from 'lucide-react';
 import JoditEditor from 'jodit-react';
-import { groupOptions, trackOptions } from '../../../contents/admin-data/teachers';
+import { groupOptions, trackOptions } from '../../../constants/admin-data/teachers';
 
 interface EditTeacherModalProps {
     open: boolean;

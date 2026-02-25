@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Modal, Button, Form, Input, Select, Row, Col } from 'antd';
 import { X } from 'lucide-react';
 import JoditEditor from 'jodit-react';
-import { groupOptions, genderOptions } from '../../../contents/admin-data/mentors';
+import { groupOptions, genderOptions } from '../../../constants/admin-data/mentors';
 
 interface EditMentorModalProps {
     open: boolean;
