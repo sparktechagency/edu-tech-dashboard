@@ -12,6 +12,7 @@ const assignmentsResources = api.injectEndpoints({
             },
 
         }),
+
             uplloadAssignment: build.mutation({
             query: ({ assignmentId, formData }) => ({
                 url: `/submission-assignment/${assignmentId}`,
