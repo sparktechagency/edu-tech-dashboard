@@ -1,79 +1,69 @@
 import { useState } from 'react';
-import { Table, Button, Select, Input } from 'antd';
-import { Search, Plus, Calendar, MapPin, Eye, Edit, Trash2, ChevronDown, Filter as FilterIcon } from 'lucide-react';
+import { Table, Button, Input, Modal, message } from 'antd';
+import { Search, Plus, Calendar, MapPin, Eye, Edit, Trash2, Filter as FilterIcon } from 'lucide-react';
 import HeaderTitle from '../../../components/shared/HeaderTitle';
 import AddClassScheduleModal from '../../../components/modals/admin/AddClassScheduleModal';
 import ClassScheduleDetailsModal from '../../../components/modals/admin/ClassScheduleDetailsModal';
-import DeleteScheduleModal from '../../../components/modals/admin/DeleteScheduleModal';
-
-const scheduleData = [
-    {
-        key: '1',
-        title: 'Introduction Computer Basic',
-        description: 'This season introduce for student...',
-        date: '17/10/2025',
-        time: '11:30 am',
-        target: ['Skill Path', 'Fullstack'],
-        location: '12 Street, Florida',
-        status: 'Active',
-    },
-    {
-        key: '2',
-        title: 'Introduction Computer Basic',
-        description: 'This season introduce for student...',
-        date: '17/10/2025',
-        time: '11:30 am',
-        target: ['Skill Path', 'Fullstack'],
-        location: '12 Street, Florida',
-        status: 'Active',
-    },
-    {
-        key: '3',
-        title: 'Introduction Computer Basic',
-        description: 'This season introduce for student...',
-        date: '17/10/2025',
-        time: '11:30 am',
-        target: ['Skill Path', 'Fullstack'],
-        location: '12 Street, Florida',
-        status: 'Active',
-    },
-    {
-        key: '4',
-        title: 'Introduction Computer Basic',
-        description: 'This season introduce for student...',
-        date: '17/10/2025',
-        time: '11:30 am',
-        target: ['Skill Path', 'Fullstack'],
-        location: '12 Street, Florida',
-        status: 'Active',
-    },
-    {
-        key: '5',
-        title: 'Introduction Computer Basic',
-        description: 'This season introduce for student...',
-        date: '17/10/2025',
-        time: '11:30 am',
-        target: ['Skill Path', 'Fullstack'],
-        location: '12 Street, Florida',
-        status: 'Active',
-    },
-    {
-        key: '6',
-        title: 'Introduction Computer Basic',
-        description: 'This season introduce for student...',
-        date: '17/10/2025',
-        time: '11:30 am',
-        target: ['Skill Path', 'Fullstack'],
-        location: '12 Street, Florida',
-        status: 'Active',
-    },
-];
+import {
+    useDeleteClassScheduleMutation,
+    useGetClassScheduleQuery,
+} from '../../../redux/apiSlices/admin/adminClassScheduleApi';
+import moment from 'moment';
+import { toast } from 'sonner';
 
 const AdminSchedule = () => {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
-    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [selectedSchedule, setSelectedSchedule] = useState<any>(null);
+    const [page, setPage] = useState(1);
+    const [searchTerm, setSearchTerm] = useState('');
+    // API CALLS
+    const { data: scheduleApi, refetch } = useGetClassScheduleQuery({ page: page, limit: 10, searchTerm: searchTerm });
+    const [deleteSchedule] = useDeleteClassScheduleMutation();
+    console.log(scheduleApi?.data);
+
+    const scheduleData = scheduleApi?.data?.map((item: any) => ({
+        _id: item?._id,
+        key: item?._id,
+        title: item?.title,
+        description: item?.description,
+        classDate: item?.classDate,
+        date: moment(item?.classDate).format('DD/MM/YYYY'),
+        time: moment(item?.classDate).format('hh:mm A'),
+        userGroup: item?.userGroup,
+        teacher: item?.teacher,
+        userGroupTrack: item?.userGroupTrack,
+        virtualClass: item?.virtualClass,
+        target: item,
+        location: item?.location,
+        status: `${item?.status === true ? 'Active' : 'Inactive'}`,
+    }));
+
+    const handleDelete = (id: string) => {
+        Modal.confirm({
+            title: 'Delete Teacher',
+            content: 'Are you sure you want to delete this teacher?',
+            okText: 'Yes, Delete',
+            okType: 'danger',
+            cancelText: 'No',
+            onOk: async () => {
+                try {
+                    toast.promise(deleteSchedule({ id }).unwrap(), {
+                        loading: 'Deleting schedule...',
+                        success: (res: any) => {
+                            if (res?.success) {
+                                refetch();
+                            }
+                            return res?.message || 'Schedule deleted successfully';
+                        },
+                        error: (err: any) => err?.message || 'Failed to delete schedule',
+                    });
+                } catch (error: any) {
+                    message.error(error?.data?.message || 'Something went wrong');
+                }
+            },
+        });
+    };
 
     const columns = [
         {
@@ -105,16 +95,21 @@ const AdminSchedule = () => {
             title: 'TARGET',
             dataIndex: 'target',
             key: 'target',
-            render: (tags: string[]) => (
-                <div className="flex gap-1.5">
-                    {tags.map((tag) => (
-                        <span
-                            key={tag}
-                            className="px-2.5 py-1 bg-gray-50 text-gray-400 text-[10px] rounded-full border border-gray-100 uppercase tracking-tighter"
-                        >
-                            {tag}
-                        </span>
-                    ))}
+            render: (tags: { userGroupTrack: { name: string }; userGroup: { _id: string; name: string }[] }) => (
+                <div className="flex flex-wrap gap-1">
+                    <p className="px-2.5 py-1 bg-gray-50 text-gray-400 text-[10px] rounded-full border border-gray-100 uppercase tracking-tighter">
+                        {tags?.userGroupTrack?.name}
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                        {tags?.userGroup?.map((tag: { _id: string; name: string }) => (
+                            <span
+                                key={tag?._id}
+                                className="px-2.5 py-1 bg-gray-50 text-gray-400 text-[10px] rounded-full border border-gray-100 uppercase tracking-tighter"
+                            >
+                                {tag?.name}
+                            </span>
+                        ))}
+                    </div>
                 </div>
             ),
         },
@@ -136,7 +131,6 @@ const AdminSchedule = () => {
             render: (text: string) => (
                 <div className="flex items-center gap-2 px-3 py-1 border border-green-200 rounded-lg bg-green-50 text-green-600 text-xs font-medium cursor-pointer w-fit">
                     {text}
-                    <ChevronDown size={14} />
                 </div>
             ),
         },
@@ -158,16 +152,17 @@ const AdminSchedule = () => {
                     <Button
                         icon={<Edit size={16} />}
                         className="flex items-center justify-center gap-1.5 text-sm text-gray-500 hover:text-green-500 border-none shadow-none bg-transparent"
+                        onClick={() => {
+                            setSelectedSchedule(record);
+                            setIsAddModalOpen(true);
+                        }}
                     >
                         Edit
                     </Button>
                     <Button
                         icon={<Trash2 size={16} />}
                         className="flex items-center justify-center gap-1.5 text-sm text-red-500 hover:bg-red-50 border border-red-100 rounded-lg px-3 py-1.5 h-auto transition-colors"
-                        onClick={() => {
-                            setSelectedSchedule(record);
-                            setIsDeleteModalOpen(true);
-                        }}
+                        onClick={() => handleDelete(record._id)}
                     >
                         Delete
                     </Button>
@@ -185,6 +180,7 @@ const AdminSchedule = () => {
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 z-10" />
                         <Input
                             placeholder="Search materials"
+                            onChange={(e) => setSearchTerm(e.target.value)}
                             className="h-10 pl-10 bg-[#F9FAFB] border-none shadow-none w-64"
                             style={{ backgroundColor: 'white' }}
                         />
@@ -198,14 +194,17 @@ const AdminSchedule = () => {
                     <Button
                         icon={<Plus className="w-4 h-4" />}
                         className="h-10 px-6 bg-[#22C55E] text-white hover:bg-[#1ea34d] border-none font-medium flex items-center gap-2 rounded-lg"
-                        onClick={() => setIsAddModalOpen(true)}
+                        onClick={() => {
+                            setSelectedSchedule(null);
+                            setIsAddModalOpen(true);
+                        }}
                     >
                         Add Schedule
                     </Button>
                 </div>
             </div>
 
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+            {/* <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
                 <div className="flex items-center gap-4">
                     <div className="bg-gray-50 p-2.5 rounded-lg border border-gray-100">
                         <FilterIcon size={18} className="text-gray-400" />
@@ -224,29 +223,37 @@ const AdminSchedule = () => {
                         Clear Filters
                     </button>
                 </div>
-            </div>
+            </div> */}
 
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                 <Table
                     columns={columns}
                     dataSource={scheduleData}
-                    pagination={{ pageSize: 6 }}
+                    pagination={{
+                        current: page,
+                        pageSize: 10,
+                        total: scheduleApi?.data?.total,
+                        showSizeChanger: false,
+                        onChange: (page) => setPage(page),
+                    }}
                     className="schedule-table"
                 />
             </div>
 
-            <AddClassScheduleModal open={isAddModalOpen} onCancel={() => setIsAddModalOpen(false)} />
+            <AddClassScheduleModal
+                open={isAddModalOpen}
+                onCancel={() => {
+                    setIsAddModalOpen(false);
+                    setSelectedSchedule(null);
+                }}
+                refetch={refetch}
+                selectedSchedule={selectedSchedule}
+            />
 
             <ClassScheduleDetailsModal
                 open={isDetailsModalOpen}
                 onCancel={() => setIsDetailsModalOpen(false)}
                 data={selectedSchedule}
-            />
-
-            <DeleteScheduleModal
-                open={isDeleteModalOpen}
-                onCancel={() => setIsDeleteModalOpen(false)}
-                onDelete={() => setIsDeleteModalOpen(false)}
             />
         </section>
     );
