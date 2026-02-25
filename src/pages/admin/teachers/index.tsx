@@ -7,6 +7,12 @@ import TeacherDetailsModal from '../../../components/modals/admin/TeacherDetails
 import EditTeacherModal from '../../../components/modals/admin/EditTeacherModal';
 import AddAssignmentModal from '../../../components/modals/admin/AddAssignmentModal';
 import AddGoalsModal from '../../../components/modals/admin/AddGoalsModal';
+import {
+    useAddTeacherMutation,
+    useDeleteTeacherMutation,
+    useGetTeachersQuery,
+    useUpdateTeacherMutation,
+} from '../../../redux/apiSlices/admin/adminTeachersApi';
 
 const AdminTeachers = () => {
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
@@ -15,7 +21,18 @@ const AdminTeachers = () => {
     const [isAddAssignmentModalOpen, setIsAddAssignmentModalOpen] = useState(false);
     const [isAddGoalsModalOpen, setIsAddGoalsModalOpen] = useState(false);
     const [selectedTeacher, setSelectedTeacher] = useState<any>(null);
+    const [page, setPage] = useState(1);
+    const [searchTerm, setSearchTerm] = useState('');
 
+    // API CALLS
+    const { data: teachersApi } = useGetTeachersQuery({ page: page, limit: 10, searchTerm: searchTerm });
+    const [addTeacher] = useAddTeacherMutation();
+    const [updateTeacher] = useUpdateTeacherMutation();
+    const [deleteTeacher] = useDeleteTeacherMutation();
+    const teachers = teachersApi?.data || [];
+    console.log(teachers);
+
+    // TABLE COLUMN
     const columns = [
         {
             title: 'TEACHER',
@@ -134,6 +151,7 @@ const AdminTeachers = () => {
                     </Button>
                     <div className="relative">
                         <Input
+                            onChange={(e) => setSearchTerm(e.target.value)}
                             placeholder="Search teacher"
                             prefix={<Search size={16} className="text-gray-400" />}
                             className="h-10 w-64 border-gray-100 bg-white rounded-md"
@@ -162,7 +180,13 @@ const AdminTeachers = () => {
                 <Table
                     columns={columns}
                     dataSource={teachersData}
-                    pagination={false}
+                    pagination={{
+                        current: page,
+                        pageSize: 10,
+                        total: teachersApi?.data?.total,
+                        showSizeChanger: false,
+                        onChange: (page) => setPage(page),
+                    }}
                     className="admin-teachers-table"
                     rowClassName="border-b last:border-0 border-gray-50"
                 />
