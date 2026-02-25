@@ -1,71 +1,63 @@
 import { useState } from 'react';
-import { Table, Button, Input, Select } from 'antd';
-import { Search, Filter, Plus, Eye, Edit, Trash2, ChevronDown, FileText, BookOpen } from 'lucide-react';
+import { Table, Button, Input, Modal, message } from 'antd';
+import { Search, Filter, Plus, Eye, Edit, Trash2, FileText, BookOpen } from 'lucide-react';
 import HeaderTitle from '../../../components/shared/HeaderTitle';
 import AddLearningMaterialModal from '../../../components/modals/admin/AddLearningMaterialModal';
 import LearningMaterialDetailsModal from '../../../components/modals/admin/LearningMaterialDetailsModal';
-
-const materialsData = [
-    {
-        key: '1',
-        title: 'Essential Experts Training',
-        description: 'Join us for an engaging session',
-        type: 'link',
-        url: 'https://example.pdf',
-        target: ['Skill Path', 'Fullstack'],
-        status: 'Active',
-    },
-    {
-        key: '2',
-        title: 'Essential Experts Training',
-        description: 'Join us for an engaging session',
-        type: 'link',
-        url: 'https://example.pdf',
-        target: ['Skill Path', 'Fullstack'],
-        status: 'Active',
-    },
-    {
-        key: '3',
-        title: 'Essential Experts Training',
-        description: 'Join us for an engaging session',
-        type: 'pdf',
-        url: 'https://example.pdf',
-        target: ['Skill Path', 'Fullstack'],
-        status: 'Active',
-    },
-    {
-        key: '4',
-        title: 'Essential Experts Training',
-        description: 'Join us for an engaging session',
-        type: 'pdf',
-        url: 'https://example.pdf',
-        target: ['Skill Path', 'Fullstack'],
-        status: 'Active',
-    },
-    {
-        key: '5',
-        title: 'Essential Experts Training',
-        description: 'Join us for an engaging session',
-        type: 'link',
-        url: 'https://example.pdf',
-        target: ['Skill Path', 'Fullstack'],
-        status: 'Active',
-    },
-    {
-        key: '6',
-        title: 'Essential Experts Training',
-        description: 'Join us for an engaging session',
-        type: 'link',
-        url: 'https://example.pdf',
-        target: ['Skill Path', 'Fullstack'],
-        status: 'Active',
-    },
-];
+import { toast } from 'sonner';
+import { useGetMaterialsQuery } from '../../../redux/apiSlices/admin/adminMaterialsApi';
+import { useDeleteMaterialsMutation } from '../../../redux/apiSlices/mentor/learningApi';
+import moment from 'moment';
 
 const AdminLearningMaterials = () => {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
     const [selectedMaterial, setSelectedMaterial] = useState<any>(null);
+    const [page, setPage] = useState(1);
+    const [searchTerm, setSearchTerm] = useState('');
+    // API CALLS
+    const { data: materialApi, refetch } = useGetMaterialsQuery({ page: page, limit: 10, searchTerm: searchTerm });
+    const [deleteMaterials] = useDeleteMaterialsMutation();
+    console.log(materialApi);
+
+    const materialsData = materialApi?.data?.resources?.map((item: any) => ({
+        _id: item?._id,
+        key: item?._id,
+        title: item?.title,
+        description: item?.description,
+        type: item?.type,
+        url: item?.contentUrl,
+        targetAudience: item?.targeteAudience,
+        target: item?.targertGroup?.userGroup,
+        status: item?.markAsAssigned ? 'Active' : 'Inactive',
+        date: moment(item?.createdAt).format('YYYY-MM-DD'),
+    }));
+
+    const handleDelete = (id: string) => {
+        Modal.confirm({
+            title: 'Delete Material',
+            content: 'Are you sure you want to delete this material?',
+            okText: 'Yes, Delete',
+            okType: 'danger',
+            cancelText: 'No',
+            onOk: async () => {
+                try {
+                    toast.promise(deleteMaterials({ id }).unwrap(), {
+                        loading: 'Deleting material...',
+                        success: (res: any) => {
+                            if (res?.success) {
+                                refetch();
+                            }
+                            return res?.message || 'material deleted successfully';
+                        },
+                        error: (err: any) => err?.message || 'Failed to delete material',
+                    });
+                } catch (error: any) {
+                    message.error(error?.data?.message || 'Something went wrong');
+                }
+            },
+        });
+    };
 
     const columns = [
         {
@@ -88,17 +80,24 @@ const AdminLearningMaterials = () => {
             key: 'type',
             render: (_: any, record: any) => (
                 <div>
-                    {record.type === 'link' ? (
+                    {record.type === 'PDF' ? (
                         <a
                             href={record.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bg-green-50 w-8 h-8 rounded flex items-center justify-center text-green-500 shadow-sm border border-green-100"
+                        >
+                            <FileText size={18} />
+                        </a>
+                    ) : (
+                        <a
+                            href={record.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className="text-gray-400 text-xs flex items-center gap-1.5 hover:text-blue-500 transition-colors border-b border-gray-200 border-dotted pb-0.5"
                         >
                             {record.url}
                         </a>
-                    ) : (
-                        <div className="bg-green-50 w-8 h-8 rounded flex items-center justify-center text-green-500 shadow-sm border border-green-100">
-                            <FileText size={18} />
-                        </div>
                     )}
                 </div>
             ),
@@ -107,16 +106,11 @@ const AdminLearningMaterials = () => {
             title: 'TARGET',
             dataIndex: 'target',
             key: 'target',
-            render: (tags: string[]) => (
+            render: (tags: { _id: string; name: string }) => (
                 <div className="flex gap-2">
-                    {tags.map((tag) => (
-                        <span
-                            key={tag}
-                            className="px-3 py-1 bg-gray-50 text-gray-400 text-[10px] rounded-full border border-gray-200 uppercase tracking-tight font-medium"
-                        >
-                            {tag}
-                        </span>
-                    ))}
+                    <span className="px-3 py-1 bg-gray-50 text-gray-400 text-[10px] rounded-full border border-gray-200 uppercase tracking-tight font-medium">
+                        {tags?.name}
+                    </span>
                 </div>
             ),
         },
@@ -125,26 +119,9 @@ const AdminLearningMaterials = () => {
             dataIndex: 'status',
             key: 'status',
             render: (text: string) => (
-                <Select
-                    defaultValue={text}
-                    className="status-select"
-                    suffixIcon={<ChevronDown size={14} className="text-green-600" />}
-                    bordered={false}
-                    options={[
-                        { value: 'Active', label: 'Active' },
-                        { value: 'Inactive', label: 'Inactive' },
-                    ]}
-                    style={{
-                        backgroundColor: '#F0FDF4',
-                        border: '1px solid #BBF7D0',
-                        borderRadius: '8px',
-                        color: '#16A34A',
-                        fontSize: '12px',
-                        fontWeight: 600,
-                        width: 'fit-content',
-                    }}
-                    dropdownStyle={{ borderRadius: '8px' }}
-                />
+                <div className="flex items-center gap-2 px-3 py-1 border border-green-200 rounded-lg bg-green-50 text-green-600 text-xs font-medium cursor-pointer w-fit">
+                    {text}
+                </div>
             ),
         },
         {
@@ -164,12 +141,17 @@ const AdminLearningMaterials = () => {
                     </Button>
                     <Button
                         icon={<Edit size={16} />}
+                        onClick={() => {
+                            setSelectedMaterial(record);
+                            setIsAddModalOpen(true);
+                        }}
                         className="flex items-center justify-center gap-1.5 text-xs text-gray-600 hover:!text-green-500 border-none shadow-none bg-[#F9FAFB] px-3 py-1.5 h-auto font-medium"
                     >
                         Edit
                     </Button>
                     <Button
                         icon={<Trash2 size={16} />}
+                        onClick={() => handleDelete(record._id)}
                         className="flex items-center justify-center gap-1.5 text-xs text-red-500 hover:!bg-red-50 border border-red-100 rounded-lg px-3 py-1.5 h-auto font-medium shadow-none"
                     >
                         Delete
@@ -178,7 +160,6 @@ const AdminLearningMaterials = () => {
             ),
         },
     ];
-
     return (
         <section className="space-y-6">
             <div className="flex justify-between items-center">
@@ -188,6 +169,8 @@ const AdminLearningMaterials = () => {
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 z-10" />
                         <Input
                             placeholder="Search materials"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
                             className="h-10 pl-10 bg-white border border-gray-200 shadow-sm w-72 rounded-lg"
                         />
                     </div>
@@ -211,12 +194,23 @@ const AdminLearningMaterials = () => {
                 <Table
                     columns={columns}
                     dataSource={materialsData}
-                    pagination={{ pageSize: 6, position: ['bottomRight'] }}
+                    pagination={{
+                        current: page,
+                        pageSize: 10,
+                        total: materialApi?.data?.total,
+                        showSizeChanger: false,
+                        onChange: (page) => setPage(page),
+                    }}
                     className="materials-table"
                 />
             </div>
 
-            <AddLearningMaterialModal open={isAddModalOpen} onCancel={() => setIsAddModalOpen(false)} />
+            <AddLearningMaterialModal
+                open={isAddModalOpen}
+                onCancel={() => setIsAddModalOpen(false)}
+                selectedMaterial={selectedMaterial}
+                refetch={refetch}
+            />
 
             <LearningMaterialDetailsModal
                 open={isDetailsModalOpen}

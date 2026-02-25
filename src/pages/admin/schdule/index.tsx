@@ -41,8 +41,8 @@ const AdminSchedule = () => {
 
     const handleDelete = (id: string) => {
         Modal.confirm({
-            title: 'Delete Teacher',
-            content: 'Are you sure you want to delete this teacher?',
+            title: 'Delete Schedule',
+            content: 'Are you sure you want to delete this schedule?',
             okText: 'Yes, Delete',
             okType: 'danger',
             cancelText: 'No',
