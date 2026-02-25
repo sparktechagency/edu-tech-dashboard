@@ -1,4 +1,4 @@
-import { Modal, Table } from 'antd';
+import { Input, Modal, Progress } from 'antd';
 import { X } from 'lucide-react';
 
 interface WeeklyReportDetailsModalProps {
@@ -8,16 +8,6 @@ interface WeeklyReportDetailsModalProps {
 }
 
 const WeeklyReportDetailsModal = ({ open, onCancel, data }: WeeklyReportDetailsModalProps) => {
-    const skillProgressData = [
-        { key: '1', skill: 'HTML', progress: '100%' },
-        { key: '2', skill: 'CSS', progress: '90%' },
-    ];
-
-    const skillColumns = [
-        { title: 'Skill Name', dataIndex: 'skill', key: 'skill' },
-        { title: 'Progress', dataIndex: 'progress', key: 'progress', align: 'right' as const },
-    ];
-
     return (
         <Modal
             title={null}
@@ -83,13 +73,7 @@ const WeeklyReportDetailsModal = ({ open, onCancel, data }: WeeklyReportDetailsM
                                     <td className="px-5 py-3.5 bg-gray-50/50 font-medium text-gray-600">
                                         Skill Tracked
                                     </td>
-                                    <td className="px-5 py-3.5 text-gray-800">3</td>
-                                </tr>
-                                <tr>
-                                    <td className="px-5 py-3.5 bg-gray-50/50 font-medium text-gray-600">
-                                        Skill Tracked
-                                    </td>
-                                    <td className="px-5 py-3.5 text-gray-800">3</td>
+                                    <td className="px-5 py-3.5 text-gray-800">{data?.skillsTracked}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -98,15 +82,30 @@ const WeeklyReportDetailsModal = ({ open, onCancel, data }: WeeklyReportDetailsM
 
                 <section>
                     <h3 className="text-lg font-semibold mb-3 text-gray-800">Skill Progress</h3>
-                    <div className="border border-gray-100 rounded-xl overflow-hidden shadow-sm">
-                        <Table
-                            dataSource={skillProgressData}
-                            columns={skillColumns}
-                            pagination={false}
-                            size="small"
-                            showHeader={false}
-                            className="skill-progress-table"
-                        />
+                    <div className="space-y-4">
+                        <div className=" ">
+                            <label htmlFor="" className="font-medium">
+                                Skill Name
+                            </label>
+                            <Input
+                                value={data?.goalSheet?.skillName}
+                                readOnly
+                                className="h-11  shadow-none"
+                                style={{ backgroundColor: '#f3f4f6', border: '1px solid #e5e7eb' }}
+                            />
+                        </div>
+
+                        <div className="flex gap-6 w-full">
+                            <div className="flex flex-col w-full ">
+                                <p className="font-medium">Planed Progress</p>
+                                <Progress percent={data?.goalSheet?.plannedProgress} />
+                            </div>
+
+                            <div className="flex flex-col w-full ">
+                                <p className="font-medium">Actual Progress</p>
+                                <Progress percent={data?.goalSheet?.actualProgress} />
+                            </div>
+                        </div>
                     </div>
                 </section>
 
@@ -114,21 +113,13 @@ const WeeklyReportDetailsModal = ({ open, onCancel, data }: WeeklyReportDetailsM
                     <h3 className="text-lg font-semibold mb-3 text-gray-800">Concerns & Comments</h3>
                     <div className="p-4 bg-white rounded-xl min-h-[120px] border border-gray-100 shadow-inner">
                         <textarea
-                            className="w-full h-full bg-transparent border-none outline-none resize-none text-gray-500 text-sm placeholder:italic"
+                            className="w-full h-full bg-transparent border-none outline-none resize-none text-gray-800 text-sm placeholder:italic"
                             placeholder="Enter concerns or comments here..."
                             readOnly
+                            value={data?.comments}
                         ></textarea>
                     </div>
                 </section>
-
-                <div className="flex justify-end pt-2">
-                    <button
-                        onClick={onCancel}
-                        className="px-8 py-2.5 rounded-lg border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 transition-colors"
-                    >
-                        Cancel
-                    </button>
-                </div>
             </div>
         </Modal>
     );
