@@ -6,31 +6,48 @@ interface MentorDetailsModalProps {
     open: boolean;
     onCancel: () => void;
     mentor: any;
-    onEditHours: () => void;
 }
 
-const MentorDetailsModal: React.FC<MentorDetailsModalProps> = ({ open, onCancel, mentor, onEditHours }) => {
+const MentorDetailsModal: React.FC<MentorDetailsModalProps> = ({ open, onCancel, mentor }) => {
+    console.log(mentor, 'selected mentor');
     if (!mentor) return null;
 
     const details = [
         { label: 'First Name', value: mentor.firstName },
         { label: 'Last Name', value: mentor.lastName },
         { label: 'Email', value: mentor.email },
-        { label: 'Phone', value: mentor.phone },
-        { label: 'Bio', value: mentor.bio },
-        { label: 'Company', value: mentor.company },
-        { label: 'Job Title', value: mentor.jobTitle },
-        { label: 'Location', value: mentor.location },
+        { label: 'Phone', value: mentor.mobileNumber || mentor.contactNumber },
+        { label: 'vNumber', value: mentor.vNumber || 'N/A' },
         { label: 'Gender', value: mentor.gender },
-        { label: 'Preferred Group', value: mentor.preferredGroup },
+        { label: 'Highest Education', value: mentor.highestEducation || 'N/A' },
         {
-            label: 'Status',
+            label: 'Groups',
+            value:
+                mentor.userGroup && mentor.userGroup.length > 0 ? (
+                    mentor.userGroup.map((group: any) => (
+                        <Tag
+                            key={group._id}
+                            className="rounded-full px-4 py-0.5 bg-gray-50 border-gray-100 text-gray-500 font-medium"
+                        >
+                            {group.name}
+                        </Tag>
+                    ))
+                ) : (
+                    <span className="text-gray-400 italic">No Group</span>
+                ),
+        },
+        { label: 'Laptop', value: mentor.havealaptop ? 'Yes' : 'No' },
+        {
+            label: 'Career Directions',
+            value: mentor.careerDirections?.length > 0 ? mentor.careerDirections.join(', ') : 'None',
+        },
+        { label: 'Address', value: mentor.address || 'N/A' },
+        { label: 'Professional Title', value: mentor.professionalTitle || 'N/A' },
+        {
+            label: 'Verified',
             value: (
-                <Tag
-                    color="success"
-                    className="px-3 py-0.5 rounded-full border-none bg-[#e6f7e9] text-[#52c41a] font-medium"
-                >
-                    {mentor.status}
+                <Tag color={mentor.verified ? 'success' : 'error'} className="rounded-full">
+                    {mentor.verified ? 'Verified' : 'Unverified'}
                 </Tag>
             ),
         },
@@ -43,7 +60,7 @@ const MentorDetailsModal: React.FC<MentorDetailsModalProps> = ({ open, onCancel,
             onCancel={onCancel}
             footer={false}
             closeIcon={<X size={20} />}
-            width={700}
+            width={800}
             centered
         >
             <div className="border border-gray-100 rounded-lg overflow-hidden mt-6 mb-8">
@@ -57,31 +74,40 @@ const MentorDetailsModal: React.FC<MentorDetailsModalProps> = ({ open, onCancel,
                                 <td className="py-4 px-6 bg-gray-50/50 text-gray-500 w-1/3 font-medium">
                                     {item.label}
                                 </td>
-                                <td className="py-4 px-6 text-gray-700 font-medium">{item.value}</td>
+                                <td className="py-4 px-6 text-gray-700 font-medium tracking-wide">
+                                    {item.value || 'N/A'}
+                                </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
 
-            <div className="mb-4 px-2">
-                <h3 className="font-bold text-[#18212d] mb-4 text-base">Available Hours Management</h3>
-                <div className="flex justify-between items-center bg-gray-50/30 p-4 rounded-lg border border-gray-50">
-                    <div>
-                        <p className="text-gray-400 text-xs font-semibold mb-1 uppercase tracking-wider">
-                            Total Available Hours
-                        </p>
-                        <p className="text-gray-800 font-medium">{mentor.totalHours} hours available</p>
+            {mentor.assignedStudents?.length > 0 && (
+                <div className="mb-6">
+                    <h3 className="text-lg font-semibold mb-3 text-gray-800">Assigned Students</h3>
+                    <div className="border border-gray-100 rounded-lg overflow-hidden">
+                        <table className="w-full text-sm">
+                            <thead className="bg-gray-50">
+                                <tr>
+                                    <th className="py-3 px-6 text-left text-gray-500 font-medium">Name</th>
+                                    <th className="py-3 px-6 text-left text-gray-500 font-medium">Email</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {mentor.assignedStudents.map((student: any) => (
+                                    <tr key={student._id} className="border-t border-gray-100">
+                                        <td className="py-3 px-6 text-gray-700 font-medium">
+                                            {`${student.firstName} ${student.lastName}`}
+                                        </td>
+                                        <td className="py-3 px-6 text-gray-500 font-medium">{student.email}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
                     </div>
-                    <Button
-                        icon={<Edit3 size={14} />}
-                        className="flex items-center gap-2 h-9 border-gray-200 text-gray-600 rounded-md px-4"
-                        onClick={onEditHours}
-                    >
-                        Edit Hours
-                    </Button>
                 </div>
-            </div>
+            )}
         </Modal>
     );
 };

@@ -1,13 +1,18 @@
 import { useState } from 'react';
-import { Table, Button, Input, Select, Space, Tag, Avatar, Progress } from 'antd';
-import { Search, Filter, Download, Eye, Edit2, Trash2, User, Star, TrendingUp } from 'lucide-react';
-import { mentorsData, mentorStats, statusOptions } from '../../../constants/admin-data/mentors';
+import { Table, Button, Input, Space, Tag, Avatar, Progress } from 'antd';
+import { Search, Filter, Download, Eye, Edit2, Trash2, User, Star, TrendingUp, Plus } from 'lucide-react';
+import { mentorStats } from '../../../constants/admin-data/mentors';
 import HeaderTitle from '../../../components/shared/HeaderTitle';
 import ImportMentorsModal from '../../../components/modals/admin/ImportMentorsModal';
 import MentorDetailsModal from '../../../components/modals/admin/MentorDetailsModal';
 import EditMentorModal from '../../../components/modals/admin/EditMentorModal';
 import ReviewMentorModal from '../../../components/modals/admin/ReviewMentorModal';
 import MentorStudentsModal from '../../../components/modals/admin/MentorStudentsModal';
+import { useDeleteAdminMentorMutation, useGetAdminMentorsQuery } from '../../../redux/apiSlices/admin/adminMentorsApi';
+import { useGetAllStudentsQuery } from '../../../redux/apiSlices/admin/adminTeachersApi';
+import AddMentorModal from '../../../components/modals/admin/AddMentorModal';
+import { toast } from 'sonner';
+import { Modal, message } from 'antd';
 
 const AdminMentors = () => {
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
@@ -15,21 +20,34 @@ const AdminMentors = () => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
     const [isStudentsModalOpen, setIsStudentsModalOpen] = useState(false);
+    const [isAddMentorModalOpen, setIsAddMentorModalOpen] = useState(false);
     const [selectedMentor, setSelectedMentor] = useState<any>(null);
+    const [page, setPage] = useState(1);
+    const [searchTerm, setSearchTerm] = useState('');
+
+    // API CALLS
+    const { data: mentorsApi, isLoading, refetch } = useGetAdminMentorsQuery({ page, searchTerm });
+    const { data: studentsApi } = useGetAllStudentsQuery({});
+    const [deleteMentor] = useDeleteAdminMentorMutation();
+    const mentors = mentorsApi?.data?.mentors || [];
+    const pagination = mentorsApi?.data?.pagination;
 
     const columns = [
         {
-            title: 'TEACHER',
+            title: 'MENTOR',
             dataIndex: 'name',
             key: 'name',
-            render: (text: string, record: any) => (
+            render: (_: string, record: any) => (
                 <div className="flex items-center gap-3">
                     <Avatar
+                        src={record.profile}
                         icon={<User size={16} />}
                         className="bg-[#f6ffed] text-[#52c41a] flex items-center justify-center border-none"
                     />
                     <div>
-                        <div className="font-semibold text-gray-800">{text}</div>
+                        <div className="font-semibold text-gray-800">
+                            {record.firstName} {record.lastName}
+                        </div>
                         <div className="text-xs text-gray-400">{record.email}</div>
                     </div>
                 </div>
@@ -37,49 +55,45 @@ const AdminMentors = () => {
         },
         {
             title: 'GROUPS',
-            dataIndex: 'groups',
+            dataIndex: 'userGroup',
             key: 'groups',
-            render: (groups: string[]) => (
+            render: (userGroup: any[]) => (
                 <div className="flex flex-wrap gap-2">
-                    {groups.length > 0 ? (
-                        groups.map((group) => (
+                    {userGroup && userGroup.length > 0 ? (
+                        userGroup.map((group: any) => (
                             <Tag
-                                key={group}
+                                key={group._id}
                                 className="rounded-full px-4 py-0.5 bg-gray-50 border-gray-100 text-gray-500 font-medium"
                             >
-                                {group}
+                                {group.name}
                             </Tag>
                         ))
                     ) : (
-                        <span className="text-gray-400 font-medium ml-1">No Group</span>
+                        <span className="text-gray-400 italic">No Group</span>
                     )}
                 </div>
             ),
         },
         {
             title: 'TRACK',
-            dataIndex: 'track',
+            dataIndex: 'userGroupTrack',
             key: 'track',
-            render: (track: string) => <span className="text-gray-500 font-medium">{track}</span>,
+            render: (track: string) => <span className="text-gray-500 font-medium">{track || 'N/A'}</span>,
         },
         {
             title: 'LOCATION',
-            dataIndex: 'location',
+            dataIndex: 'address',
             key: 'location',
-            render: (location: string) => <span className="text-gray-500 font-medium">{location}</span>,
+            render: (address: string) => <span className="text-gray-500 font-medium">{address || 'N/A'}</span>,
         },
         {
-            title: 'STATUS',
-            dataIndex: 'status',
-            key: 'status',
-            render: (status: string) => (
-                <Select
-                    defaultValue={status}
-                    options={statusOptions}
-                    className="w-32 rounded-lg mentor-status-select"
-                    variant="filled"
-                    style={{ backgroundColor: '#f9f9f9', borderRadius: '8px' }}
-                />
+            title: 'VERIFIED',
+            dataIndex: 'verified',
+            key: 'verified',
+            render: (verified: boolean) => (
+                <Tag color={verified ? 'success' : 'error'} className="rounded-full">
+                    {verified ? 'Verified' : 'Unverified'}
+                </Tag>
             ),
         },
         {
@@ -107,7 +121,7 @@ const AdminMentors = () => {
                     >
                         Edit
                     </Button>
-                    <Button
+                    {/* <Button
                         icon={<Star size={14} />}
                         className="flex items-center gap-2 border-gray-200 text-gray-700 hover:text-black font-medium h-9 rounded-md"
                         onClick={() => {
@@ -116,11 +130,12 @@ const AdminMentors = () => {
                         }}
                     >
                         Review
-                    </Button>
+                    </Button> */}
                     <Button
                         icon={<Trash2 size={14} />}
                         danger
                         className="flex items-center gap-2 font-medium h-9 rounded-md border-red-200 text-red-500"
+                        onClick={() => handleDelete(record._id)}
                     >
                         Remove
                     </Button>
@@ -128,6 +143,32 @@ const AdminMentors = () => {
             ),
         },
     ];
+
+    const handleDelete = (id: string) => {
+        Modal.confirm({
+            title: 'Are you sure you want to remove this mentor?',
+            content: 'This action cannot be undone.',
+            okText: 'Yes, Remove',
+            okType: 'danger',
+            cancelText: 'No',
+            onOk: async () => {
+                try {
+                    toast.promise(deleteMentor(id).unwrap(), {
+                        loading: 'Removing mentor...',
+                        success: (res: any) => {
+                            if (res?.success) {
+                                refetch();
+                            }
+                            return res?.message || 'Mentor removed successfully';
+                        },
+                        error: (err: any) => err?.data?.message || err?.message || 'Failed to remove mentor',
+                    });
+                } catch (error: any) {
+                    message.error('Something went wrong');
+                }
+            },
+        });
+    };
 
     return (
         <div className="">
@@ -172,6 +213,14 @@ const AdminMentors = () => {
                 <HeaderTitle title="Mentor Management" />
                 <div className="flex flex-wrap items-center gap-3">
                     <Button
+                        type="primary"
+                        icon={<Plus size={16} />}
+                        className="flex items-center gap-2 h-10 bg-[#52c41a] border-none hover:bg-[#73d13d] rounded-md font-semibold"
+                        onClick={() => setIsAddMentorModalOpen(true)}
+                    >
+                        Create Mentor
+                    </Button>
+                    <Button
                         icon={<Filter size={16} />}
                         className="flex items-center gap-2 h-10 border-gray-100 bg-white text-gray-600 rounded-lg px-4"
                     >
@@ -186,7 +235,9 @@ const AdminMentors = () => {
                     </Button>
                     <div className="relative">
                         <Input
-                            placeholder="Search Students...."
+                            placeholder="Search Mentors...."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
                             prefix={<Search size={16} className="text-gray-400" />}
                             className="h-10 w-64 border-gray-100 bg-white rounded-lg"
                         />
@@ -198,8 +249,16 @@ const AdminMentors = () => {
             <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm">
                 <Table
                     columns={columns}
-                    dataSource={mentorsData}
-                    pagination={false}
+                    dataSource={mentors}
+                    loading={isLoading}
+                    pagination={{
+                        total: pagination?.totalItems,
+                        current: pagination?.currentPage,
+                        pageSize: 10,
+                        onChange: (page) => {
+                            setPage(page);
+                        },
+                    }}
                     className="mentor-management-table"
                     rowClassName="hover:bg-gray-50/50 transition-colors"
                 />
@@ -207,19 +266,22 @@ const AdminMentors = () => {
 
             {/* Modals */}
             <ImportMentorsModal open={isImportModalOpen} onCancel={() => setIsImportModalOpen(false)} />
+            <AddMentorModal
+                open={isAddMentorModalOpen}
+                onCancel={() => setIsAddMentorModalOpen(false)}
+                refetch={refetch}
+            />
             <MentorDetailsModal
                 open={isDetailsModalOpen}
                 onCancel={() => setIsDetailsModalOpen(false)}
                 mentor={selectedMentor}
-                onEditHours={() => {
-                    setIsDetailsModalOpen(false);
-                    setIsEditModalOpen(true);
-                }}
             />
             <EditMentorModal
                 open={isEditModalOpen}
                 onCancel={() => setIsEditModalOpen(false)}
                 mentor={selectedMentor}
+                students={studentsApi?.data?.data || []}
+                refetch={refetch}
             />
             <ReviewMentorModal open={isReviewModalOpen} onCancel={() => setIsReviewModalOpen(false)} />
             <MentorStudentsModal
