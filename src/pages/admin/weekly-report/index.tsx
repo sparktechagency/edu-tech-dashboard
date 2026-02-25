@@ -1,13 +1,30 @@
 import { useState } from 'react';
-import { Table, Button, Select, Input } from 'antd';
+import { Table, Button, Input } from 'antd';
 import { Eye, Search, Filter } from 'lucide-react';
-import { weeklyReports } from '../../../constants/mentor-data';
 import WeeklyReportDetailsModal from '../../../components/modals/admin/WeeklyReportDetailsModal';
 import HeaderTitle from '../../../components/shared/HeaderTitle';
+import { useGetWeeklyReportQuery } from '../../../redux/apiSlices/admin/adminWeeklyReport';
+import moment from 'moment';
 
 const AdminWeeklyReport = () => {
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
     const [selectedReport, setSelectedReport] = useState<any>(null);
+    const [page, setPage] = useState(1);
+    const [searchTerm, setSearchTerm] = useState('');
+    // API CALLS
+    const { data: weeklyReportApi } = useGetWeeklyReportQuery({ page: page, limit: 10, searchTerm: searchTerm });
+
+    const reportsData = weeklyReportApi?.data?.reports?.map((item: any) => ({
+        key: item?._id,
+        studentName: `${item?.studentId?.firstName} ${item?.studentId?.lastName}`,
+        duration: `${moment(item?.weekStartDate).format('DD/MM/YYYY')} - ${moment(item?.weekEndDate).format('DD/MM/YYYY')}`,
+        attendance: `${item?.isPresent ? 'Present' : 'Absent'}`,
+        hardOutcomes: item?.achievedHardOutcomes?.length,
+        improvements: item?.softSkillImprovements?.length,
+        skillsTracked: item?.studentId?.userGroup?.length,
+        goalSheet: item?.goalSheet,
+        comments: item?.comments,
+    }));
 
     const columns = [
         {
@@ -71,22 +88,12 @@ const AdminWeeklyReport = () => {
         <section className="space-y-6">
             <div className="flex justify-between items-center">
                 <HeaderTitle title="Weekly Report" />
-            </div>
-
-            <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
-                <div className="w-full md:w-1/3">
-                    <Select
-                        placeholder="Select Mentor"
-                        className="w-full h-11"
-                        suffixIcon={<Filter className="w-4 h-4 text-gray-400" />}
-                        options={[{ value: 'all', label: 'All Mentors' }]}
-                    />
-                </div>
                 <div className="flex gap-3 w-full md:w-auto">
                     <div className="relative flex-1 md:w-64">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 z-10" />
                         <Input
                             placeholder="Search materials"
+                            onChange={(e) => setSearchTerm(e.target.value)}
                             className="h-11 pl-10 border-none shadow-none"
                             style={{ backgroundColor: '#fff' }}
                         />
@@ -103,8 +110,14 @@ const AdminWeeklyReport = () => {
             <div className="bg-white rounded-2xl border border-[#FAFAFA] shadow-sm overflow-hidden">
                 <Table
                     columns={columns}
-                    dataSource={weeklyReports}
-                    pagination={{ pageSize: 7 }}
+                    dataSource={reportsData}
+                    pagination={{
+                        current: page,
+                        pageSize: 10,
+                        total: weeklyReportApi?.data?.total,
+                        showSizeChanger: false,
+                        onChange: (page) => setPage(page),
+                    }}
                     className="weekly-report-table"
                     rowClassName="hover:bg-[#F9FAFB] transition-colors"
                 />

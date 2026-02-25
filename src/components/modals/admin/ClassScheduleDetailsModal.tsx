@@ -47,12 +47,14 @@ const ClassScheduleDetailsModal = ({ open, onCancel, data }: ClassScheduleDetail
                         <tr>
                             <td className="px-5 py-3.5 bg-gray-50/50 font-medium text-gray-600">Target Group</td>
                             <td className="px-5 py-3.5 flex items-center gap-2">
-                                <span className="text-gray-800">{data?.targetGroup || 'Full Stack'}</span>
+                                <span className="text-gray-800">
+                                    {data?.userGroup?.map((item: any) => item?.name).join(', ') || 'Full Stack'}
+                                </span>
                             </td>
                         </tr>
                         <tr>
                             <td className="px-5 py-3.5 bg-gray-50/50 font-medium text-gray-600">Target Track</td>
-                            <td className="px-5 py-3.5 text-gray-800">{data?.targetTrack || 'Data'}</td>
+                            <td className="px-5 py-3.5 text-gray-800">{data?.userGroupTrack?.name || 'Data'}</td>
                         </tr>
                         <tr>
                             <td className="px-5 py-3.5 bg-gray-50/50 font-medium text-gray-600">Date</td>
