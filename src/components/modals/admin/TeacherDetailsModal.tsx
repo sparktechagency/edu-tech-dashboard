@@ -12,16 +12,19 @@ const TeacherDetailsModal: React.FC<TeacherDetailsModalProps> = ({ open, onCance
     if (!teacher) return null;
 
     const details = [
-        { label: 'First Name', value: teacher.firstName || 'mentortest' },
-        { label: 'Last Name', value: teacher.lastName || 'mentortest' },
-        { label: 'Email', value: teacher.email || 'mentortest@share-network.org' },
-        { label: 'Phone', value: teacher.phone || '+31635699002' },
-        { label: 'Groups', value: teacher.groups?.length > 0 ? teacher.groups.join(', ') : 'No groups' },
-        { label: 'Track', value: teacher.track || 'Data' },
-        { label: 'Bio', value: teacher.bio || 'No bio provided' },
-        { label: 'LinkedIn', value: teacher.linkedin || 'Not provided' },
-        { label: 'GitHub', value: teacher.github || 'Male' }, // Image shows 'Male' in GitHub row, likely a placeholder or mapping error in mock
-        { label: 'Portfolio', value: teacher.portfolio || 'Not provided' },
+        { label: 'First Name', value: teacher.firstName },
+        { label: 'Last Name', value: teacher.lastName },
+        { label: 'Email', value: teacher.email },
+        { label: 'Phone', value: teacher.mobileNumber || teacher.phone },
+        { label: 'Gender', value: teacher.gender || 'Not specified' },
+        {
+            label: 'Groups',
+            value: teacher.userGroup?.length > 0 ? teacher.userGroup.map((g: any) => g.name).join(', ') : 'No groups',
+        },
+        { label: 'Track', value: teacher.userGroupTrack || 'N/A' },
+        { label: 'About', value: teacher.about || 'No bio provided' },
+        { label: 'Verified', value: teacher.verified ? 'Yes' : 'No' },
+        { label: 'Subscribed', value: teacher.isSubscribed ? 'Yes' : 'No' },
     ];
 
     return (
@@ -48,12 +51,38 @@ const TeacherDetailsModal: React.FC<TeacherDetailsModalProps> = ({ open, onCance
                                 <td className="py-4 px-6 bg-gray-50/50 text-gray-500 w-1/3 font-medium">
                                     {item.label}
                                 </td>
-                                <td className="py-4 px-6 text-gray-700">{item.value}</td>
+                                <td className="py-4 px-6 text-gray-700">{item.value || 'N/A'}</td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
+
+            {teacher.assignedStudents?.length > 0 && (
+                <div className="mt-6">
+                    <h3 className="text-lg font-semibold mb-3">Assigned Students</h3>
+                    <div className="border border-gray-100 rounded-lg overflow-hidden">
+                        <table className="w-full text-sm">
+                            <thead className="bg-gray-50">
+                                <tr>
+                                    <th className="py-3 px-6 text-left text-gray-500 font-medium">Name</th>
+                                    <th className="py-3 px-6 text-left text-gray-500 font-medium">Email</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {teacher.assignedStudents.map((student: any) => (
+                                    <tr key={student._id} className="border-t border-gray-100">
+                                        <td className="py-3 px-6 text-gray-700">
+                                            {student.firstName} {student.lastName}
+                                        </td>
+                                        <td className="py-3 px-6 text-gray-500">{student.email}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            )}
         </Modal>
     );
 };

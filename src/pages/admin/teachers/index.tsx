@@ -1,36 +1,59 @@
 import { useState } from 'react';
-import { Table, Button, Input, Select, Space, Tag, Avatar } from 'antd';
+import { Table, Button, Input, Space, Tag, Avatar } from 'antd';
 import { Search, Filter, Download as DownloadIcon, Plus, Eye, Edit2, Trash2, User } from 'lucide-react';
-import { teachersData, statusOptions } from '../../../constants/admin-data/teachers';
 import ImportExcelModal from '../../../components/modals/admin/ImportExcelModal';
+import {
+    useDeleteTeacherMutation,
+    useGetAllStudentsQuery,
+    useGetTeachersQuery,
+} from '../../../redux/apiSlices/admin/adminTeachersApi';
+import AddTeacherModal from '../../../components/modals/admin/AddTeacherModal';
 import TeacherDetailsModal from '../../../components/modals/admin/TeacherDetailsModal';
 import EditTeacherModal from '../../../components/modals/admin/EditTeacherModal';
-import AddAssignmentModal from '../../../components/modals/admin/AddAssignmentModal';
-import AddGoalsModal from '../../../components/modals/admin/AddGoalsModal';
-import {
-    useAddTeacherMutation,
-    useDeleteTeacherMutation,
-    useGetTeachersQuery,
-    useUpdateTeacherMutation,
-} from '../../../redux/apiSlices/admin/adminTeachersApi';
+import { Modal, message } from 'antd';
+import { toast } from 'sonner';
 
 const AdminTeachers = () => {
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+    const [isAddTeacherModalOpen, setIsAddTeacherModalOpen] = useState(false);
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [isAddAssignmentModalOpen, setIsAddAssignmentModalOpen] = useState(false);
-    const [isAddGoalsModalOpen, setIsAddGoalsModalOpen] = useState(false);
     const [selectedTeacher, setSelectedTeacher] = useState<any>(null);
     const [page, setPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
 
     // API CALLS
-    const { data: teachersApi } = useGetTeachersQuery({ page: page, limit: 10, searchTerm: searchTerm });
-    const [addTeacher] = useAddTeacherMutation();
-    const [updateTeacher] = useUpdateTeacherMutation();
+    const { data: teachersApi, refetch } = useGetTeachersQuery({ page: page, limit: 10, searchTerm: searchTerm });
+    const { data: studentsApi } = useGetAllStudentsQuery({});
     const [deleteTeacher] = useDeleteTeacherMutation();
     const teachers = teachersApi?.data || [];
-    console.log(teachers);
+    const students = studentsApi?.data?.data || [];
+
+    const handleDelete = (id: string) => {
+        Modal.confirm({
+            title: 'Delete Teacher',
+            content: 'Are you sure you want to delete this teacher?',
+            okText: 'Yes, Delete',
+            okType: 'danger',
+            cancelText: 'No',
+            onOk: async () => {
+                try {
+                    toast.promise(deleteTeacher({ id }).unwrap(), {
+                        loading: 'Deleting teacher...',
+                        success: (res: any) => {
+                            if (res?.success) {
+                                refetch();
+                            }
+                            return res?.message || 'Teacher deleted successfully';
+                        },
+                        error: (err: any) => err?.message || 'Failed to delete teacher',
+                    });
+                } catch (error: any) {
+                    message.error(error?.data?.message || 'Something went wrong');
+                }
+            },
+        });
+    };
 
     // TABLE COLUMN
     const columns = [
@@ -38,14 +61,17 @@ const AdminTeachers = () => {
             title: 'TEACHER',
             dataIndex: 'name',
             key: 'name',
-            render: (text: string, record: any) => (
+            render: (_: string, record: any) => (
                 <div className="flex items-center gap-3">
                     <Avatar
+                        src={record.profile}
                         icon={<User size={16} />}
                         className="bg-[#f6ffed] text-[#52c41a] flex items-center justify-center border-none"
                     />
                     <div>
-                        <div className="font-semibold text-gray-800">{text}</div>
+                        <div className="font-semibold text-gray-800">
+                            {record.firstName} {record.lastName}
+                        </div>
                         <div className="text-xs text-gray-400">{record.email}</div>
                     </div>
                 </div>
@@ -53,17 +79,17 @@ const AdminTeachers = () => {
         },
         {
             title: 'GROUPS',
-            dataIndex: 'groups',
+            dataIndex: 'userGroup',
             key: 'groups',
-            render: (groups: string[]) => (
+            render: (userGroup: any[]) => (
                 <div className="flex flex-wrap gap-2">
-                    {groups.length > 0 ? (
-                        groups.map((group) => (
+                    {userGroup && userGroup.length > 0 ? (
+                        userGroup.map((group: any) => (
                             <Tag
-                                key={group}
+                                key={group._id}
                                 className="rounded-full px-4 py-0.5 bg-gray-50 border-gray-100 text-gray-500 font-medium"
                             >
-                                {group}
+                                {group.name}
                             </Tag>
                         ))
                     ) : (
@@ -74,28 +100,24 @@ const AdminTeachers = () => {
         },
         {
             title: 'TRACK',
-            dataIndex: 'track',
+            dataIndex: 'userGroupTrack',
             key: 'track',
-            render: (track: string) => <span className="text-gray-500">{track}</span>,
+            render: (track: string) => <span className="text-gray-500">{track || 'N/A'}</span>,
         },
         {
             title: 'LOCATION',
-            dataIndex: 'location',
-            key: 'location',
-            render: (location: string) => <span className="text-gray-500">{location}</span>,
+            dataIndex: 'address',
+            key: 'address',
+            render: (_: any, record: any) => <span className="text-gray-500">{record.address || 'N/A'}</span>,
         },
         {
-            title: 'STATUS',
-            dataIndex: 'status',
-            key: 'status',
-            render: (status: string) => (
-                <Select
-                    defaultValue={status}
-                    options={statusOptions}
-                    className="w-32 rounded-lg"
-                    variant="filled"
-                    style={{ backgroundColor: '#f5f5f5' }}
-                />
+            title: 'VERIFIED',
+            dataIndex: 'verified',
+            key: 'verified',
+            render: (verified: boolean) => (
+                <Tag color={verified ? 'success' : 'error'} className="rounded-full">
+                    {verified ? 'Verified' : 'Unverified'}
+                </Tag>
             ),
         },
         {
@@ -123,7 +145,12 @@ const AdminTeachers = () => {
                     >
                         Edit
                     </Button>
-                    <Button icon={<Trash2 size={14} />} danger className="flex items-center gap-2 font-medium">
+                    <Button
+                        icon={<Trash2 size={14} />}
+                        danger
+                        className="flex items-center gap-2 font-medium"
+                        onClick={() => handleDelete(record._id)}
+                    >
                         Remove
                     </Button>
                 </Space>
@@ -161,17 +188,9 @@ const AdminTeachers = () => {
                         type="primary"
                         icon={<Plus size={16} />}
                         className="flex items-center gap-2 h-10 bg-[#52c41a] border-none hover:bg-[#73d13d] rounded-md font-semibold"
-                        onClick={() => setIsAddAssignmentModalOpen(true)}
+                        onClick={() => setIsAddTeacherModalOpen(true)}
                     >
-                        Add Assignment
-                    </Button>
-                    <Button
-                        type="primary"
-                        icon={<Plus size={16} />}
-                        className="flex items-center gap-2 h-10 bg-[#52c41a] border-none hover:bg-[#73d13d] rounded-md font-semibold"
-                        onClick={() => setIsAddGoalsModalOpen(true)}
-                    >
-                        Add Goals
+                        Create Teacher
                     </Button>
                 </div>
             </div>
@@ -179,33 +198,39 @@ const AdminTeachers = () => {
             <div className="border border-gray-100 rounded-xl overflow-hidden shadow-sm">
                 <Table
                     columns={columns}
-                    dataSource={teachersData}
+                    dataSource={teachers}
                     pagination={{
                         current: page,
                         pageSize: 10,
                         total: teachersApi?.data?.total,
                         showSizeChanger: false,
-                        onChange: (page) => setPage(page),
+                        onChange: (p) => setPage(p),
                     }}
                     className="admin-teachers-table"
                     rowClassName="border-b last:border-0 border-gray-50"
+                    rowKey="_id"
                 />
             </div>
 
             {/* Modals */}
             <ImportExcelModal open={isImportModalOpen} onCancel={() => setIsImportModalOpen(false)} />
+            <AddTeacherModal
+                refetch={refetch}
+                open={isAddTeacherModalOpen}
+                onCancel={() => setIsAddTeacherModalOpen(false)}
+            />
             <TeacherDetailsModal
                 open={isDetailsModalOpen}
                 onCancel={() => setIsDetailsModalOpen(false)}
                 teacher={selectedTeacher}
             />
             <EditTeacherModal
+                refetch={refetch}
                 open={isEditModalOpen}
                 onCancel={() => setIsEditModalOpen(false)}
                 teacher={selectedTeacher}
+                students={students}
             />
-            <AddAssignmentModal open={isAddAssignmentModalOpen} onCancel={() => setIsAddAssignmentModalOpen(false)} />
-            <AddGoalsModal open={isAddGoalsModalOpen} onCancel={() => setIsAddGoalsModalOpen(false)} />
         </div>
     );
 };

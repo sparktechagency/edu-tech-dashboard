@@ -28,8 +28,19 @@ const adminTeachersApi = api.injectEndpoints({
                 method: 'DELETE',
             }),
         }),
+        getAllStudents: build.query({
+            query: () => ({
+                url: '/student-admin',
+                method: 'GET',
+            }),
+        }),
     }),
 });
 
-export const { useGetTeachersQuery, useAddTeacherMutation, useUpdateTeacherMutation, useDeleteTeacherMutation } =
-    adminTeachersApi;
+export const {
+    useGetTeachersQuery,
+    useAddTeacherMutation,
+    useUpdateTeacherMutation,
+    useDeleteTeacherMutation,
+    useGetAllStudentsQuery,
+} = adminTeachersApi;

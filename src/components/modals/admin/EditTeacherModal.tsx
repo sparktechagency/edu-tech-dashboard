@@ -1,29 +1,48 @@
 import React, { useEffect } from 'react';
-import { Modal, Button, Form, Input, Select, Checkbox, Row, Col, Tag } from 'antd';
-import { X, Plus } from 'lucide-react';
-import JoditEditor from 'jodit-react';
-import { groupOptions, trackOptions } from '../../../constants/admin-data/teachers';
+import { message, Modal, Button, Form, Input, Select, Row, Col } from 'antd';
+import { X } from 'lucide-react';
+import { useUpdateTeacherMutation } from '../../../redux/apiSlices/admin/adminTeachersApi';
+import { toast } from 'sonner';
 
 interface EditTeacherModalProps {
     open: boolean;
     onCancel: () => void;
     teacher: any;
+    students: any[];
+    refetch: () => void;
 }
 
-const EditTeacherModal: React.FC<EditTeacherModalProps> = ({ open, onCancel, teacher }) => {
+const EditTeacherModal: React.FC<EditTeacherModalProps> = ({ open, onCancel, teacher, students, refetch }) => {
     const [form] = Form.useForm();
+    const [updateTeacher, { isLoading }] = useUpdateTeacherMutation();
 
     useEffect(() => {
         if (teacher) {
-            form.setFieldsValue(teacher);
+            form.setFieldsValue({
+                ...teacher,
+                phone: teacher.mobileNumber || teacher.phone,
+                assignedStudents: teacher.assignedStudents?.map((s: any) => s._id) || [],
+                userGroup: teacher.userGroup?.map((g: any) => g._id) || [],
+            });
         }
     }, [teacher, form]);
 
-    const config = {
-        readonly: false,
-        placeholder: 'Enter bio...',
-        height: 300,
-        toolbarAdaptive: false,
+    const onFinish = async (values: any) => {
+        try {
+            toast.promise(updateTeacher({ id: teacher._id, data: values }).unwrap(), {
+                loading: 'Updating teacher...',
+                success: (res: any) => {
+                    if (res?.success) {
+                        refetch();
+                        onCancel();
+                    }
+                    return res?.message || 'Teacher updated successfully';
+                },
+                error: (err: any) => err?.message || 'Failed to update teacher',
+            });
+        } catch (error: any) {
+            toast.error(error?.data?.message || 'Something went wrong');
+        }
     };
 
     return (
@@ -31,100 +50,124 @@ const EditTeacherModal: React.FC<EditTeacherModalProps> = ({ open, onCancel, tea
             title={<span className="text-xl font-semibold">Edit Teacher</span>}
             open={open}
             onCancel={onCancel}
-            footer={[
-                <Button key="cancel" onClick={onCancel} className="px-6 h-10 border-gray-300 rounded-md">
-                    Cancel
-                </Button>,
-                <Button
-                    key="submit"
-                    type="primary"
-                    onClick={onCancel}
-                    className="px-6 h-10 bg-[#52c41a] border-none hover:bg-[#73d13d] rounded-md"
-                >
-                    Update Teacher
-                </Button>,
-            ]}
+            footer={null}
             closeIcon={<X size={20} />}
             width={1000}
             centered
         >
-            <Form form={form} layout="vertical" className="mt-6">
+            <Form form={form} layout="vertical" className="mt-6" onFinish={onFinish}>
                 <Row gutter={24}>
                     <Col span={12}>
-                        <Form.Item label={<span className="font-semibold">First Name</span>} name="firstName">
+                        <Form.Item
+                            label={<span className="font-semibold text-gray-700">First Name</span>}
+                            name="firstName"
+                        >
                             <Input placeholder="Enter first name" className="h-11 rounded-md" />
                         </Form.Item>
                     </Col>
                     <Col span={12}>
-                        <Form.Item label={<span className="font-semibold">Last Name</span>} name="lastName">
+                        <Form.Item
+                            label={<span className="font-semibold text-gray-700">Last Name</span>}
+                            name="lastName"
+                        >
                             <Input placeholder="Enter last name" className="h-11 rounded-md" />
                         </Form.Item>
                     </Col>
                 </Row>
 
-                <Form.Item label={<span className="font-semibold">Email</span>} name="email">
+                <Form.Item label={<span className="font-semibold text-gray-700">Email</span>} name="email">
                     <Input placeholder="Enter email" className="h-11 rounded-md" />
                 </Form.Item>
 
-                <Form.Item label={<span className="font-semibold">Phone</span>} name="phone">
-                    <Input placeholder="Enter phone" className="h-11 rounded-md" />
+                <Form.Item label={<span className="font-semibold text-gray-700">User Groups</span>} name="userGroup">
+                    <Select
+                        mode="multiple"
+                        placeholder="Select groups"
+                        className="w-full"
+                        style={{ height: 'auto', minHeight: '44px' }}
+                        options={[
+                            { label: 'Skill Path', value: '697ee75db5bd6a1c68bf8685' },
+                            { label: 'Beginners', value: '697ee745b5bd6a1c68bf867f' },
+                        ]}
+                    />
                 </Form.Item>
 
-                <Form.Item label={<span className="font-semibold">Groups</span>} name="groups">
-                    <Checkbox.Group className="flex gap-12 mt-2">
-                        {groupOptions.map((opt) => (
-                            <Checkbox key={opt.value} value={opt.value}>
-                                {opt.label}
-                            </Checkbox>
-                        ))}
-                    </Checkbox.Group>
-                </Form.Item>
-
-                <Form.Item label={<span className="font-semibold">Track</span>} name="track">
-                    <Select placeholder="Select option" className="h-11 rounded-md" options={trackOptions} />
-                </Form.Item>
-
-                <Form.Item label={<span className="font-semibold">Track (Tags)</span>} name="tags">
-                    <div className="flex flex-wrap gap-2 p-2 border border-gray-200 rounded-md">
-                        <Tag closable className="py-1 px-3 bg-gray-50 border-gray-200 rounded text-gray-600">
-                            Python
-                        </Tag>
-                        <Tag closable className="py-1 px-3 bg-gray-50 border-gray-200 rounded text-gray-600">
-                            React
-                        </Tag>
-                        <Tag closable className="py-1 px-3 bg-gray-50 border-gray-200 rounded text-gray-600">
-                            Java
-                        </Tag>
-                        <Input
-                            prefix={<Plus size={14} />}
-                            placeholder="Add Languages..."
-                            bordered={false}
-                            className="w-40 border-none shadow-none focus:ring-0"
-                        />
-                    </div>
-                </Form.Item>
-
-                <Form.Item label={<span className="font-semibold">Bio</span>} name="bio">
-                    <JoditEditor value={teacher?.bio || ''} config={config} onBlur={() => {}} />
+                <Form.Item
+                    label={<span className="font-semibold text-gray-700">Assign Students</span>}
+                    name="assignedStudents"
+                >
+                    <Select
+                        mode="multiple"
+                        placeholder="Select students"
+                        className="w-full"
+                        style={{ height: 'auto', minHeight: '44px' }}
+                        options={students?.map((student: any) => ({
+                            label: `${student.firstName} ${student.lastName} (${student.email})`,
+                            value: student._id,
+                        }))}
+                        filterOption={(input, option) =>
+                            (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                        }
+                    />
                 </Form.Item>
 
                 <Row gutter={24}>
-                    <Col span={8}>
-                        <Form.Item label={<span className="font-semibold">LinkedIn</span>} name="linkedin">
-                            <Input placeholder="Enter URL" className="h-11 rounded-md" />
+                    <Col span={12}>
+                        <Form.Item
+                            label={<span className="font-semibold text-gray-700">Phone</span>}
+                            name="mobileNumber"
+                        >
+                            <Input placeholder="Enter phone" className="h-11 rounded-md" />
                         </Form.Item>
                     </Col>
-                    <Col span={8}>
-                        <Form.Item label={<span className="font-semibold">GitHub</span>} name="github">
-                            <Input placeholder="Enter URL" className="h-11 rounded-md" />
-                        </Form.Item>
-                    </Col>
-                    <Col span={8}>
-                        <Form.Item label={<span className="font-semibold">Portfolio</span>} name="portfolio">
-                            <Input placeholder="Enter URL" className="h-11 rounded-md" />
+                    <Col span={12}>
+                        <Form.Item label={<span className="font-semibold text-gray-700">vNumber</span>} name="vNumber">
+                            <Input placeholder="Enter vNumber" className="h-11 rounded-md" />
                         </Form.Item>
                     </Col>
                 </Row>
+
+                <Row gutter={24}>
+                    <Col span={12}>
+                        <Form.Item label={<span className="font-semibold text-gray-700">Gender</span>} name="gender">
+                            <Select
+                                placeholder="Select gender"
+                                className="h-11 rounded-md"
+                                options={[
+                                    { label: 'Male', value: 'Male' },
+                                    { label: 'Female', value: 'Female' },
+                                    { label: 'Other', value: 'Other' },
+                                ]}
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                        <Form.Item
+                            label={<span className="font-semibold text-gray-700">Track</span>}
+                            name="userGroupTrack"
+                        >
+                            <Input placeholder="Enter track ID" className="h-11 rounded-md" />
+                        </Form.Item>
+                    </Col>
+                </Row>
+
+                <Form.Item label={<span className="font-semibold text-gray-700">About</span>} name="about">
+                    <Input.TextArea placeholder="Enter about info" rows={4} className="rounded-md" />
+                </Form.Item>
+
+                <div className="flex justify-end gap-3 mt-6">
+                    <Button onClick={onCancel} className="px-8 h-11 border-gray-300 rounded-md">
+                        Cancel
+                    </Button>
+                    <Button
+                        type="primary"
+                        htmlType="submit"
+                        loading={isLoading}
+                        className="px-8 h-11 bg-[#52c41a] border-none hover:bg-[#73d13d] rounded-md font-semibold"
+                    >
+                        Update Teacher
+                    </Button>
+                </div>
             </Form>
         </Modal>
     );
