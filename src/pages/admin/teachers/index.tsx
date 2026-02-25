@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Table, Button, Input, Select, Space, Tag, Avatar } from 'antd';
 import { Search, Filter, Download as DownloadIcon, Plus, Eye, Edit2, Trash2, User } from 'lucide-react';
-import { teachersData, statusOptions } from '../../../contents/admin-data/teachers';
+import { teachersData, statusOptions } from '../../../constants/admin-data/teachers';
 import ImportExcelModal from '../../../components/modals/admin/ImportExcelModal';
 import TeacherDetailsModal from '../../../components/modals/admin/TeacherDetailsModal';
 import EditTeacherModal from '../../../components/modals/admin/EditTeacherModal';

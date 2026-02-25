@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Table, Button, Input, Tag, Avatar } from 'antd';
 import { Search, Eye, Edit2, Trash2, Link, Calendar, Star, GraduationCap } from 'lucide-react';
-import { studentsData } from '../../../../contents/admin-data/students';
+import { studentsData } from '../../../../constants/admin-data/students';
 import ImportExcelModal from '../../../../components/modals/admin/ImportExcelModal';
 import StudentDetailsModal from '../../../../components/modals/admin/StudentDetailsModal';
 import EditStudentModal from '../../../../components/modals/admin/EditStudentModal';
