@@ -22,12 +22,13 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onCancel }) => {
     useEffect(() => {
         if (user) {
             profileForm.setFieldsValue({
-                fullName: user?.name || `${user?.firstName || ''} ${user?.lastName || ''}`.trim(),
+                firstName: user?.firstName,
+                lastName: user?.lastName,
                 email: user?.email,
-                mobileNumber: user?.contactNumber || user?.contact,
+                mobileNumber: user?.mobileNumber,
                 professionalTitle: user?.professionalTitle,
-                preferredGroup: user?.preferedGroup || user?.preferredGroup,
-                availableHours: user?.aviliableHours || user?.availableHours,
+                preferredGroup: user?.preferedGroup,
+                availableHours: user?.aviliableHours,
                 aboutMe: user?.about || user?.aboutMe,
                 linkedinProfile: user?.linkedInProfile,
                 githubProfile: user?.githubProfile,
@@ -191,7 +192,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ user, onCancel }) => {
                     >
                         <Input className="h-12 rounded-lg" placeholder="Expedition" />
                     </Form.Item>
-                    <Form.Item label={<span className="font-semibold text-gray-700">Phone</span>} name="contact">
+                    <Form.Item label={<span className="font-semibold text-gray-700">Phone</span>} name="mobileNumber">
                         <Input className="h-12 rounded-lg" placeholder="+31 6123456789" />
                     </Form.Item>
                     <Form.Item
