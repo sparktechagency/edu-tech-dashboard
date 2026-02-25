@@ -1,6 +1,7 @@
 import { Modal } from 'antd';
 import { LuCalendarDays, LuClock, LuMapPin } from 'react-icons/lu';
 import { Event } from '../../../constants/student/events';
+import { imageUrl } from '../../../redux/api/baseApi';
 
 interface EventDetailsModalProps {
     isOpen: boolean;
@@ -10,6 +11,9 @@ interface EventDetailsModalProps {
 
 export const EventDetailsModal = ({ isOpen, onCancel, event }: EventDetailsModalProps) => {
     if (!event) return null;
+    const fullImageUrl = event?.image
+    ? `${imageUrl}${event.image}` // ⚠️ important: no extra slash
+    : "https://via.placeholder.com/600x300";
 
     return (
         <Modal
@@ -24,7 +28,7 @@ export const EventDetailsModal = ({ isOpen, onCancel, event }: EventDetailsModal
             <div className="bg-white">
                 {/* Banner Image */}
                 <div className="h-[300px] w-full relative">
-                    <img src={event.image} alt={event.title} className="w-full h-full object-cover" />
+                    <img src={fullImageUrl} alt={event.title} className="w-full h-full object-cover" />
                 </div>
 
                 {/* Modal Content */}

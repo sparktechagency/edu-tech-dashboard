@@ -11,6 +11,7 @@ const userSlice = api.injectEndpoints({
                 };
             },
         }),
+
         changeStatusUser: builder.mutation({
             query: ({id}:{id:string}) => {
                 return {
