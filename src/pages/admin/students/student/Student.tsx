@@ -155,11 +155,11 @@ const Student = () => {
                     >
                         Class
                     </Button>
-                    <Button
+                    {/* <Button
                         icon={<Trash2 size={14} />}
                         danger
                         className="flex items-center gap-2 rounded-md h-8 border-[#ff4d4f]"
-                    ></Button>
+                    ></Button> */}
                 </div>
             ),
         },
