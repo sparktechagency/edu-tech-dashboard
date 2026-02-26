@@ -9,11 +9,13 @@ const adminMaterialsApi = api.injectEndpoints({
             }),
         }),
         addMaterials: build.mutation({
-            query: ({ data }: { data: any }) => ({
-                url: '/learning',
-                method: 'POST',
-                body: data,
-            }),
+            query: ( data: any ) => { 
+                return {
+                    url: '/learning',
+                    method: 'POST',
+                    body: data,
+                }
+            },
         }),
         updateMaterials: build.mutation({
             query: ({ data, id }: { data: any; id: string }) => ({

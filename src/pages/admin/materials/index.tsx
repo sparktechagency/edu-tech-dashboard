@@ -18,7 +18,7 @@ const AdminLearningMaterials = () => {
     // API CALLS
     const { data: materialApi, refetch } = useGetMaterialsQuery({ page: page, limit: 10, searchTerm: searchTerm });
     const [deleteMaterials] = useDeleteMaterialsMutation();
-    console.log(materialApi);
+
 
     const materialsData = materialApi?.data?.resources?.map((item: any) => ({
         _id: item?._id,
@@ -207,8 +207,8 @@ const AdminLearningMaterials = () => {
 
             <AddLearningMaterialModal
                 open={isAddModalOpen}
-                onCancel={() => setIsAddModalOpen(false)}
-                selectedMaterial={selectedMaterial}
+                onCancel={() =>{ setIsAddModalOpen(false); setSelectedMaterial(null); }}
+                selectedMaterial={selectedMaterial} 
                 refetch={refetch}
             />
 
