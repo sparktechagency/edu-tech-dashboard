@@ -62,8 +62,11 @@ const CreateResourceModal: React.FC<CreateResourceModalProps> = ({ visible, onCl
                     >
                         <Select placeholder="Select" className="h-[42px] rounded-lg border-gray-200">
                             <Select.Option value="PDF">PDF</Select.Option>
-                            <Select.Option value="Link">Link</Select.Option>
-                            <Select.Option value="Video">Video</Select.Option>
+                            <Select.Option value="LINK">Link</Select.Option>
+                            <Select.Option value="VIDEO">Video</Select.Option>
+                            <Select.Option value="AUDIO">Audio</Select.Option>
+                            <Select.Option value="DOCX">Docx</Select.Option>
+
                         </Select>
                     </Form.Item>
 
@@ -98,7 +101,7 @@ const CreateResourceModal: React.FC<CreateResourceModalProps> = ({ visible, onCl
                 >
                     <Select placeholder="Select" className="h-[42px] rounded-lg border-gray-200">
                         {userGroups?.data?.map((group) => (
-                            <Select.Option key={group._id} value={group._id}>
+                            <Select.Option  key={group._id} value={group._id}>
                                 {group.name}
                             </Select.Option>
                         ))}

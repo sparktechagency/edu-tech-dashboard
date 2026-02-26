@@ -10,8 +10,8 @@ export const api = createApi({
             Authorization: `Bearer ${token}`,
         },
     }),
-    tagTypes: ['Facility', 'Package', 'Review', 'Profile',"Class","Resourse"],
+    tagTypes: ['Facility', 'Package', 'Review', 'Profile',"Class","Resourse","Assignment","Submission"],
     endpoints: () => ({}),
 });
 
-export const imageUrl = 'http://10.10.7.72:8000';
+export const imageUrl = 'http://10.10.7.72:8000/uploads';

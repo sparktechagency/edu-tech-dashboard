@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Table, Button, Input, Select, Space, Tag } from 'antd';
+import { Table, Button, Input, Space, Tag } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { SearchOutlined, FilterOutlined, EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { HiOutlineDocumentText } from 'react-icons/hi';
@@ -65,6 +65,8 @@ const Resources = () => {
     };
 
     const handleDelete = async (key: string) => {
+    
+        
         await Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -75,7 +77,7 @@ const Resources = () => {
             confirmButtonText: 'Yes, delete it!',
         }).then(async (result) => {
             if (result.isConfirmed) {
-                const { error }: any = await deleteResource(key);
+                const { error }: any = await deleteResource({id: key});
                 if (!error) {
                     toast.success('Resource deleted successfully');
                     return;
@@ -160,22 +162,22 @@ const Resources = () => {
             key: 'uploadDate',
             render: (date) => <span className="text-gray-600">{new Date(date).toLocaleDateString('en-GB')}</span>,
         },
-        {
-            title: 'STATUS',
-            dataIndex: 'status',
-            key: 'status',
-            render: (status) => (
-                <Select
-                    defaultValue={status}
-                    style={{ width: 100 }}
-                    className="rounded-lg"
-                    options={[
-                        { value: 'Active', label: <span className="text-green-600 font-medium">Active</span> },
-                        { value: 'Inactive', label: <span className="text-red-600 font-medium">Inactive</span> },
-                    ]}
-                />
-            ),
-        },
+        // {
+        //     title: 'STATUS',
+        //     dataIndex: 'status',
+        //     key: 'status',
+        //     render: (status) => (
+        //         <Select
+        //             defaultValue={status}
+        //             style={{ width: 100 }}
+        //             className="rounded-lg"
+        //             options={[
+        //                 { value: 'Active', label: <span className="text-green-600 font-medium">Active</span> },
+        //                 { value: 'Inactive', label: <span className="text-red-600 font-medium">Inactive</span> },
+        //             ]}
+        //         />
+        //     ),
+        // },
         {
             title: 'ACTION',
             key: 'action',

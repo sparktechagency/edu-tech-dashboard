@@ -6,6 +6,7 @@ import type { ColumnsType } from 'antd/es/table';
 import StudentDetailsModal from '../../../components/modals/teacher/StudentDetailsModal';
 import HeaderTitle from '../../../components/shared/HeaderTitle';
 import { useGetMyStudentsQuery } from '../../../redux/apiSlices/teacher/homeSlice';
+import { getImageUrl } from '../../../utils/getImageUrl';
 
 export interface StudentData {
     key: string;
@@ -37,7 +38,7 @@ const MyStudent = () => {
         track: student.userGroupTrack?.name || null,
         joined: student.createdAt,
         status: student.verified ? 'Active' : 'Inactive',
-        avatar: student.profile || 'https://via.placeholder.com/150',
+        avatar: getImageUrl(student.profile! )|| 'https://via.placeholder.com/150',
     })) || [];
 
     const columns: ColumnsType = [

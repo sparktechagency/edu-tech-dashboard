@@ -40,26 +40,26 @@ const AssignmentDetailsModal: React.FC<AssignmentDetailsModalProps> = ({ open, o
                             <td className="p-4 text-gray-700 tracking-tight text-sm">{assignment.description}</td>
                         </tr>
                         <tr className="border-b border-gray-100">
-                            <td className="p-4 font-semibold text-gray-500 text-sm">Type</td>
+                            <td className="p-4 font-semibold text-gray-500 text-sm">Group Track</td>
                             <td className="p-4 text-gray-700 font-medium">
                                 <Tag
                                     color="error"
                                     className="bg-red-50 text-red-500 border-red-100 rounded px-2 font-medium"
                                 >
-                                    {assignment.attachment || 'PDF'}
+                                    {assignment?.type?.name || 'PDF'}
                                 </Tag>
                             </td>
                         </tr>
                         <tr className="border-b border-gray-100">
-                            <td className="p-4 font-semibold text-gray-500 text-sm">Target Track</td>
+                            <td className="p-4 font-semibold text-gray-500 text-sm">Groups</td>
                             <td className="p-4">
                                 <div className="flex flex-wrap gap-1">
-                                    {assignment.targets?.map((t: string) => (
+                                    {assignment.targets?.map((t: {_id: string; name: string}) => (
                                         <Tag
-                                            key={t}
+                                            key={t._id}
                                             className="bg-gray-100 text-gray-600 border-none rounded-full px-4 font-medium uppercase text-[10px]"
                                         >
-                                            {t}
+                                            {t.name}
                                         </Tag>
                                     ))}
                                 </div>
@@ -67,7 +67,7 @@ const AssignmentDetailsModal: React.FC<AssignmentDetailsModalProps> = ({ open, o
                         </tr>
                         <tr className="border-b border-gray-100">
                             <td className="p-4 font-semibold text-gray-500 text-sm">Due Date</td>
-                            <td className="p-4 text-gray-700 font-medium">{assignment.dueDate}</td>
+                            <td className="p-4 text-gray-700 font-medium">{new Date(assignment.dueDate).toDateString()}</td>
                         </tr>
                         <tr className="border-b-0">
                             <td className="p-4 font-semibold text-gray-500 text-sm">Status</td>

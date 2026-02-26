@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { Button, Input, Typography, ConfigProvider } from 'antd';
 import { SearchOutlined, FilterOutlined, PlusOutlined } from '@ant-design/icons';
 
@@ -8,15 +8,24 @@ import AssignmentDetailsModal from './components/AssignmentDetailsModal';
 import SubmissionReviewModal from './components/SubmissionReviewModal';
 import AssignmentTable from './components/AssignmentTable';
 import SubmissionTable from './components/SubmissionTable';
-import { initialAssignments, initialSubmissions } from '../../../constants/assignmentData';
+
+import { useCreateAssignmentMutation, useDeleteAssignmentMutation, useGetAllSubmissionOfAssignmentQuery, useGetAssignmentQuery, useGiveMarksOfSubmissionMutation, useUpdateAssignmentMutation } from '../../../redux/apiSlices/teacher/assignmentSlice';
+import { toast } from 'sonner';
+
 
 const { Title } = Typography;
 
 function Assignment() {
+    const [page, setPage] = useState(1);
+    const [createAssignment]=useCreateAssignmentMutation()
+    const [updateAssignment]=useUpdateAssignmentMutation()
+    const [deleteAssignment]=useDeleteAssignmentMutation()
     const [activeTab, setActiveTab] = useState<'assignment' | 'submission'>('assignment');
-    const [assignments, setAssignments] = useState(initialAssignments);
-    const [submissions, setSubmissions] = useState(initialSubmissions);
     const [searchText, setSearchText] = useState('');
+    const {data:assignmentData, isLoading,isFetching} = useGetAssignmentQuery({page:page, limit:10,searchTerm:searchText});
+    const {data:submissionData} = useGetAllSubmissionOfAssignmentQuery({page:1, limit:10});
+    const [reviewSubmission]=useGiveMarksOfSubmissionMutation()
+    const [file, setFile] = useState<any | null>(null);
 
     // Modal States
     const [modalMode, setModalMode] = useState<'create' | 'edit'>('create');
@@ -30,46 +39,126 @@ function Assignment() {
 
     // --- Derived State (Search/Filter Logic) ---
 
-    const filteredAssignments = useMemo(() => {
-        return assignments.filter(
-            (a) =>
-                a.title.toLowerCase().includes(searchText.toLowerCase()) ||
-                a.description.toLowerCase().includes(searchText.toLowerCase()),
-        );
-    }, [assignments, searchText]);
+    const newData = assignmentData?.data?.map(item=>{
+        return {
+            key: item._id,
+            title: item.title,
+            targets: item.userGroup,
+            description: item.description,
+            dueDate: item.dueDate,
+            status: item.published?"Active":"Inactive",
+            points: item.totalPoint,
+            type:item.userGroupTrack,
+            attachment:item.attachment
 
-    const filteredSubmissions = useMemo(() => {
-        return submissions.filter(
-            (s) =>
-                s.name.toLowerCase().includes(searchText.toLowerCase()) ||
-                s.email.toLowerCase().includes(searchText.toLowerCase()),
-        );
-    }, [submissions, searchText]);
+        }
+    })
+
+    const modifiedData = submissionData?.data?.data?.map(item=>{
+        return {
+            key: item._id,
+            avatar:item.studentId.profile,
+            name: item.studentId.name,
+            email: item.studentId.email,
+            assignment: item.assignmentId,
+            submissionDate: item.createdAt,
+            attachment:item.fileAssignment,
+            grade: item.marks,
+            review: item.feedback
+        }
+    })
 
     // --- Logic Handlers ---
 
-    const handleCreateEditFinish = (values: any) => {
+    const handleCreateEditFinish = async (values: any) => {
         if (modalMode === 'edit') {
-            setAssignments((prev) => prev.map((a) => (a.key === values.key ? { ...a, ...values } : a)));
+            console.log(file.file.originFileObj);
+            
+            const formData = new FormData();
+            formData.append('title', values.title);
+            formData.append('description', values.description);
+            formData.append('dueDate', values.dueDate);
+            formData.append('totalPoint', values.points);
+            formData.append('userGroupTrack', values.type);
+            if (file) {
+                formData.append('attachment', file.file.originFileObj);
+            }
+
+            
+            const { error } = await updateAssignment({ id: selectedAssignment?.key, data: formData }).unwrap();
+            if (!error) {
+                toast.success('Assignment updated successfully');
+                setIsCreateModalOpen(false);
+                return;
+            }
+            toast.error(error?.data?.message || 'Failed to update assignment');
         } else {
-            const newAssignment = {
-                ...values,
-                key: String(Date.now()),
-                status: 'Active',
-            };
-            setAssignments((prev) => [newAssignment, ...prev]);
+
+        const formData = new FormData();
+        
+        
+        if (file.file.originFileObj) {
+            formData.append('attachment', file.file.originFileObj);
         }
+
+        formData.append('title', values.title);
+        formData.append('description', values.description);
+        if(values.targets){
+            for(let i=0; i<values.targets.length; i++){
+                formData.append('userGroup[]', values.targets[i]);
+            }
+        }
+
+        
+
+
+        formData.append('dueDate', values.dueDate);
+        formData.append('totalPoint', values.points);
+        formData.append('userGroupTrack', values.type);
+
+      const {error} =  await createAssignment(formData).unwrap();
+      if(!error){
+        toast.success('Assignment created successfully');
         setIsCreateModalOpen(false);
+        return
+      }
+      toast.error(error?.data?.message || 'Failed to create assignment');
+
+
+        }
     };
 
-    const handleDelete = (key: string) => {
-        setAssignments((prev) => prev.filter((a) => a.key !== key));
+
+    const handleChangeStatus = async (key: string, status: string) => {
+        const { error }: any = await updateAssignment({ id: key, data: { published: status === 'Active' ? true : false } });
+        if (!error) {
+            toast.success('Assignment updated successfully');
+            return;
+        }
+        toast.error(error?.data?.message || 'Failed to update assignment');
+    }
+
+    const handleDelete = async (key: string) => {
+   
+        
+       const { error }: any = await deleteAssignment({id: key});
+        if (!error) {
+            toast.success('Assignment deleted successfully');
+            return;
+        }
+        toast.error(error?.data?.message || 'Failed to delete assignment');
     };
 
-    const handleReviewFinish = (key: string, grade: string) => {
-        setSubmissions((prev) =>
-            prev.map((s) => (s.key === key ? { ...s, grade: `${grade}/100`, status: 'Submitted' } : s)),
-        );
+    const handleReviewFinish = (key: string, grade: string, review: string) => {
+        console.log(review);
+        
+        const { error }: any = reviewSubmission({id: key, data: {marks: grade, feedback: review}});
+        if (!error) {
+            toast.success('Review submitted successfully');
+            setIsReviewModalOpen(false);
+            return;
+        }
+        toast.error(error?.data?.message || 'Failed to submit review');
     };
 
     return (
@@ -154,7 +243,7 @@ function Assignment() {
                 >
                     {activeTab === 'assignment' ? (
                         <AssignmentTable
-                            data={filteredAssignments}
+                            data={newData || []}
                             onView={(record) => {
                                 setSelectedAssignment(record);
                                 setIsDetailsModalOpen(true);
@@ -165,10 +254,14 @@ function Assignment() {
                                 setIsCreateModalOpen(true);
                             }}
                             onDelete={handleDelete}
+                            isLoading={isLoading || isFetching}
+                            pagination={assignmentData?.pagination!}
+                            setPage={setPage}
+                            handleChangeStatus={handleChangeStatus}
                         />
                     ) : (
                         <SubmissionTable
-                            data={filteredSubmissions}
+                            data={modifiedData||[]}
                             onView={(record) => {
                                 setSelectedSubmission(record);
                                 setIsReviewModalOpen(true);
@@ -186,6 +279,7 @@ function Assignment() {
                 initialValues={selectedAssignment}
                 onCancel={() => setIsCreateModalOpen(false)}
                 onFinish={handleCreateEditFinish}
+                setFile={setFile}
             />
 
             <AssignmentDetailsModal

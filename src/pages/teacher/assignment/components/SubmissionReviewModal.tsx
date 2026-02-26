@@ -1,6 +1,7 @@
 import React from 'react';
 import { Modal, Avatar, Typography, Form, Input, Button } from 'antd';
 import { PlusOutlined, FilePdfOutlined, DownloadOutlined } from '@ant-design/icons';
+import { getImageUrl } from '../../../../utils/getImageUrl';
 
 const { Text } = Typography;
 
@@ -8,12 +9,13 @@ interface SubmissionReviewModalProps {
     open: boolean;
     onCancel: () => void;
     submission: any;
-    onReview: (id: string, grade: string) => void;
+    onReview: (id: string, grade: string, review: string) => void;
 }
 
 const SubmissionReviewModal: React.FC<SubmissionReviewModalProps> = ({ open, onCancel, submission, onReview }) => {
     const [form] = Form.useForm();
-
+  
+    
     if (!submission) return null;
 
     return (
@@ -32,11 +34,11 @@ const SubmissionReviewModal: React.FC<SubmissionReviewModalProps> = ({ open, onC
         >
             <div className="pt-4 px-2">
                 <div className="flex items-center gap-4 mb-8">
-                    <Avatar src={submission.avatar} size={64} className="border-2 border-white shadow-sm" />
+                    <Avatar src={getImageUrl(submission.avatar||'')} size={64} className="border-2 border-white shadow-sm" />
                     <div>
                         <h3 className="text-xl font-bold text-gray-800 !m-0">{submission.name}</h3>
                         <Text type="secondary" className="text-sm">
-                            Submission Date: {submission.submissionDate}
+                            Submission Date: {new Date(submission.submissionDate).toLocaleString()}
                         </Text>
                     </div>
                 </div>
@@ -54,7 +56,7 @@ const SubmissionReviewModal: React.FC<SubmissionReviewModalProps> = ({ open, onC
                         </div>
                     </div>
                     <a
-                        href="#"
+                        href={`${getImageUrl(submission.attachment)}`}
                         className="flex items-center justify-center h-10 w-10 bg-blue-50/50 rounded-full hover:bg-blue-100 transition-colors text-[#3182CE]"
                     >
                         <DownloadOutlined />
@@ -62,11 +64,10 @@ const SubmissionReviewModal: React.FC<SubmissionReviewModalProps> = ({ open, onC
                 </div>
 
                 <Form form={form} layout="vertical">
-                    <Form.Item label={<span className="font-bold text-gray-700 text-base">Student Notes</span>}>
+                    <Form.Item name="review" initialValue={submission?.review} label={<span className="font-bold text-gray-700 text-base">Review of Submission</span>}>
                         <Input.TextArea
                             rows={4}
-                            defaultValue={submission.notes}
-                            readOnly
+                            defaultValue={submission?.review}
                             className="rounded-xl bg-gray-50/30 border-gray-100 py-4 px-5 text-gray-600 focus:bg-white"
                         />
                     </Form.Item>
@@ -74,10 +75,10 @@ const SubmissionReviewModal: React.FC<SubmissionReviewModalProps> = ({ open, onC
                     <div className="flex items-center gap-4 mt-4">
                         <span className="font-bold text-gray-800">Grade</span>
                         <div className="flex items-center">
-                            <Form.Item name="grade" initialValue={submission.grade?.split('/')[0] || '98'} noStyle>
-                                <Input className="w-20 h-14 rounded-xl text-center font-bold text-xl bg-white border-gray-200" />
+                            <Form.Item name="grade" initialValue={submission.grade || 0} noStyle>
+                                <Input type="number" className="w-20 h-14 rounded-xl text-center font-bold text-xl bg-white border-gray-200" />
                             </Form.Item>
-                            <span className="ml-3 text-gray-400 font-bold text-lg">/100</span>
+                            <span className="ml-3 text-gray-400 font-bold text-lg">/{submission?.assignment?.totalPoint}</span>
                         </div>
                     </div>
 
@@ -89,7 +90,7 @@ const SubmissionReviewModal: React.FC<SubmissionReviewModalProps> = ({ open, onC
                             type="primary"
                             className="h-12 px-12 rounded-xl font-bold bg-[#3182CE] hover:bg-[#2b71b1] border-none shadow-md shadow-blue-200 transition-all hover:-translate-y-0.5"
                             onClick={() => {
-                                onReview(submission.key, form.getFieldValue('grade'));
+                                onReview(submission.key, form.getFieldValue('grade'), form.getFieldValue('review'));
                                 onCancel();
                             }}
                         >
