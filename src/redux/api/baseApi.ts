@@ -10,7 +10,7 @@ export const api = createApi({
             Authorization: `Bearer ${token}`,
         },
     }),
-    tagTypes: ['Facility', 'Package', 'Review', 'Profile', 'Chat-Rooms', 'Chat-Messages', 'TimeTracks'],
+    tagTypes: ['Facility', 'Package', 'Review', 'Profile', 'Chat-Rooms', 'Chat-Messages', 'TimeTracks',"Class","Resourse","Assignment","Submission"],
     endpoints: () => ({}),
 });
 

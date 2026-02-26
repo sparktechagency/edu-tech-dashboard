@@ -1,15 +1,23 @@
 import React from 'react';
 import { Table, Tag, Select, Space, Button, Popconfirm } from 'antd';
 import { FilePdfOutlined, FilterOutlined, EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import FileViewerButton from '../../../../components/shared/FileViewButton';
+import { IPagination } from '../../../../types/teacher/home/class.type';
 
 interface AssignmentTableProps {
     data: any[];
     onView: (record: any) => void;
     onEdit: (record: any) => void;
     onDelete: (key: string) => void;
+    isLoading: boolean,
+    pagination:IPagination,
+    setPage:(page:number)=>void
+    handleChangeStatus:(key: string, status: string) => void
 }
 
-const AssignmentTable: React.FC<AssignmentTableProps> = ({ data, onView, onEdit, onDelete }) => {
+const AssignmentTable: React.FC<AssignmentTableProps> = ({ data, onView, onEdit, onDelete,isLoading, pagination,setPage,handleChangeStatus}) => {
+  
+    
     const columns = [
         {
             title: 'TITLE',
@@ -29,26 +37,24 @@ const AssignmentTable: React.FC<AssignmentTableProps> = ({ data, onView, onEdit,
         },
         {
             title: 'ATTACHMENT',
-            dataIndex: 'type',
-            key: 'type',
+            dataIndex: 'attachment',
+            key: 'attachment',
             render: (text: string) => (
-                <Tag color="error" className="bg-red-50 text-red-500 border-red-100 rounded px-2 font-medium">
-                    {text || 'PDF'}
-                </Tag>
+                text ?<FileViewerButton fileUrl={text} fileName="File Preview" /> : <span className="font-medium text-gray-700">No File</span>
             ),
         },
         {
             title: 'TARGET',
             dataIndex: 'targets',
             key: 'targets',
-            render: (targets: string[]) => (
+            render: (targets: {name: string,_id: string}[]) => (
                 <div className="flex flex-col gap-1">
                     {targets?.map((t) => (
                         <Tag
-                            key={t}
-                            className={`${t === 'Skill Path' ? 'bg-green-50 text-green-500 border-green-100' : 'bg-gray-50 text-gray-500 border-gray-100'} rounded-full px-3 py-0.5 text-[10px] w-fit font-medium`}
+                            key={t._id}
+                            className={`${t.name === 'Skill Path' ? 'bg-green-50 text-green-500 border-green-100' : 'bg-gray-50 text-gray-500 border-gray-100'} rounded-full px-3 py-0.5 text-[10px] w-fit font-medium`}
                         >
-                            {t}
+                            {t.name}
                         </Tag>
                     ))}
                 </div>
@@ -58,18 +64,19 @@ const AssignmentTable: React.FC<AssignmentTableProps> = ({ data, onView, onEdit,
             title: 'DUE DATE',
             dataIndex: 'dueDate',
             key: 'dueDate',
-            render: (date: string) => <span className="font-medium text-gray-700">{date}</span>,
+            render: (date: string) => <span className="font-medium text-gray-700">{new Date(date).toDateString()}</span>,
         },
         {
             title: 'STATUS',
             dataIndex: 'status',
             key: 'status',
-            render: (status: string) => (
+            render: (status: string,record:any) => (
                 <Select
                     defaultValue={status}
                     className="w-24 custom-select-green"
                     bordered={true}
                     suffixIcon={<FilterOutlined className="text-[10px]" />}
+                    onChange={(v)=>handleChangeStatus(record.key,v)}
                 >
                     <Select.Option value="Active">Active</Select.Option>
                     <Select.Option value="Inactive">Inactive</Select.Option>
@@ -114,7 +121,7 @@ const AssignmentTable: React.FC<AssignmentTableProps> = ({ data, onView, onEdit,
     ];
 
     return (
-        <Table columns={columns} dataSource={data} pagination={{ pageSize: 8 }} className="custom-dashboard-table" />
+        <Table loading={isLoading} columns={columns} dataSource={data} pagination={{ pageSize: 10,current:pagination?.page,total:pagination?.total,onChange:(page)=>setPage(page)}} className="custom-dashboard-table" />
     );
 };
 

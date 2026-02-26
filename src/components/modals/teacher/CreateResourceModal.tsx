@@ -1,5 +1,6 @@
 import { Modal, Button, Input, Select, Form } from 'antd';
 import { IoCloseOutline } from 'react-icons/io5';
+import { useGetUserGroupsTrackQuery } from '../../../redux/apiSlices/teacher/resourceSlice';
 
 interface CreateResourceModalProps {
     visible: boolean;
@@ -10,6 +11,7 @@ interface CreateResourceModalProps {
 
 const CreateResourceModal: React.FC<CreateResourceModalProps> = ({ visible, onClose, onSave, initialValues }) => {
     const [form] = Form.useForm();
+    const {data:userGroups} = useGetUserGroupsTrackQuery({page:1,limit:10});
 
     const handleOk = () => {
         form.validateFields().then((values) => {
@@ -50,13 +52,6 @@ const CreateResourceModal: React.FC<CreateResourceModalProps> = ({ visible, onCl
                     <Input placeholder="Enter title" className="h-[42px] rounded-lg border-gray-200" />
                 </Form.Item>
 
-                <Form.Item name="description" label={<span className="font-semibold text-gray-700">Description</span>}>
-                    <Input.TextArea
-                        placeholder="Write description..."
-                        rows={4}
-                        className="rounded-lg border-gray-200"
-                    />
-                </Form.Item>
 
                 <div className="flex gap-6">
                     <Form.Item
@@ -67,29 +62,49 @@ const CreateResourceModal: React.FC<CreateResourceModalProps> = ({ visible, onCl
                     >
                         <Select placeholder="Select" className="h-[42px] rounded-lg border-gray-200">
                             <Select.Option value="PDF">PDF</Select.Option>
-                            <Select.Option value="Link">Link</Select.Option>
-                            <Select.Option value="Video">Video</Select.Option>
+                            <Select.Option value="LINK">Link</Select.Option>
+                            <Select.Option value="VIDEO">Video</Select.Option>
+                            <Select.Option value="AUDIO">Audio</Select.Option>
+                            <Select.Option value="DOCX">Docx</Select.Option>
+
                         </Select>
                     </Form.Item>
 
                     <Form.Item
+                        name="targetAudience"
+                        label={<span className="font-semibold text-gray-700">Target Audience</span>}
+                        className="flex-1"
+                        rules={[{ required: true, message: 'Please select a type' }]}
+                    >
+                        <Select placeholder="Select" className="h-[42px] rounded-lg border-gray-200">
+                            <Select.Option value="STUDENT">Student</Select.Option>
+                            <Select.Option value="MENTOR">Mentor</Select.Option>
+                            <Select.Option value="TEACHER">Teacher</Select.Option>
+                            <Select.Option value="COORDINATOR">Coordinator</Select.Option>
+
+                        </Select>
+                    </Form.Item>
+
+                    
+                </div>
+                <Form.Item
                         name="contentUrl"
                         label={<span className="font-semibold text-gray-700">Content URL</span>}
                         className="flex-1"
                     >
                         <Input placeholder="https://..." className="h-[42px] rounded-lg border-gray-200" />
                     </Form.Item>
-                </div>
-
                 <Form.Item
-                    name="materialType"
-                    label={<span className="font-semibold text-gray-700">Material Type</span>}
+                    name="targertGroup"
+                    label={<span className="font-semibold text-gray-700">User Group</span>}
                     rules={[{ required: true, message: 'Please select a material type' }]}
                 >
                     <Select placeholder="Select" className="h-[42px] rounded-lg border-gray-200">
-                        <Select.Option value="Learning Material">Learning Material</Select.Option>
-                        <Select.Option value="Assignment">Assignment</Select.Option>
-                        <Select.Option value="Reference">Reference</Select.Option>
+                        {userGroups?.data?.map((group) => (
+                            <Select.Option  key={group._id} value={group._id}>
+                                {group.name}
+                            </Select.Option>
+                        ))}
                     </Select>
                 </Form.Item>
 

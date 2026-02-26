@@ -1,20 +1,25 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Input, Button, Table, Badge, DatePicker, Select, Avatar, Space, Typography, Card } from 'antd';
 import { SearchOutlined, FilterOutlined, CalendarOutlined, UserOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
-import { initialStudents, StudentAttendance } from '../../../constants/initialStudents';
+import {  StudentAttendance } from '../../../constants/initialStudents';
+import { useBulkAttandanceMutation, useGetStudentsOFTeacherQuery } from '../../../redux/apiSlices/teacher/attandanceSlice';
+import { getImageUrl } from '../../../utils/getImageUrl';
+import { useGetUserGroupsQuery } from '../../../redux/apiSlices/teacher/resourceSlice';
+import { toast } from 'sonner';
 
 const { Title } = Typography;
 const { Option } = Select;
 
 export default function AttendanceTeacher() {
-    const [students, setStudents] = useState<StudentAttendance[]>(initialStudents);
-    const [selectedDate, setSelectedDate] = useState(dayjs());
-    const [searchText, setSearchText] = useState('');
+    const [page,setPage]=useState(1)
     const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
-
-    // Extract all unique groups for the filter
-    const allGroups = Array.from(new Set(initialStudents?.flatMap((s) => s.groups))).sort();
+    const [searchText, setSearchText] = useState('');
+    const {data:studentsData, isLoading, isFetching} = useGetStudentsOFTeacherQuery({page: page, limit: 10,...(selectedGroup ? {userGroup: selectedGroup} : {}),searchTerm:searchText});
+    const {data:userGroups} = useGetUserGroupsQuery({page:1,limit:10});
+    const [studentAttendance]=useBulkAttandanceMutation()
+    const [students, setStudents] = useState<StudentAttendance[]>([]);
+    const [selectedDate, setSelectedDate] = useState(dayjs());
 
     const handleStatusChange = (key: string, value: StudentAttendance['status']) => {
         setStudents((prev) => [...prev.map((s) => (s.key === key ? { ...s, status: value } : s))]);
@@ -25,26 +30,63 @@ export default function AttendanceTeacher() {
     };
 
     const markAll = (status: StudentAttendance['status']) => {
-        // We update the state of the CURRENTLY VISIBLE (filtered) students
-        // or all students? Usually "Mark All" refers to the current view.
-        // Let's update all for now as per "Mark All" literal, but use map to trigger re-render properly.
-        const filteredKeys = filteredStudents.map((s) => s.key);
-        setStudents((prev) => [...prev.map((s) => (filteredKeys.includes(s.key) ? { ...s, status } : s))]);
+        const filteredKeys = students.map((s) => {
+            return {
+                ...s,
+                status
+            }
+        })
+        setStudents(filteredKeys as any);
     };
 
-    const filteredStudents = students.filter((s) => {
-        const matchesSearch =
-            s.name.toLowerCase().includes(searchText.toLowerCase()) ||
-            s.description.toLowerCase().includes(searchText.toLowerCase());
-        const matchesGroup = !selectedGroup || s.groups.includes(selectedGroup);
-        return matchesSearch && matchesGroup;
-    });
+    const newData = studentsData?.data?.map((stu)=>{
+        return {
+            key: stu._id,
+            name: stu.name,
+            description: stu.email,
+            groups:stu.userGroup,
+            avatar: stu.profile,
+            status: '',
+            notes: '',
+            classId: stu.classId
+        }
+    })
+
+
+    const handleSaveAttandance =async () => {
+        if(!selectedDate) {
+            toast.error('Please select a date');
+            return
+        }
+       const classId = students?.find(s=>s.classId)?.classId;
+       const data ={
+        date: selectedDate.format('YYYY-MM-DD'),     
+        classId,
+        records: students?.filter(s=>s.status)?.map((s) => ({
+            studentId: s.key,
+            status: s.status,
+            note: s.notes
+        }))
+    }
+     const {error}=await studentAttendance(data);
+     console.log(error);
+     
+     if(!error){
+        toast.success('Attendance saved successfully')
+        return
+     }
+     toast.error((error as any)?.data?.message || 'Failed to save attendance');
+    };
+
+    useEffect(() => {
+        setStudents(newData || [] as any);
+    }, [studentsData]);
 
     const stats = {
         total: students.length,
-        present: students.filter((s) => s.status === 'Present').length,
-        late: students.filter((s) => s.status === 'Late').length,
-        absent: students.filter((s) => s.status === 'Absent').length,
+        present: students.filter((s) => s.status === 'present').length,
+        late: students.filter((s) => s.status === 'late').length,
+        absent: students.filter((s) => s.status === 'absent').length,
     };
 
     const columns = [
@@ -54,7 +96,7 @@ export default function AttendanceTeacher() {
             key: 'name',
             render: (_: any, record: StudentAttendance) => (
                 <Space>
-                    <Avatar src={record.avatar} icon={<UserOutlined />} size={40} className="bg-gray-100" />
+                    <Avatar src={getImageUrl(record.avatar!)} icon={<UserOutlined />} size={40} className="bg-gray-100" />
                     <div>
                         <div className="font-bold text-gray-800">{record.name}</div>
                         <div className="text-xs text-gray-400">{record.description}</div>
@@ -66,15 +108,15 @@ export default function AttendanceTeacher() {
             title: 'GROUP/TRACK',
             dataIndex: 'groups',
             key: 'groups',
-            render: (groups: string[]) => (
+            render: (groups: { name: string , _id: string}[]) => (
                 <div className="flex flex-wrap gap-1">
-                    {groups.map((group) => (
+                    {groups?.map((group) => (
                         <Badge
-                            key={group}
-                            count={group}
+                            key={group._id}
+                            count={group.name}
                             style={{
-                                backgroundColor: group === 'Skill Path' ? '#E8F5E9' : '#F5F5F5',
-                                color: group === 'Skill Path' ? '#4CAF50' : '#888',
+                                backgroundColor: group?.name === 'Skill Path' ? '#E8F5E9' : '#F5F5F5',
+                                color: group?.name === 'Skill Path' ? '#4CAF50' : '#888',
                                 boxShadow: 'none',
                             }}
                         />
@@ -93,10 +135,10 @@ export default function AttendanceTeacher() {
                     className="w-32 custom-select"
                     onChange={(val) => handleStatusChange(record.key, val)}
                 >
-                    <Option value="Present">Present</Option>
-                    <Option value="Late">Late</Option>
-                    <Option value="Absent">Absent</Option>
-                    <Option value="Excused">Excused</Option>
+                    <Option value="present">Present</Option>
+                    <Option value="late">Late</Option>
+                    <Option value="absent">Absent</Option>
+                    <Option value="excused">Excused</Option>
                 </Select>
             ),
         },
@@ -138,9 +180,9 @@ export default function AttendanceTeacher() {
                         onChange={(val) => setSelectedGroup(val)}
                         suffixIcon={<FilterOutlined className="text-gray-400" />}
                     >
-                        {allGroups.map((group) => (
-                            <Option key={group} value={group}>
-                                {group}
+                        {userGroups?.data?.map((group) => (
+                            <Option key={group._id} value={group._id}>
+                                {group.name}
                             </Option>
                         ))}
                     </Select>
@@ -178,25 +220,25 @@ export default function AttendanceTeacher() {
                 <div className="flex flex-wrap items-center gap-2">
                     <Button
                         className="bg-white text-gray-700 border border-gray-100 hover:border-[#8012FF]/30 h-10 rounded-lg px-4 font-medium"
-                        onClick={() => markAll('Present')}
+                        onClick={() => markAll('present')}
                     >
                         Set all: Present
                     </Button>
                     <Button
                         className="bg-white text-gray-700 border border-gray-100 hover:border-[#8012FF]/30 h-10 rounded-lg px-4 font-medium"
-                        onClick={() => markAll('Absent')}
+                        onClick={() => markAll('absent')}
                     >
                         Set all: Absent
                     </Button>
                     <Button
                         className="bg-white text-gray-700 border border-gray-100 hover:border-[#8012FF]/30 h-10 rounded-lg px-4 font-medium"
-                        onClick={() => markAll('Late')}
+                        onClick={() => markAll('late')}
                     >
                         Set all: Late
                     </Button>
                     <Button
                         className="bg-white text-gray-700 border border-gray-100 hover:border-[#8012FF]/30 h-10 rounded-lg px-4 font-medium"
-                        onClick={() => markAll('Excused')}
+                        onClick={() => markAll('excused')}
                     >
                         Set all: Excused
                     </Button>
@@ -205,7 +247,7 @@ export default function AttendanceTeacher() {
 
             {/* Table Area */}
             <Card className="rounded-3xl shadow-sm border-none overflow-hidden custom-table-card">
-                <Table columns={columns} dataSource={filteredStudents} pagination={false} className="custom-table" />
+                <Table loading={isLoading||isFetching} columns={columns} dataSource={students} pagination={{ pageSize: 10,current:page,onChange:(page)=>setPage(page),total:studentsData?.pagination?.total}} className="custom-table" />
             </Card>
 
             {/* Footer Action */}
@@ -213,9 +255,7 @@ export default function AttendanceTeacher() {
                 <Button
                     type="primary"
                     className="bg-[#21c35d] hover:!bg-[#21c35d]/90 h-12 rounded-2xl px-12 font-bold text-lg shadow-lg shadow-[#21c35d]/20 flex-center"
-                    onClick={() => {
-                        console.log('Saving attendance:', students);
-                    }}
+                    onClick={handleSaveAttandance}
                 >
                     Save Attendance
                 </Button>

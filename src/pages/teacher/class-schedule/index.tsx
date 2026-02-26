@@ -4,9 +4,16 @@ import type { ColumnsType } from 'antd/es/table';
 import { SearchOutlined, FilterOutlined, EyeOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { IoTimeOutline, IoLocationOutline } from 'react-icons/io5';
 import HeaderTitle from '../../../components/shared/HeaderTitle';
-import { classSchedulesData } from '../../../constants/teacher-data';
 import ClassDetailsModal from '../../../components/modals/teacher/ClassDetailsModal';
 import CreateClassModal from '../../../components/modals/teacher/CreateClassModal';
+import {
+    useAddClassTeacherMutation,
+    useDeleteClassTeacherMutation,
+    useGetTeacherClassesQuery,
+    useUpdateClassTeacherMutation,
+} from '../../../redux/apiSlices/teacher/homeSlice';
+import { toast } from 'sonner';
+import Swal from 'sweetalert2';
 
 export interface ClassScheduleItem {
     key: string;
@@ -19,11 +26,40 @@ export interface ClassScheduleItem {
     status: string;
 }
 
+export interface ClassData {
+    title: string;
+    description: string;
+    date: any; // important ✅
+    location: string;
+    virtualClass: boolean;
+}
+
 const ClassSchedule = () => {
+    const [page, setPage] = useState(1);
+    const [searchTerm, setSearchTerm] = useState('');
+    const { data, isLoading, isFetching } = useGetTeacherClassesQuery({
+        page: page,
+        limit: 10,
+        searchTerm: searchTerm,
+    });
+    const [addClassTeacher, { isLoading: isAddingClass }] = useAddClassTeacherMutation();
+    const [updateClassTeacher, { isLoading: isUpdatingClass }] = useUpdateClassTeacherMutation();
+    const [deleteClassTeacher] = useDeleteClassTeacherMutation();
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [selectedClass, setSelectedClass] = useState<ClassScheduleItem | null>(null);
-    const [data, setData] = useState<ClassScheduleItem[]>(classSchedulesData);
+
+    const modifiedData: ClassScheduleItem[] =
+        data?.data.map((item) => ({
+            key: item._id,
+            title: item.title,
+            description: item.description,
+            date: item.classDate,
+            status: item.published ? 'Active' : 'Inactive',
+            time: item.classDate,
+            location: item.location,
+            targets: item.userGroup?.map((group) => group?.name) || [],
+        })) || [];
 
     const handleView = (record: ClassScheduleItem) => {
         setSelectedClass(record);
@@ -40,27 +76,78 @@ const ClassSchedule = () => {
         setIsCreateModalOpen(true);
     };
 
-    const handleSave = (values: any) => {
-        if (selectedClass) {
-            // Edit logic (update data)
-            setData((prev) =>
-                prev.map((item) =>
-                    item.key === selectedClass.key
-                        ? { ...item, ...values, date: values.date.format('DD/MM/YYYY') }
-                        : item,
-                ),
-            );
+    const handleDelete = async (record: ClassScheduleItem) => {
+        await Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!',
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                const { error }: any = await deleteClassTeacher(record.key);
+                if (!error) {
+                    toast.success('Class deleted successfully');
+                    return;
+                }
+                toast.error(error?.data?.message || 'Failed to delete class');
+            }
+        });
+    };
+
+    const handleStatusChange = (value: string, record: ClassScheduleItem) => {
+        if (value == 'Active') {
+            updateClassTeacher({
+                id: record.key,
+                data: {
+                    published: true,
+                },
+            });
         } else {
-            // Create logic (add to data)
-            const newItem = {
-                ...values,
-                key: (data.length + 1).toString(),
-                date: values.date.format('DD/MM/YYYY'),
-                time: '08:00 am', // Mock time
-                targets: ['Skill Path', 'Data'], // Mock targets
-                status: 'Active',
-            };
-            setData((prev) => [newItem, ...prev]);
+            updateClassTeacher({
+                id: record.key,
+                data: {
+                    published: false,
+                },
+            });
+        }
+    };
+
+    const handleSave = async (values: ClassData) => {
+        if (selectedClass) {
+            const { error, data }: any = await updateClassTeacher({
+                id: selectedClass.key,
+                data: {
+                    ...values,
+                    classDate: values?.date?.toISOString(),
+                },
+            });
+
+            if (!error) {
+                setIsCreateModalOpen(false);
+                toast.success(data?.message || 'Class updated successfully');
+                return;
+            }
+            toast.error(error?.data?.message || 'Failed to update class');
+        } else {
+            const { error }: any = await addClassTeacher({
+                title: values.title,
+                description: values.description,
+                classDate: values.date.toISOString(),
+                location: values.location,
+                virtualClass: values.virtualClass,
+                published: true,
+            });
+
+            if (!error) {
+                setIsCreateModalOpen(false);
+                toast.success('Class added successfully');
+                return;
+            }
+
+            toast.error(error?.data?.message || 'Failed to add class');
         }
     };
 
@@ -86,8 +173,8 @@ const ClassSchedule = () => {
             key: 'dateTime',
             render: (_, record) => (
                 <div className="text-gray-600">
-                    <div className="font-medium">{record.date}</div>
-                    <div className="text-xs">{record.time}</div>
+                    <div className="font-medium">{new Date(record.date).toDateString()}</div>
+                    <div className="text-xs">{new Date(record.time).toLocaleTimeString()}</div>
                 </div>
             ),
         },
@@ -123,10 +210,11 @@ const ClassSchedule = () => {
             title: 'STATUS',
             dataIndex: 'status',
             key: 'status',
-            render: (status) => (
+            render: (status, record) => (
                 <Select
                     defaultValue={status}
                     style={{ width: 100 }}
+                    onChange={(value) => handleStatusChange(value, record)}
                     bordered={true}
                     className="rounded-lg status-select"
                     options={[
@@ -159,6 +247,7 @@ const ClassSchedule = () => {
                         icon={<DeleteOutlined />}
                         danger
                         className="flex items-center gap-1 border-red-100 bg-red-50 text-red-500 hover:bg-red-100"
+                        onClick={() => handleDelete(record)}
                     >
                         Delete
                     </Button>
@@ -175,6 +264,7 @@ const ClassSchedule = () => {
                     <Input
                         placeholder="Search student"
                         prefix={<SearchOutlined className="text-gray-400" />}
+                        onChange={(v) => setSearchTerm(v.target.value)}
                         className="w-72 h-[42px] rounded-lg border-gray-200"
                     />
                     <Button
@@ -193,7 +283,18 @@ const ClassSchedule = () => {
             </div>
 
             <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-                <Table columns={columns} dataSource={data} pagination={{ pageSize: 6 }} className="" />
+                <Table
+                    loading={isLoading || isFetching}
+                    columns={columns}
+                    dataSource={modifiedData}
+                    pagination={{
+                        pageSize: 10,
+                        current: page,
+                        onChange: (page) => setPage(page),
+                        total: data?.pagination.total,
+                    }}
+                    className=""
+                />
             </div>
 
             <ClassDetailsModal
@@ -207,6 +308,7 @@ const ClassSchedule = () => {
                 onClose={() => setIsCreateModalOpen(false)}
                 onSave={handleSave}
                 initialValues={selectedClass}
+                isLoading={isAddingClass || isUpdatingClass}
             />
         </div>
     );
