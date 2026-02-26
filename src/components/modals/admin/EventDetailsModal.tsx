@@ -72,11 +72,11 @@ const EventDetailsModal = ({ open, onCancel, data }: EventDetailsModalProps) => 
                         </tr>
                         <tr>
                             <td className="px-5 py-4 bg-gray-50/50 font-medium text-gray-500 text-[13px]">
-                                Target Group
+                                Target Track
                             </td>
                             <td className="px-5 py-4">
                                 <span className="px-3 py-1 bg-gray-50 text-gray-500 rounded-full text-xs font-semibold border border-gray-100">
-                                    {data?.targetGroup || 'Fullstack'}
+                                    {data?.targetUser?.name || 'Fullstack'}
                                 </span>
                             </td>
                         </tr>
@@ -84,7 +84,7 @@ const EventDetailsModal = ({ open, onCancel, data }: EventDetailsModalProps) => 
                             <td className="px-5 py-4 bg-gray-50/50 font-medium text-gray-500 text-[13px]">
                                 Target Group
                             </td>
-                            <td className="px-5 py-4 text-gray-800 text-[13px]">{data?.targetAudience || 'All'}</td>
+                            <td className="px-5 py-4 text-gray-800 text-[13px]">{data?.targetGroup?.name || 'All'}</td>
                         </tr>
                         <tr>
                             <td className="px-5 py-4 bg-gray-50/50 font-medium text-gray-500 text-[13px]">Status</td>

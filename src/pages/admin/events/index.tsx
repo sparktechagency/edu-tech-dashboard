@@ -1,88 +1,61 @@
 import { useState } from 'react';
-import { Table, Button, Input, Select } from 'antd';
-import { Search, Filter, Plus, Eye, Edit, Trash2, ChevronDown, Calendar } from 'lucide-react';
+import { Table, Button, Input, Modal, message } from 'antd';
+import { Search, Filter, Plus, Eye, Edit, Trash2, Calendar } from 'lucide-react';
 import HeaderTitle from '../../../components/shared/HeaderTitle';
 import AddEventModal from '../../../components/modals/admin/AddEventModal';
 import EventDetailsModal from '../../../components/modals/admin/EventDetailsModal';
-
-const eventsData = [
-    {
-        key: '1',
-        title: 'Essential Experts Training',
-        description: 'Join us for an engaging session',
-        date: '17/10/2025',
-        location: 'Single 126, 1015 AE, Amsterdam',
-        type: 'Workshop',
-        target: ['Skill Path'],
-        status: 'Active',
-    },
-    {
-        key: '2',
-        title: 'Essential Experts Training',
-        description: 'Join us for an engaging session',
-        date: '17/10/2025',
-        location: 'Single 126, 1015 AE, Amsterdam',
-        type: 'Workshop',
-        target: ['Skill Path'],
-        status: 'Active',
-    },
-    {
-        key: '3',
-        title: 'Essential Experts Training',
-        description: 'Join us for an engaging session',
-        date: '17/10/2025',
-        location: 'Single 126, 1015 AE, Amsterdam',
-        type: 'Workshop',
-        target: ['Skill Path'],
-        status: 'Active',
-    },
-    {
-        key: '4',
-        title: 'Essential Experts Training',
-        description: 'Join us for an engaging session',
-        date: '17/10/2025',
-        location: 'Single 126, 1015 AE, Amsterdam',
-        type: 'Workshop',
-        target: ['Skill Path'],
-        status: 'Active',
-    },
-    {
-        key: '5',
-        title: 'Essential Experts Training',
-        description: 'Join us for an engaging session',
-        date: '17/10/2025',
-        location: 'Single 126, 1015 AE, Amsterdam',
-        type: 'Workshop',
-        target: ['Skill Path'],
-        status: 'Active',
-    },
-    {
-        key: '6',
-        title: 'Essential Experts Training',
-        description: 'Join us for an engaging session',
-        date: '17/10/2025',
-        location: 'Single 126, 1015 AE, Amsterdam',
-        type: 'Workshop',
-        target: ['Skill Path'],
-        status: 'Active',
-    },
-    {
-        key: '7',
-        title: 'Essential Experts Training',
-        description: 'Join us for an engaging session',
-        date: '17/10/2025',
-        location: 'Single 126, 1015 AE, Amsterdam',
-        type: 'Workshop',
-        target: ['Skill Path'],
-        status: 'Active',
-    },
-];
+import { useDeleteEventsMutation, useGetEventsQuery } from '../../../redux/apiSlices/admin/adminEventsApi';
+import { toast } from 'sonner';
+import moment from 'moment';
 
 const AdminEvents = () => {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState<any>(null);
+    const [page, setPage] = useState(1);
+    const [searchTerm, setSearchTerm] = useState('');
+    // API CALLS
+    const { data: eventsApi, refetch } = useGetEventsQuery({ page: page, limit: 10, searchTerm: searchTerm });
+    const [deleteEvents] = useDeleteEventsMutation();
+    console.log('event data', eventsApi?.data?.data);
 
+    const eventsData = eventsApi?.data?.data?.map((item: any) => ({
+        _id: item?._id,
+        key: item?._id,
+        title: item?.title,
+        description: item?.description,
+        type: item?.type,
+        location: item?.location,
+        targetGroup: item?.group,
+        targetUser: item?.targetUser,
+        date: moment(item?.date).format('YYYY-MM-DD'),
+    }));
+
+    const handleDelete = (id: string) => {
+        Modal.confirm({
+            title: 'Delete Material',
+            content: 'Are you sure you want to delete this material?',
+            okText: 'Yes, Delete',
+            okType: 'danger',
+            cancelText: 'No',
+            onOk: async () => {
+                try {
+                    toast.promise(deleteEvents({ id }).unwrap(), {
+                        loading: 'Deleting material...',
+                        success: (res: any) => {
+                            if (res?.success) {
+                                refetch();
+                            }
+                            return res?.message || 'material deleted successfully';
+                        },
+                        error: (err: any) => err?.message || 'Failed to delete material',
+                    });
+                } catch (error: any) {
+                    message.error(error?.data?.message || 'Something went wrong');
+                }
+            },
+        });
+    };
     const columns = [
         {
             title: 'EVENT',
@@ -121,46 +94,17 @@ const AdminEvents = () => {
         },
         {
             title: 'TARGET',
-            dataIndex: 'target',
-            key: 'target',
-            render: (tags: string[]) => (
+            dataIndex: 'targetGroup',
+            key: 'targetGroup',
+            render: (tags: { name: string; _id: string }) => (
                 <div className="flex gap-2">
-                    {tags.map((tag) => (
-                        <span
-                            key={tag}
-                            className="px-3 py-1 bg-gray-50 text-gray-400 text-[11px] rounded-full border border-gray-100 font-medium"
-                        >
-                            {tag}
-                        </span>
-                    ))}
+                    <span
+                        key={tags._id}
+                        className="px-3 py-1 bg-gray-50 text-gray-400 text-[11px] rounded-full border border-gray-100 font-medium"
+                    >
+                        {tags.name}
+                    </span>
                 </div>
-            ),
-        },
-        {
-            title: 'STATUS',
-            dataIndex: 'status',
-            key: 'status',
-            render: (text: string) => (
-                <Select
-                    defaultValue={text}
-                    className="status-select"
-                    suffixIcon={<ChevronDown size={14} className="text-green-600" />}
-                    bordered={false}
-                    options={[
-                        { value: 'Active', label: 'Active' },
-                        { value: 'Inactive', label: 'Inactive' },
-                    ]}
-                    style={{
-                        backgroundColor: '#F0FDF4',
-                        border: '1px solid #BBF7D0',
-                        borderRadius: '8px',
-                        color: '#16A34A',
-                        fontSize: '11px',
-                        fontWeight: 600,
-                        width: 'fit-content',
-                    }}
-                    dropdownStyle={{ borderRadius: '8px' }}
-                />
             ),
         },
         {
@@ -181,11 +125,16 @@ const AdminEvents = () => {
                     <Button
                         icon={<Edit size={16} />}
                         className="flex items-center justify-center gap-1.5 text-[11px] text-gray-600 hover:!text-green-500 border-none shadow-none bg-[#F9FAFB] px-3 py-1.5 h-auto font-medium"
+                        onClick={() => {
+                            setSelectedEvent(record);
+                            setIsAddModalOpen(true);
+                        }}
                     >
                         Edit
                     </Button>
                     <Button
                         icon={<Trash2 size={16} />}
+                        onClick={() => handleDelete(record._id)}
                         className="flex items-center justify-center gap-1.5 text-[11px] text-red-500 hover:!bg-red-50 border border-red-100 rounded-lg px-3 py-1.5 h-auto font-medium shadow-none"
                     >
                         Remove
@@ -204,7 +153,9 @@ const AdminEvents = () => {
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 z-10" />
                         <Input
                             placeholder="Search events"
-                            className="h-10 pl-10 bg-[#F9FAFB] border border-gray-100 shadow-sm w-72 rounded-lg"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="h-10 pl-10 bg-white border border-gray-100 shadow-sm w-72 rounded-lg"
                         />
                     </div>
                     <Button
@@ -227,16 +178,33 @@ const AdminEvents = () => {
                 <Table
                     columns={columns}
                     dataSource={eventsData}
-                    pagination={{ pageSize: 7, position: ['none' as any] }}
+                    pagination={{
+                        current: page,
+                        pageSize: 10,
+                        total: eventsApi?.data?.total,
+                        showSizeChanger: false,
+                        onChange: (page) => setPage(page),
+                    }}
                     className="events-table"
                 />
             </div>
 
-            <AddEventModal open={isAddModalOpen} onCancel={() => setIsAddModalOpen(false)} />
+            <AddEventModal
+                open={isAddModalOpen}
+                onCancel={() => {
+                    setIsAddModalOpen(false);
+                    setSelectedEvent(null);
+                }}
+                refetch={refetch}
+                selectedEvent={selectedEvent}
+            />
 
             <EventDetailsModal
                 open={isDetailsModalOpen}
-                onCancel={() => setIsDetailsModalOpen(false)}
+                onCancel={() => {
+                    setIsDetailsModalOpen(false);
+                    setSelectedEvent(null);
+                }}
                 data={selectedEvent}
             />
         </section>
