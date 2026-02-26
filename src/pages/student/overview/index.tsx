@@ -1,9 +1,152 @@
+import WelcomeBanner from './components/WelcomeBanner';
+import MentorCard from './components/MentorCard';
+import StatCard from './components/StatCard';
+import EventCard from './components/EventCard';
+import ActiveAssignmentCard from './components/ActiveAssignmentCard';
+import { PiBookOpenTextLight, PiCalendarBlankLight, PiUsersLight, PiTargetLight } from 'react-icons/pi';
+import HeaderTitle from '../../../components/shared/HeaderTitle';
+
+import {
+  useGetstudentOverviewQuery,
+  useGetprofileQuery,
+  useGetUpcomingSessionsQuery,
+  useGetActiveAssignmentsQuery
+} from '../../../redux/apiSlices/students/overview.slice';
+import { imageUrl } from '../../../redux/api/baseApi';
+
 const StudentOverview = () => {
-    return (
-        <div>
-            <h1>Student Overview</h1>
+
+  const { data: overviewData, isLoading, error } = useGetstudentOverviewQuery(undefined);
+  const { data: profileData } = useGetprofileQuery(undefined);
+  const { data: eventsData } = useGetUpcomingSessionsQuery(undefined);
+  const { data: assignmentsData } = useGetActiveAssignmentsQuery(undefined);
+
+  if (isLoading) {
+    return <div className="p-10 text-center">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="p-10 text-center text-red-500">
+      Failed to load data
+    </div>;
+  }
+
+  const statsResponse = overviewData?.data;
+
+  const stats = [
+    {
+      title: 'Assignments',
+      count: statsResponse?.totalSubmittedAssignments ?? 0,
+      icon: <PiBookOpenTextLight className="w-6 h-6 text-[#3BB77E]" />,
+      iconBgColor: '#EBF9F1',
+    },
+    {
+      title: 'Schedule',
+      count: statsResponse?.totalClasses ?? 0,
+      icon: <PiCalendarBlankLight className="w-6 h-6 text-[#84CC16]" />,
+      iconBgColor: '#F7FEE7',
+    },
+    {
+      title: 'Mentor',
+      count: statsResponse?.mentorTotal ?? 0,
+      icon: <PiUsersLight className="w-6 h-6 text-[#F97316]" />,
+      iconBgColor: '#FFF7ED',
+    },
+    {
+      title: 'Goals',
+      count: statsResponse?.totalGoals ?? 0,
+      icon: <PiTargetLight className="w-6 h-6 text-[#8B5CF6]" />,
+      iconBgColor: '#F5EEFB',
+    },
+  ];
+
+
+  const formattedEvents = eventsData?.data?.map((event: any) => ({
+    id: event._id,
+    title: event.title,
+    date: event.date,
+    image: event.image
+    ? `${imageUrl}/${event.image}`
+    : 'https://via.placeholder.com/150',
+    description: event.description,
+    month: new Date(event.date).toLocaleString('en-US', { month: 'short' }),
+    day: new Date(event.date).getDate(),
+    startTime: new Date(event.date).toLocaleTimeString(),
+    endTime: new Date(event.date).toLocaleTimeString(),
+    location: "Online",
+    color: "#3BB77E",
+  })) || [];
+
+
+  const formattedAssignments = assignmentsData?.data?.map((a: any) => ({
+    id: a._id,
+    title: a.title,
+    dueDate: new Date(a.dueDate).toLocaleDateString(),
+    subject: "COMPUTER",
+    status: "In Process",
+  })) || [];
+
+  return (
+    <section className="space-y-8 pb-10">
+
+      <WelcomeBanner
+        name={`${profileData?.data?.firstName || ''}`}
+        group={profileData?.data?.preferedGroup || ''}
+      />
+
+<MentorCard
+mentor={{
+  profile: profileData?.data?.mentorId?.profile
+    ? `${imageUrl}${profileData.data.mentorId.profile}`
+    : 'https://via.placeholder.com/150',
+
+  name: profileData?.data?.mentorId?.firstName
+    ? `${profileData.data.mentorId.firstName} ${profileData.data.mentorId.lastName}`
+    : "Mentor",
+  role: "Mentor",
+  subtext: "Guiding you towards success",
+  location: profileData?.data?.location || "",
+  specialization: profileData?.data?.specialization || "",
+  availability: profileData?.data?.availability || "",
+  email: profileData?.data?.mentorId?.email || "",
+}}
+/>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {stats.map((stat, index) => (
+          <StatCard key={index} {...stat} />
+        ))}
+      </div>
+
+      <div>
+        <HeaderTitle title="Upcoming Events" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-3">
+          {formattedEvents.map((event: any) => (
+            <EventCard key={event.id} event={event} />
+          ))}
         </div>
-    );
+      </div>
+
+      <div>
+        <HeaderTitle title="Active Assignments" />
+        <div className="space-y-4 pt-3">
+          {formattedAssignments.length > 0 ? (
+            formattedAssignments.map((assignment: any) => (
+              <ActiveAssignmentCard
+                key={assignment.id}
+                assignment={assignment}
+              />
+            ))
+          ) : (
+            <div className="bg-white p-10 rounded-2xl border border-dashed border-gray-200 text-center text-[#888888]">
+              No active assignments at the moment.
+            </div>
+          )}
+        </div>
+      </div>
+
+    </section>
+  );
 };
 
 export default StudentOverview;

@@ -20,7 +20,7 @@ export default function StudentProfile() {
 
     return (
         <section>
-            <div className="p-6 sm:p-8 bg-white rounded-md">
+            <div className="px-6 sm:px-6 bg-white rounded-md">
                 <Tabs activeKey={activeTab} onChange={setActiveTab} items={tabItems} size="large" />
             </div>
         </section>

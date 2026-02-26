@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Input, Typography, ConfigProvider } from 'antd';
+import { Button, Input, ConfigProvider } from 'antd';
 import { SearchOutlined, FilterOutlined, PlusOutlined } from '@ant-design/icons';
 
 // Modular Components
@@ -11,9 +11,9 @@ import SubmissionTable from './components/SubmissionTable';
 
 import { useCreateAssignmentMutation, useDeleteAssignmentMutation, useGetAllSubmissionOfAssignmentQuery, useGetAssignmentQuery, useGiveMarksOfSubmissionMutation, useUpdateAssignmentMutation } from '../../../redux/apiSlices/teacher/assignmentSlice';
 import { toast } from 'sonner';
+import HeaderTitle from '../../../components/shared/HeaderTitle';
 
 
-const { Title } = Typography;
 
 function Assignment() {
     const [page, setPage] = useState(1);
@@ -165,9 +165,8 @@ function Assignment() {
         <div className=" min-h-screen">
             {/* Header section */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-                <Title level={2} className="!m-0 text-2xl font-bold text-gray-800 tracking-tight uppercase">
-                    Assignment
-                </Title>
+                <HeaderTitle title="Assignment" />
+
                 <div className="flex flex-wrap items-center gap-3">
                     <Input
                         prefix={<SearchOutlined className="text-gray-400" />}

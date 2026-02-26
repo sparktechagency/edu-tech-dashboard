@@ -9,7 +9,7 @@ export interface Mentor {
     name: string;
     role: string;
     subtext: string;
-    avatar: string;
+    profile: string;
     location: string;
     specialization: string;
     availability: string;
@@ -20,7 +20,7 @@ export const mockMentor: Mentor = {
     name: 'Dr. Alexander Thorne',
     role: 'Mentor',
     subtext: 'Get to know your mentor and connect for guidance',
-    avatar: 'https://img.freepik.com/free-photo/dark-blonde-bearded-man-crosses-his-hands-chest-posing-black-shirt_8353-1116.jpg?semt=ais_user_personalization&w=740&q=80',
+    profile: 'https://img.freepik.com/free-photo/dark-blonde-bearded-man-crosses-his-hands-chest-posing-black-shirt_8353-1116.jpg?semt=ais_user_personalization&w=740&q=80',
     location: 'Amsterdam',
     specialization: 'Specailizes in Expedition',
     availability: '40 hours/week available',

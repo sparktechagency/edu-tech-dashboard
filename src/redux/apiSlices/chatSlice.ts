@@ -3,18 +3,20 @@ import { api } from '../api/baseApi';
 export const chatSlice = api.injectEndpoints({
     endpoints: (builder) => ({
         getChatRooms: builder.query({
-            query: () => '/chat/rooms', // Adjust endpoint as per actual backend if known
-            // For now, we'll use transformResponse to provide demo data if needed,
-            // or just mock the whole thing for development.
-            transformResponse: (response: any) => response.data || [],
-            async onQueryStarted(arg, { queryFulfilled }) {
-                // This is a placeholder for actual data fetching
-                // In development, if the API is not ready, we can return demo data here
-            },
+            query: () => ({
+                url: '/chat',
+                method: 'GET',
+                cache: 'no-cache',
+            }),
+            providesTags: ['Chat-Rooms'],
         }),
         getMessages: builder.query({
-            query: (chatId) => `/message/${chatId}`,
-            transformResponse: (response: any) => response.data || [],
+            query: (chatId) => ({
+                url: `/message/${chatId}`,
+                method: 'GET',
+                cache: 'no-cache',
+            }),
+            providesTags: ['Chat-Messages'],
         }),
         sendMessage: builder.mutation({
             query: (formData) => ({
@@ -22,8 +24,18 @@ export const chatSlice = api.injectEndpoints({
                 method: 'POST',
                 body: formData,
             }),
+            invalidatesTags: ['Chat-Messages'],
+        }),
+        createChatRoom: builder.mutation({
+            query: (data) => ({
+                url: '/chat',
+                method: 'POST',
+                body: data,
+            }),
+            invalidatesTags: ['Chat-Rooms'],
         }),
     }),
 });
 
-export const { useGetChatRoomsQuery, useGetMessagesQuery, useSendMessageMutation } = chatSlice;
+export const { useGetChatRoomsQuery, useGetMessagesQuery, useSendMessageMutation, useCreateChatRoomMutation } =
+    chatSlice;

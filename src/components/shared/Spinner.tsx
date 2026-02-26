@@ -5,7 +5,7 @@ const Spinner = () => {
             <div className="scale-pulse">
                 {/* Logo */}
                 <div className="flex items-center w-full ">
-                    <img src={'/Logo2.png'} alt="logo" className="h-10 w-fit object-contain" />
+                    <img src={'/logo.png'} alt="logo" className="h-20 w-fit object-contain" />
                 </div>
             </div>
 
