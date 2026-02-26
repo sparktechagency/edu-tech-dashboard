@@ -62,7 +62,7 @@ export default function AttendanceTeacher() {
        const data ={
         date: selectedDate.format('YYYY-MM-DD'),     
         classId,
-        records: students?.map((s) => ({
+        records: students?.filter(s=>s.status)?.map((s) => ({
             studentId: s.key,
             status: s.status,
             note: s.notes
