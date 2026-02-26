@@ -1,15 +1,15 @@
 import { MapPin, Clock } from 'lucide-react';
 import { Event } from '../../../../constants/student/events';
 import { useState } from 'react';
-import { EventDetailsModal } from '../../../../components/modals/student/EventDetailsModal';
+// import { EventDetailsModal } from '../../../../components/modals/student/EventDetailsModal';
 
 interface EventCardProps {
     event: Event;
 }
 
 const EventCard = ({ event }: EventCardProps) => {
-    const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [, setSelectedEvent] = useState<Event | null>(null);
+    const [, setIsModalOpen] = useState(false);
     const handleViewDetails = (event: Event) => {
         setSelectedEvent(event);
         setIsModalOpen(true);
@@ -49,7 +49,7 @@ const EventCard = ({ event }: EventCardProps) => {
                 </div>
             </div>
             {/* Event Details Modal */}
-            <EventDetailsModal isOpen={isModalOpen} onCancel={() => setIsModalOpen(false)} event={selectedEvent} />
+            {/* <EventDetailsModal isOpen={isModalOpen} onCancel={() => setIsModalOpen(false)} event={selectedEvent} /> */}
         </>
     );
 };

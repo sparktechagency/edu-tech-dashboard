@@ -48,13 +48,13 @@ const StudentOverview = () => {
     },
     {
       title: 'Mentor',
-      count: statsResponse?.mentorTotal ?? 0,
+      count: statsResponse?.totalMentors ?? 0,
       icon: <PiUsersLight className="w-6 h-6 text-[#F97316]" />,
       iconBgColor: '#FFF7ED',
     },
     {
       title: 'Goals',
-      count: statsResponse?.totalGoals ?? 0,
+      count: statsResponse?.totalWoops ?? 0,
       icon: <PiTargetLight className="w-6 h-6 text-[#8B5CF6]" />,
       iconBgColor: '#F5EEFB',
     },
@@ -65,9 +65,10 @@ const StudentOverview = () => {
     id: event._id,
     title: event.title,
     date: event.date,
-    image: event.image
-    ? `${imageUrl}/${event.image}`
-    : 'https://via.placeholder.com/150',
+    // image: event.image
+    // ? `${imageUrl}${event.image}`
+    // : 'https://via.placeholder.com/150',
+    
     description: event.description,
     month: new Date(event.date).toLocaleString('en-US', { month: 'short' }),
     day: new Date(event.date).getDate(),
@@ -76,6 +77,7 @@ const StudentOverview = () => {
     location: "Online",
     color: "#3BB77E",
   })) || [];
+  console.log('Formatted Events:', formattedEvents);
 
 
   const formattedAssignments = assignmentsData?.data?.map((a: any) => ({
@@ -96,10 +98,13 @@ const StudentOverview = () => {
 
 <MentorCard
 mentor={{
+  
   profile: profileData?.data?.mentorId?.profile
     ? `${imageUrl}${profileData.data.mentorId.profile}`
     : 'https://via.placeholder.com/150',
 
+  firstName: profileData?.data?.mentorId?.firstName || "",
+  lastName: profileData?.data?.mentorId?.lastName || "",
   name: profileData?.data?.mentorId?.firstName
     ? `${profileData.data.mentorId.firstName} ${profileData.data.mentorId.lastName}`
     : "Mentor",

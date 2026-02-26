@@ -1,49 +1,64 @@
-import { useState } from 'react';
-import { mockMentor, initialMessages, Message } from '../../../constants/student/mentor';
+
+import { useNavigate } from 'react-router-dom';
+import { useProfileQuery } from '../../../redux/apiSlices/authSlice';
 import { MentorHeader } from './components/MentorHeader';
 import { MentorSidebar } from './components/MentorSidebar';
 import { MentorJourney } from './components/MentorJourney';
-import { MentorChat } from './components/MentorChat';
-import { useNavigate } from 'react-router-dom';
+import { imageUrl } from '../../../redux/api/baseApi';
 
 export default function Mentor() {
-    const [messages, setMessages] = useState<Message[]>(initialMessages);
-    const [newMessage, setNewMessage] = useState('');
     const navigate = useNavigate();
-    const handleSendMessage = () => {
-        if (!newMessage.trim()) return;
+    const { data: profileData } = useProfileQuery(
+        {},
+        { selectFromResult: ({ data }) => ({ data: data?.data || data }) }
+    );
 
-        const message: Message = {
-            id: Date.now().toString(),
-            text: newMessage,
-            sender: 'student',
-            timestamp: new Date().toLocaleString(),
-        };
+    // Extract mentor from student profile
+    const mentorRaw = profileData?.mentorId;
 
-        setMessages([...messages, message]);
-        setNewMessage('');
-    };
-    const handleConversation = () => {
-        navigate('/student/chat');
-    };
+    // Format mentor for UI
+    const formattedMentor = mentorRaw
+        ? {
+              ...mentorRaw,
+              profile: mentorRaw.profile
+                  ? `${imageUrl}${mentorRaw.profile}`
+                  : 'https://via.placeholder.com/150',
+              role: 'Mentor',
+              subtext: 'Guiding you towards success',
+              location: mentorRaw.address || 'Not provided',
+              specialization: mentorRaw.professionalTitle || 'Not provided',
+              availability: 'Available',
+          }
+        : null;
+
+
+
+    const handleConversation = () => navigate('/student/chat');
+
+    if (!formattedMentor) return <p>Loading mentor...</p>;
 
     return (
         <section className="space-y-6 overflow-hidden">
-            <MentorHeader mentor={mockMentor} />
-
+            <MentorHeader mentor={formattedMentor} />
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <MentorSidebar mentor={mockMentor} handleConversation={handleConversation} />
-
+                <MentorSidebar
+                    mentor={formattedMentor}
+                    handleConversation={handleConversation}
+                />
                 <div className="lg:col-span-7 space-y-6">
                     <MentorJourney />
-                    <MentorChat
+                    {/* <MentorChat
                         messages={messages}
                         newMessage={newMessage}
                         setNewMessage={setNewMessage}
                         onSendMessage={handleSendMessage}
-                    />
+                    /> */}
                 </div>
             </div>
+            {/* Contact & Professional Links */}
+            
+        
         </section>
     );
 }
+
