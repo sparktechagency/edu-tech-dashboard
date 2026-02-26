@@ -7,6 +7,8 @@ export interface Message {
 
 export interface Mentor {
     name: string;
+    firstName: string;
+    lastName: string;
     role: string;
     subtext: string;
     profile: string;
@@ -17,7 +19,9 @@ export interface Mentor {
 }
 
 export const mockMentor: Mentor = {
-    name: 'Dr. Alexander Thorne',
+    name: 'Alexander Thorne',
+    firstName: 'Alexander',
+    lastName: 'Thorne',
     role: 'Mentor',
     subtext: 'Get to know your mentor and connect for guidance',
     profile: 'https://img.freepik.com/free-photo/dark-blonde-bearded-man-crosses-his-hands-chest-posing-black-shirt_8353-1116.jpg?semt=ais_user_personalization&w=740&q=80',

@@ -51,7 +51,7 @@ export const MentorSidebar = ({ mentor, handleConversation }: { mentor: Mentor; 
         </div>
 
         {/* Contact & Professional Links */}
-        <div className="bg-white p-8 rounded-2xl border border-gray-100">
+        <div className="bg-white p-8 rounded-2xl border border-gray-100 space-y-6">
             <h2 className="text-xl font-bold text-[#1E293B] mb-2">Contact & Professional Links</h2>
             <p className="text-[#94A3B8] text-sm mb-6 font-medium">Primary Contact</p>
 
