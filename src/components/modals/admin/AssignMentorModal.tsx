@@ -1,19 +1,69 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Modal, Button, Form, Select } from 'antd';
 import { X } from 'lucide-react';
+import { useUpdateMentorMutation } from '../../../redux/apiSlices/admin/adminStudentApi';
+import { toast } from 'sonner';
 
 interface AssignMentorModalProps {
     open: boolean;
     onCancel: () => void;
     student: any;
+    allMentors: any;
+    isMentorsLoading: boolean;
+    refetch: () => void;
 }
 
-const AssignMentorModal: React.FC<AssignMentorModalProps> = ({ open, onCancel, student }) => {
+const AssignMentorModal: React.FC<AssignMentorModalProps> = ({
+    open,
+    onCancel,
+    student,
+    allMentors,
+    isMentorsLoading,
+    refetch,
+}) => {
     const [form] = Form.useForm();
+    const [updateMentor, { isLoading: isUpdating }] = useUpdateMentorMutation();
+
+    useEffect(() => {
+        if (student?.mentorId) {
+            form.setFieldsValue({
+                mentorId: typeof student.mentorId === 'string' ? student.mentorId : student.mentorId._id,
+            });
+        } else {
+            form.resetFields();
+        }
+    }, [student, form]);
+
+    const handleAssign = async () => {
+        try {
+            const { mentorId } = await form.validateFields();
+            console.log(mentorId);
+            console.log(student._id);
+            toast.promise(updateMentor({ id: student._id, data: { mentorId: mentorId } }).unwrap(), {
+                loading: 'Assigning mentor...',
+                success: (res) => {
+                    console.log(res);
+                    if (res?.success) {
+                        form.resetFields();
+                        refetch();
+                        onCancel();
+                        return res?.message || 'Mentor assigned successfully!';
+                    }
+                },
+                error: (err: any) => err?.data?.message || 'Failed to assign mentor',
+            });
+        } catch (error) {
+            console.error('Assignment failed:', error);
+        }
+    };
 
     return (
         <Modal
-            title={<span className="text-2xl font-bold text-gray-800">Assign Mentor - {student?.name}</span>}
+            title={
+                <span className="text-2xl font-bold text-gray-800">
+                    Assign Mentor - {student?.firstName} {student?.lastName}
+                </span>
+            }
             open={open}
             onCancel={onCancel}
             footer={[
@@ -27,7 +77,8 @@ const AssignMentorModal: React.FC<AssignMentorModalProps> = ({ open, onCancel, s
                 <Button
                     key="submit"
                     type="primary"
-                    onClick={onCancel}
+                    onClick={handleAssign}
+                    loading={isUpdating}
                     className="px-10 h-10 bg-[#52c41a] border-none hover:bg-[#73d13d] rounded-md font-medium"
                 >
                     Assign Mentor
@@ -38,16 +89,21 @@ const AssignMentorModal: React.FC<AssignMentorModalProps> = ({ open, onCancel, s
             centered
         >
             <Form form={form} layout="vertical" className="mt-8 mb-4">
-                <Form.Item label={<span className="font-bold text-gray-700">Select Mentor</span>} name="mentor">
+                <Form.Item
+                    label={<span className="font-bold text-gray-700">Select Mentor</span>}
+                    name="mentorId"
+                    rules={[{ required: true, message: 'Please select a mentor' }]}
+                >
                     <Select
                         placeholder="Choose a mentor"
                         className="h-11 rounded-md"
                         variant="filled"
                         style={{ backgroundColor: '#f9f9f9' }}
-                        options={[
-                            { label: 'aharoni amittai', value: '1' },
-                            { label: 'Reem Halabia', value: '2' },
-                        ]}
+                        loading={isMentorsLoading}
+                        options={allMentors?.map((m: any) => ({
+                            label: `${m.firstName} ${m.lastName}`,
+                            value: m._id,
+                        }))}
                     />
                 </Form.Item>
             </Form>

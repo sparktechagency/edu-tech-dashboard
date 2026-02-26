@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Table, Button, Input, Tag, Avatar } from 'antd';
-import { Search, Eye, Edit2, Trash2, Link, Calendar, Star, GraduationCap } from 'lucide-react';
-import { studentsData } from '../../../../constants/admin-data/students';
+import { Search, Eye, Edit2, Trash2, Link, Calendar, GraduationCap } from 'lucide-react';
 import ImportExcelModal from '../../../../components/modals/admin/ImportExcelModal';
 import StudentDetailsModal from '../../../../components/modals/admin/StudentDetailsModal';
 import EditStudentModal from '../../../../components/modals/admin/EditStudentModal';
@@ -9,6 +8,9 @@ import AssignMentorModal from '../../../../components/modals/admin/AssignMentorM
 import AssignIndividualClassModal from '../../../../components/modals/admin/AssignIndividualClassModal';
 import ReviewModal from '../../../../components/modals/admin/ReviewModal';
 import HeaderTitle from '../../../../components/shared/HeaderTitle';
+import { useGetAllStudentsQuery } from '../../../../redux/apiSlices/admin/adminStudentApi';
+import { useGetAdminMentorsQuery } from '../../../../redux/apiSlices/admin/adminMentorsApi';
+import { imageUrl } from '../../../../redux/api/baseApi';
 
 const Student = () => {
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
@@ -18,19 +20,34 @@ const Student = () => {
     const [isClassModalOpen, setIsClassModalOpen] = useState(false);
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
     const [selectedStudent, setSelectedStudent] = useState<any>(null);
+    const [page, setPage] = useState(1);
+    const [searchTerm, setSearchTerm] = useState('');
+    // API CALLS
+    const { data: studentsApi, refetch } = useGetAllStudentsQuery({ page, searchTerm });
+    const { data: mentorsApi, isLoading: isMentorsLoading } = useGetAdminMentorsQuery({ page, searchTerm });
+    const allStudents = studentsApi?.data?.data;
+    const allMentors = mentorsApi?.data?.mentors || [];
+
+    const pagination = studentsApi?.data?.pagination;
 
     const columns = [
         {
             title: 'STUDENT',
-            dataIndex: 'name',
+            dataIndex: 'firstName',
             key: 'name',
-            render: (text: string, record: any) => (
+            render: (_: string, record: any) => (
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-[#f6ffed] flex items-center justify-center text-[#52c41a]">
-                        <GraduationCap size={20} />
+                    <div className="w-10 h-10 rounded-full bg-[#f6ffed] flex items-center justify-center text-[#52c41a] overflow-hidden">
+                        {record.profile ? (
+                            <Avatar src={imageUrl + record.profile} size={40} />
+                        ) : (
+                            <GraduationCap size={20} />
+                        )}
                     </div>
                     <div>
-                        <div className="font-semibold text-gray-800">{text}</div>
+                        <div className="font-semibold text-gray-800">
+                            {record.firstName} {record.lastName}
+                        </div>
                         <div className="text-xs text-gray-400">{record.email}</div>
                     </div>
                 </div>
@@ -38,16 +55,16 @@ const Student = () => {
         },
         {
             title: 'GROUP/TRACK',
-            dataIndex: 'groups',
-            key: 'groups',
-            render: (groups: string[]) => (
-                <div className="flex gap-2">
-                    {groups?.map((group) => (
+            dataIndex: 'userGroup',
+            key: 'userGroup',
+            render: (userGroup: string[]) => (
+                <div className="flex gap-2 flex-wrap w-[200px]">
+                    {userGroup?.map((group: any) => (
                         <Tag
-                            key={group}
+                            key={group._id || group}
                             className="rounded-full px-4 py-0.5 bg-[#f6ffed] border-none text-[#52c41a] font-medium"
                         >
-                            {group}
+                            {group.name || group}
                         </Tag>
                     ))}
                 </div>
@@ -55,8 +72,8 @@ const Student = () => {
         },
         {
             title: 'CURRENT MENTOR',
-            dataIndex: 'mentorInfo',
-            key: 'mentorInfo',
+            dataIndex: 'mentorId',
+            key: 'mentorId',
             render: (mentor: any) => {
                 if (!mentor) {
                     return (
@@ -67,19 +84,22 @@ const Student = () => {
                 }
                 return (
                     <div className="flex items-center gap-2">
-                        <Avatar src={mentor.avatar} size="small" />
-                        <span className="text-gray-600 font-medium">{mentor.name}</span>
+                        <Avatar src={imageUrl + mentor.profile || mentor.profile} size="small" />
+                        <span className="text-gray-600 font-medium">
+                            {mentor.firstName} {mentor.lastName}
+                        </span>
                     </div>
                 );
             },
         },
         {
             title: 'STATUS',
-            dataIndex: 'status',
+            dataIndex: 'verified',
             key: 'status',
-            render: (status: string) => {
-                const color = status === 'Active' ? '#f6ffed' : '#fff7e6';
-                const textColor = status === 'Active' ? '#52c41a' : '#faad14';
+            render: (verified: boolean) => {
+                const status = verified ? 'Verified' : 'Unverified';
+                const color = verified ? '#f6ffed' : '#fff7e6';
+                const textColor = verified ? '#52c41a' : '#faad14';
                 return (
                     <Tag
                         className="rounded-full px-4 py-0.5 border-none font-medium"
@@ -136,16 +156,6 @@ const Student = () => {
                         Class
                     </Button>
                     <Button
-                        onClick={() => {
-                            setSelectedStudent(record);
-                            setIsReviewModalOpen(true);
-                        }}
-                        icon={<Star size={14} />}
-                        className="flex items-center gap-2 border-gray-200 text-gray-500 rounded-md h-8"
-                    >
-                        Review
-                    </Button>
-                    <Button
                         icon={<Trash2 size={14} />}
                         danger
                         className="flex items-center gap-2 rounded-md h-8 border-[#ff4d4f]"
@@ -163,16 +173,28 @@ const Student = () => {
                     placeholder="Search student"
                     prefix={<Search size={16} className="text-gray-400" />}
                     className="h-10 w-64 border-gray-100 bg-white rounded-md"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
                 />
             </div>
 
             <div className="border border-gray-100 rounded-xl overflow-hidden shadow-sm bg-white">
                 <Table
                     columns={columns}
-                    dataSource={studentsData}
-                    pagination={false}
+                    dataSource={allStudents}
+                    loading={!allStudents && !studentsApi}
+                    pagination={
+                        pagination && {
+                            current: page,
+                            total: pagination.total,
+                            pageSize: pagination.limit,
+                            onChange: (p) => setPage(p),
+                            showSizeChanger: false,
+                        }
+                    }
                     className="admin-students-table"
                     rowClassName="border-b last:border-0 border-gray-50"
+                    rowKey="_id"
                 />
             </div>
 
@@ -187,11 +209,15 @@ const Student = () => {
                 open={isEditModalOpen}
                 onCancel={() => setIsEditModalOpen(false)}
                 student={selectedStudent}
+                refetch={refetch}
             />
             <AssignMentorModal
                 open={isAssignModalOpen}
                 onCancel={() => setIsAssignModalOpen(false)}
                 student={selectedStudent}
+                allMentors={allMentors}
+                isMentorsLoading={isMentorsLoading}
+                refetch={refetch}
             />
             <AssignIndividualClassModal
                 open={isClassModalOpen}

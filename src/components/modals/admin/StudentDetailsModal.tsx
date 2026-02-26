@@ -63,49 +63,56 @@ const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({ open, onCance
                     <InfoRow label="First Name" value={student.firstName} />
                     <InfoRow label="Last Name" value={student.lastName} />
                     <InfoRow label="Email" value={student.email} />
-                    <InfoRow label="Phone" value={student.phone} />
-                    <InfoRow label="Group" value={student.groups?.[0]} isTag />
+                    <InfoRow label="Contact Number" value={student.contactNumber} />
+                    <InfoRow label="Group" value={student.userGroup?.[0]?.name} isTag />
                     <InfoRow
                         label="Status"
-                        value={student.status}
+                        value={student.verified ? 'Verified' : 'Unverified'}
                         isTag
-                        tagColor={student.status === 'Active' ? '#f6ffed' : '#fff7e6'}
+                        tagColor={student.verified ? '#f6ffed' : '#fff7e6'}
                     />
-                    <InfoRow label="Bio" value={student.bio} />
-                    <InfoRow label="Birth Date" value={student.birthDate} />
+                    <InfoRow label="About" value={student.about} />
                     <InfoRow label="V Number" value={student.vNumber} />
                     <InfoRow label="Gender" value={student.gender} />
                     <InfoRow label="Highest Education" value={student.highestEducation} />
-                    <InfoRow label="Programming Experience" value={student.programmingExperience} />
+                    <InfoRow label="Available Hours" value={student.aviliableHours} />
                 </div>
 
                 {/* Motivation Section */}
                 <SectionHeader title="Motivation" />
                 <div className="border border-gray-100 rounded-xl overflow-hidden mb-6">
-                    <InfoRow label="Career Directions" value={student.careerDirections} />
-                    <InfoRow label="Hours per Week" value={student.hoursPerWeek} />
-                    <InfoRow label="Has Laptop" value={student.hasLaptop} />
-                    <InfoRow label="Hobbies & Interests" value={student.hobbies} />
+                    <InfoRow label="Career Directions" value={student.careerDirections?.join(', ')} />
+                    <InfoRow label="Note" value={student.note} />
+                    <InfoRow label="Has Laptop" value={student.havealaptop ? 'Yes' : 'No'} />
+                </div>
+
+                {/* Portfolio & Socials Section */}
+                <SectionHeader title="Portfolio & Socials" />
+                <div className="border border-gray-100 rounded-xl overflow-hidden mb-6">
+                    <InfoRow label="LinkedIn Profile" value={student.linkedInProfile} />
+                    <InfoRow label="GitHub Profile" value={student.githubProfile} />
+                    <InfoRow label="Portfolio Website" value={student.PortfolioWebsite} />
                 </div>
 
                 {/* Address Information Section */}
                 <SectionHeader title="Address Information" />
                 <div className="border border-gray-100 rounded-xl overflow-hidden mb-6">
-                    <InfoRow label="City" value={student.city} />
-                    <InfoRow label="Zip Code" value={student.zipCode} />
-                    <InfoRow label="Street Address" value={student.streetAddress} />
+                    <InfoRow label="Address" value={student.address} />
                 </div>
 
-                {/* Administration Information Section */}
-                <SectionHeader title="Administration Information" />
-                <div className="border border-gray-100 rounded-xl overflow-hidden mb-6">
-                    <InfoRow label="Contact Person/Case Manager" value={student.caseManager} />
-                    <InfoRow label="V-Number" value={student.vNumber} />
-                    <InfoRow label="Notes" value={student.notes} />
-                    <InfoRow label="LinkedIn" value={student.linkedin} />
-                    <InfoRow label="GitHub" value={student.github} />
-                    <InfoRow label="Street Address" value={student.streetAddress} />
-                </div>
+                {/* Assigned Mentor Section */}
+                {student.mentorId && (
+                    <>
+                        <SectionHeader title="Assigned Mentor" />
+                        <div className="border border-gray-100 rounded-xl overflow-hidden mb-6">
+                            <InfoRow
+                                label="Mentor Name"
+                                value={`${student.mentorId.firstName} ${student.mentorId.lastName}`}
+                            />
+                            <InfoRow label="Mentor Email" value={student.mentorId.email} />
+                        </div>
+                    </>
+                )}
             </div>
         </Modal>
     );

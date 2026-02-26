@@ -56,7 +56,8 @@ const Login = () => {
             if (creds) {
                 form.setFieldsValue({
                     email: creds.email,
-                    password: creds.email === 'segiba3385@gxuzi.com' ? '123456' : '12345678',
+                    // password: creds.email === 'segiba3385@gxuzi.com' ? '123456' : '12345678',
+                    password: '12345678',
                 });
             }
         }
