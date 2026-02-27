@@ -1,7 +1,6 @@
-import { GoalDetail } from "../pages/student/goal/components/GoalResults";
-import { Section } from "../pages/student/goal/components/Questionnaire";
+import { Section } from '../pages/student/goal/components/Questionnaire';
 
-const mockGoals: GoalDetail[] = [
+const mockGoals: any[] = [
     {
         id: '1',
         title: 'Goal 1: Foundations',
@@ -26,8 +25,7 @@ const mockGoals: GoalDetail[] = [
         obstacle: 'Feelings of imposter syndrome when reaching out.',
         plan: 'Attend one networking event per month and reach out on LinkedIn.',
     },
-];  
-
+];
 
 const questionnaireData: Section[] = [
     {
@@ -83,6 +81,5 @@ const questionnaireData: Section[] = [
         ],
     },
 ];
- 
 
-export {mockGoals, questionnaireData};
+export { mockGoals, questionnaireData };

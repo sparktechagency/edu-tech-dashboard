@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useRef, useEffect, useMemo } from 'react';
 import { Image as AntdImage, Avatar, Typography } from 'antd';
 import MessageInput from './MessageInput';
 import { io } from 'socket.io-client';

@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { FiEdit2 } from 'react-icons/fi';
 import GoalCards from './components/GoalCards';
 import WoopStepper from './components/WoopStepper';
 import WoopForm from './components/WoopForm';

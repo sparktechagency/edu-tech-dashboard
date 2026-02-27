@@ -1,6 +1,6 @@
 import React from 'react';
-import { Modal, Button, Tag } from 'antd';
-import { X, Edit3 } from 'lucide-react';
+import { Modal, Tag } from 'antd';
+import { X } from 'lucide-react';
 
 interface MentorDetailsModalProps {
     open: boolean;
