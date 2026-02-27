@@ -65,9 +65,9 @@ const StudentOverview = () => {
     id: event._id,
     title: event.title,
     date: event.date,
-    // image: event.image
-    // ? `${imageUrl}${event.image}`
-    // : 'https://via.placeholder.com/150',
+    image: event.image
+    ? `${imageUrl}${event.image}`
+    : 'https://via.placeholder.com/150',
     
     description: event.description,
     month: new Date(event.date).toLocaleString('en-US', { month: 'short' }),
@@ -85,7 +85,7 @@ const StudentOverview = () => {
     title: a.title,
     dueDate: new Date(a.dueDate).toLocaleDateString(),
     subject: "COMPUTER",
-    status: "In Process",
+    status: "Active",
   })) || [];
 
   return (

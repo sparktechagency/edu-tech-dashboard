@@ -8,7 +8,6 @@ interface ActiveAssignmentCardProps {
 }
 
 const ActiveAssignmentCard = ({ assignment }: ActiveAssignmentCardProps) => {
-    // Determine icon based on subject or title as a mock behavior
     const Icon = assignment.subject === 'MATHEMATICS' ? PiCalculatorLight : HiOutlineComputerDesktop;
     const iconBg = assignment.subject === 'MATHEMATICS' ? '#EBF9F1' : '#F5EEFB';
     const iconColor = assignment.subject === 'MATHEMATICS' ? '#3BB77E' : '#7C3AED';
@@ -32,7 +31,7 @@ const ActiveAssignmentCard = ({ assignment }: ActiveAssignmentCardProps) => {
                     <p className="text-[#888888] text-sm mt-1">Due: {assignment.dueDate}</p>
                 </div>
             </div>
-            <div className="text-[#D97706] font-semibold text-[15px]">{assignment.status}</div>
+            <div className="text-[#D97706] font-semibold text-[15px]">{assignment.status==='PENDING'}</div>
         </Link>
     );
 };
