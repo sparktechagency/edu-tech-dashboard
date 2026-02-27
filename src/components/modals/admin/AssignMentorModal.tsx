@@ -11,6 +11,10 @@ interface AssignMentorModalProps {
     allMentors: any;
     isMentorsLoading: boolean;
     refetch: () => void;
+    userGroups: any;
+    userTracks: any;
+    isUserGroupsLoading: boolean;
+    isUserTracksLoading: boolean;
 }
 
 const AssignMentorModal: React.FC<AssignMentorModalProps> = ({
@@ -20,14 +24,20 @@ const AssignMentorModal: React.FC<AssignMentorModalProps> = ({
     allMentors,
     isMentorsLoading,
     refetch,
+    userGroups,
+    userTracks,
+    isUserGroupsLoading,
+    isUserTracksLoading,
 }) => {
     const [form] = Form.useForm();
     const [updateMentor, { isLoading: isUpdating }] = useUpdateMentorMutation();
 
     useEffect(() => {
-        if (student?.mentorId) {
+        if (student) {
             form.setFieldsValue({
-                mentorId: typeof student.mentorId === 'string' ? student.mentorId : student.mentorId._id,
+                mentorId: student.mentorId?._id || student.mentorId,
+                userGroup: student.userGroup?.map((g: any) => g._id) || [],
+                userGroupTrack: student.userGroupTrack?._id || student.userGroupTrack,
             });
         } else {
             form.resetFields();
@@ -36,21 +46,24 @@ const AssignMentorModal: React.FC<AssignMentorModalProps> = ({
 
     const handleAssign = async () => {
         try {
-            const { mentorId } = await form.validateFields();
-            console.log(mentorId);
-            console.log(student._id);
-            toast.promise(updateMentor({ id: student._id, data: { mentorId: mentorId } }).unwrap(), {
-                loading: 'Assigning mentor...',
+            const values = await form.validateFields();
+            const payload = {
+                mentorId: values.mentorId,
+                userGroup: values.userGroup,
+                userGroupTrack: values.userGroupTrack,
+            };
+
+            toast.promise(updateMentor({ id: student._id, data: payload }).unwrap(), {
+                loading: 'Assigning mentor/group/track...',
                 success: (res) => {
-                    console.log(res);
                     if (res?.success) {
                         form.resetFields();
                         refetch();
                         onCancel();
-                        return res?.message || 'Mentor assigned successfully!';
+                        return res?.message || 'Assignment updated successfully!';
                     }
                 },
-                error: (err: any) => err?.data?.message || 'Failed to assign mentor',
+                error: (err: any) => err?.data?.message || 'Failed to update assignment',
             });
         } catch (error) {
             console.error('Assignment failed:', error);
@@ -61,7 +74,7 @@ const AssignMentorModal: React.FC<AssignMentorModalProps> = ({
         <Modal
             title={
                 <span className="text-2xl font-bold text-gray-800">
-                    Assign Mentor - {student?.firstName} {student?.lastName}
+                    Assign Mentor/Group/Track - {student?.firstName} {student?.lastName}
                 </span>
             }
             open={open}
@@ -81,7 +94,7 @@ const AssignMentorModal: React.FC<AssignMentorModalProps> = ({
                     loading={isUpdating}
                     className="px-10 h-10 bg-[#52c41a] border-none hover:bg-[#73d13d] rounded-md font-medium"
                 >
-                    Assign Mentor
+                    Assign
                 </Button>,
             ]}
             closeIcon={<X size={20} />}
@@ -103,6 +116,41 @@ const AssignMentorModal: React.FC<AssignMentorModalProps> = ({
                         options={allMentors?.map((m: any) => ({
                             label: `${m.firstName} ${m.lastName}`,
                             value: m._id,
+                        }))}
+                    />
+                </Form.Item>
+                <Form.Item
+                    label={<span className="font-bold text-gray-700">Select Group</span>}
+                    name="userGroup"
+                    rules={[{ required: true, message: 'Please select at least one group' }]}
+                >
+                    <Select
+                        mode="multiple"
+                        placeholder="Choose groups"
+                        className="h-11 rounded-md"
+                        variant="filled"
+                        style={{ backgroundColor: '#f9f9f9' }}
+                        loading={isUserGroupsLoading}
+                        options={userGroups?.map((g: any) => ({
+                            label: g.name,
+                            value: g._id,
+                        }))}
+                    />
+                </Form.Item>
+                <Form.Item
+                    label={<span className="font-bold text-gray-700">Select Track</span>}
+                    name="userGroupTrack"
+                    rules={[{ required: true, message: 'Please select a track' }]}
+                >
+                    <Select
+                        placeholder="Choose a track"
+                        className="h-11 rounded-md"
+                        variant="filled"
+                        style={{ backgroundColor: '#f9f9f9' }}
+                        loading={isUserTracksLoading}
+                        options={userTracks?.map((t: any) => ({
+                            label: t.name,
+                            value: t._id,
                         }))}
                     />
                 </Form.Item>

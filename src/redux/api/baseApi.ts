@@ -1,16 +1,32 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-const token = localStorage.getItem('token');
-
 export const api = createApi({
     reducerPath: 'api',
     baseQuery: fetchBaseQuery({
         baseUrl: 'http://10.10.7.72:8000/api/v1',
-        headers: {
-            Authorization: `Bearer ${token}`,
+        prepareHeaders: (headers) => {
+            const token = localStorage.getItem('token');
+
+            if (token) {
+                headers.set('Authorization', `Bearer ${token}`);
+            }
+
+            return headers;
         },
     }),
-    tagTypes: ['Facility', 'Package', 'Review', 'Profile', 'Chat-Rooms', 'Chat-Messages', 'TimeTracks',"Class","Resourse","Assignment","Submission"],
+    tagTypes: [
+        'Facility',
+        'Package',
+        'Review',
+        'Profile',
+        'Chat-Rooms',
+        'Chat-Messages',
+        'TimeTracks',
+        'Class',
+        'Resourse',
+        'Assignment',
+        'Submission',
+    ],
     endpoints: () => ({}),
 });
 

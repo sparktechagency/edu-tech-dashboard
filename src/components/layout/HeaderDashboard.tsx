@@ -22,10 +22,22 @@ const HeaderDashboard = () => {
                   : userRole === 'MENTOR'
                     ? 'Mentor'
                     : 'Admin';
+    const routeRole =
+        userRole === 'SUPER_ADMIN'
+            ? 'admin'
+            : userRole === 'TEACHER'
+              ? 'teacher'
+              : userRole === 'COORDINATOR'
+                ? 'mentor-coordinator'
+                : userRole === 'STUDENT'
+                  ? 'student'
+                  : userRole === 'MENTOR'
+                    ? 'mentor'
+                    : 'admin';
     return (
         <div className="container  bg-transparent flex items-center justify-between text-white h-[80px]">
             <div>
-                <div onClick={() => navigate('/')} className=" cursor-pointer">
+                <div onClick={() => navigate(`/${routeRole}/overview`)} className=" cursor-pointer">
                     <div className=" flex items-center justify-center gap-2.5">
                         <img src="/logo.png" alt="" className=" w-11 h-14 " />
                         <div className="flex flex-col gap-y-0.5 text-white">
