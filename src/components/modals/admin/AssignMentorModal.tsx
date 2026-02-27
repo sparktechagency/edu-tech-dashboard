@@ -29,7 +29,6 @@ const AssignMentorModal: React.FC<AssignMentorModalProps> = ({
     isUserGroupsLoading,
     isUserTracksLoading,
 }) => {
-    console.log(student);
     const [form] = Form.useForm();
     const [updateMentor, { isLoading: isUpdating }] = useUpdateMentorMutation();
 

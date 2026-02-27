@@ -35,8 +35,6 @@ const Student = () => {
     const allMentors = mentorsApi?.data?.mentors || [];
     const userGroups = userGroupsApi?.data;
     const userTracks = userTracksApi?.data;
-    console.log(userGroups, 'user groups');
-    console.log(userTracks, 'user tracks');
 
     const pagination = studentsApi?.data?.pagination;
 

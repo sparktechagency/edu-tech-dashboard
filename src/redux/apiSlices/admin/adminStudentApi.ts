@@ -39,6 +39,34 @@ const adminStudentApi = api.injectEndpoints({
                 method: 'GET',
             }),
         }),
+
+        // GOALS
+        getAllGoals: build.query({
+            query: () => ({
+                url: `/goal`,
+                method: 'GET',
+            }),
+        }),
+        createGoal: build.mutation({
+            query: (data: any) => ({
+                url: `/goal`,
+                method: 'POST',
+                body: data,
+            }),
+        }),
+        updateGoal: build.mutation({
+            query: ({ id, data }: { id: string; data: any }) => ({
+                url: `/goal/${id}`,
+                method: 'PATCH',
+                body: data,
+            }),
+        }),
+        deleteGoal: build.mutation({
+            query: (id: string) => ({
+                url: `/goal/${id}`,
+                method: 'DELETE',
+            }),
+        }),
     }),
 });
 
@@ -48,4 +76,8 @@ export const {
     useUpdateMentorMutation,
     useGetUserGroupsQuery,
     useGetUserTracksQuery,
+    useGetAllGoalsQuery,
+    useCreateGoalMutation,
+    useUpdateGoalMutation,
+    useDeleteGoalMutation,
 } = adminStudentApi;

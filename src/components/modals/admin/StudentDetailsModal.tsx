@@ -9,7 +9,6 @@ interface StudentDetailsModalProps {
 }
 
 const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({ open, onCancel, student }) => {
-    console.log(student);
     if (!student) return null;
 
     const InfoRow = ({
