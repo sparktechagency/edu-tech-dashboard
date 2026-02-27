@@ -8,12 +8,31 @@ const HeaderDashboard = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const role = localStorage.getItem('role')?.toLowerCase() || '';
-    let routeRole = role;
-    if (role === 'super_admin') {
-        routeRole = 'admin';
-    } else if (role === 'coordinator') {
-        routeRole = 'mentor-coordinator';
-    }
+
+    const ShareNetwork =
+        role === 'super_admin'
+            ? 'Admin'
+            : role === 'teacher'
+              ? 'Teacher'
+              : role === 'coordinator'
+                ? 'Mentor Coordinator'
+                : role === 'student'
+                  ? 'Student'
+                  : role === 'mentor'
+                    ? 'Mentor'
+                    : 'Admin';
+    const routeRole =
+        role === 'SUPER_ADMIN'
+            ? 'admin'
+            : role === 'TEACHER'
+              ? 'teacher'
+              : role === 'COORDINATOR'
+                ? 'mentor-coordinator'
+                : role === 'STUDENT'
+                  ? 'student'
+                  : role === 'MENTOR'
+                    ? 'mentor'
+                    : 'admin';
     return (
         <div className="container  bg-transparent flex items-center justify-between text-white h-[80px]">
             <div>
@@ -21,10 +40,7 @@ const HeaderDashboard = () => {
                     <div className=" flex items-center justify-center gap-2.5">
                         <img src="/logo.png" alt="" className=" w-11 h-14 " />
                         <div className="flex flex-col gap-y-0.5 text-white">
-                            <p className="text-2xl font-bold font-heading">
-                                {' '}
-                                Share Network {routeRole?.charAt(0)?.toUpperCase() + routeRole?.slice(1)}
-                            </p>
+                            <p className="text-2xl font-bold font-heading"> Share Network {ShareNetwork}</p>
                             <p className="text-sm font-medium ">Platform Management Dashboard</p>
                         </div>
                     </div>

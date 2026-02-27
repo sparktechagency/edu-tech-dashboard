@@ -19,7 +19,6 @@ const AdminLearningMaterials = () => {
     const { data: materialApi, refetch } = useGetMaterialsQuery({ page: page, limit: 10, searchTerm: searchTerm });
     const [deleteMaterials] = useDeleteMaterialsMutation();
 
-
     const materialsData = materialApi?.data?.resources?.map((item: any) => ({
         _id: item?._id,
         key: item?._id,
@@ -28,7 +27,7 @@ const AdminLearningMaterials = () => {
         type: item?.type,
         url: item?.contentUrl,
         targetAudience: item?.targeteAudience,
-        target: item?.targertGroup?.userGroup,
+        target: item?.targertGroup,
         status: item?.markAsAssigned ? 'Active' : 'Inactive',
         date: moment(item?.createdAt).format('YYYY-MM-DD'),
     }));
@@ -94,7 +93,7 @@ const AdminLearningMaterials = () => {
                             href={record.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-gray-400 text-xs flex items-center gap-1.5 hover:text-blue-500 transition-colors border-b border-gray-200 border-dotted pb-0.5"
+                            className="text-gray-400 text-xs flex items-center gap-1.5 hover:text-blue-500 transition-colors"
                         >
                             {record.url}
                         </a>
@@ -207,8 +206,11 @@ const AdminLearningMaterials = () => {
 
             <AddLearningMaterialModal
                 open={isAddModalOpen}
-                onCancel={() =>{ setIsAddModalOpen(false); setSelectedMaterial(null); }}
-                selectedMaterial={selectedMaterial} 
+                onCancel={() => {
+                    setIsAddModalOpen(false);
+                    setSelectedMaterial(null);
+                }}
+                selectedMaterial={selectedMaterial}
                 refetch={refetch}
             />
 

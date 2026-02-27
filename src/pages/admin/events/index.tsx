@@ -17,7 +17,6 @@ const AdminEvents = () => {
     // API CALLS
     const { data: eventsApi, refetch } = useGetEventsQuery({ page: page, limit: 10, searchTerm: searchTerm });
     const [deleteEvents] = useDeleteEventsMutation();
-    console.log('event data', eventsApi?.data?.data);
 
     const eventsData = eventsApi?.data?.data?.map((item: any) => ({
         _id: item?._id,

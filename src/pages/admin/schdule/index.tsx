@@ -20,7 +20,6 @@ const AdminSchedule = () => {
     // API CALLS
     const { data: scheduleApi, refetch } = useGetClassScheduleQuery({ page: page, limit: 10, searchTerm: searchTerm });
     const [deleteSchedule] = useDeleteClassScheduleMutation();
-    console.log(scheduleApi?.data);
 
     const scheduleData = scheduleApi?.data?.map((item: any) => ({
         _id: item?._id,

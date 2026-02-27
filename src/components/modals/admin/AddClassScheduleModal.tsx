@@ -47,7 +47,6 @@ const AddClassScheduleModal = ({ open, onCancel, refetch, selectedSchedule }: Ad
     const onFinish = async (values: any) => {
         try {
             const { date, time, ...rest } = values;
-
             // Combine date and time into a single ISO timestamp
             let classDate;
             if (date && time) {
