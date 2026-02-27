@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { X } from 'lucide-react';
 import { useAddMaterialsMutation, useUpdateMaterialsMutation } from '../../../redux/apiSlices/admin/adminMaterialsApi';
 import { toast } from 'sonner';
-import { useGetAllUserGroupsQuery } from '../../../redux/apiSlices/userGroupSlice';
+import { useGetAllUserGroupTracksQuery } from '../../../redux/apiSlices/userGroupTrackSlice';
 
 interface AddLearningMaterialModalProps {
     open: boolean;
@@ -12,12 +12,11 @@ interface AddLearningMaterialModalProps {
     selectedMaterial: any;
 }
 
-const AddLearningMaterialModal = ({ open, onCancel, refetch, selectedMaterial , }: AddLearningMaterialModalProps) => {
+const AddLearningMaterialModal = ({ open, onCancel, refetch, selectedMaterial }: AddLearningMaterialModalProps) => {
     const [form] = Form.useForm();
     const [addMaterial, { isLoading }] = useAddMaterialsMutation();
     const [editMaterial, { isLoading: isEditLoading }] = useUpdateMaterialsMutation();
-    const { data: userGroupTracks } = useGetAllUserGroupsQuery(undefined, { skip: !open }); 
-    console.log("update material ", selectedMaterial);
+    const { data: userGroupTracks } = useGetAllUserGroupTracksQuery(undefined, { skip: !open });
 
     useEffect(() => {
         if (open && selectedMaterial) {
@@ -41,13 +40,14 @@ const AddLearningMaterialModal = ({ open, onCancel, refetch, selectedMaterial , 
                 ...values,
                 markAsAssigned: !!values.markAsAssigned,
             };
+            console.log('finalData', finalData);
             const mutation = selectedMaterial?._id
                 ? editMaterial({ id: selectedMaterial._id, data: finalData }).unwrap()
-                : addMaterial(finalData).unwrap();    
+                : addMaterial(finalData).unwrap();
 
             toast.promise(mutation, {
-                loading: selectedMaterial?._id ? 'Updating material...' : 'Creating material...', 
-                
+                loading: selectedMaterial?._id ? 'Updating material...' : 'Creating material...',
+
                 success: (res: any) => {
                     if (res?.success) {
                         refetch();
@@ -58,7 +58,7 @@ const AddLearningMaterialModal = ({ open, onCancel, refetch, selectedMaterial , 
                         res?.message || `Class schedule ${selectedMaterial?._id ? 'updated' : 'created'} successfully`
                     );
                 },
-                error: (err: any) => 
+                error: (err: any) =>
                     err?.message || `Failed to ${selectedMaterial?._id ? 'update' : 'create'} class schedule`,
             });
         } catch (error: any) {

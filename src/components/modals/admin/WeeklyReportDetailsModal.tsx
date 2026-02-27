@@ -84,9 +84,7 @@ const WeeklyReportDetailsModal = ({ open, onCancel, data }: WeeklyReportDetailsM
                     <h3 className="text-lg font-semibold mb-3 text-gray-800">Skill Progress</h3>
                     <div className="space-y-4">
                         <div className=" ">
-                            <label htmlFor="" className="font-medium">
-                                Skill Name
-                            </label>
+                            <p className="font-medium pb-2">Skill Name</p>
                             <Input
                                 value={data?.goalSheet?.skillName}
                                 readOnly

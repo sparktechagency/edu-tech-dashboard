@@ -3,11 +3,25 @@ import { FiLogOut } from 'react-icons/fi';
 import { toast } from 'sonner';
 import { useDispatch } from 'react-redux';
 import { api } from '../../redux/api/baseApi';
+import { useProfileQuery } from '../../redux/apiSlices/authSlice';
 
 const HeaderDashboard = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-
+    const { data: userData } = useProfileQuery({});
+    const userRole = userData?.data?.role;
+    const ShareNetwork =
+        userRole === 'SUPER_ADMIN'
+            ? 'Admin'
+            : userRole === 'TEACHER'
+              ? 'Teacher'
+              : userRole === 'COORDINATOR'
+                ? 'Mentor Coordinator'
+                : userRole === 'STUDENT'
+                  ? 'Student'
+                  : userRole === 'MENTOR'
+                    ? 'Mentor'
+                    : 'Admin';
     return (
         <div className="container  bg-transparent flex items-center justify-between text-white h-[80px]">
             <div>
@@ -15,7 +29,7 @@ const HeaderDashboard = () => {
                     <div className=" flex items-center justify-center gap-2.5">
                         <img src="/logo.png" alt="" className=" w-11 h-14 " />
                         <div className="flex flex-col gap-y-0.5 text-white">
-                            <p className="text-2xl font-bold font-heading"> Share Network Admin</p>
+                            <p className="text-2xl font-bold font-heading"> Share Network {ShareNetwork}</p>
                             <p className="text-sm font-medium ">Platform Management Dashboard</p>
                         </div>
                     </div>
