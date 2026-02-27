@@ -41,59 +41,323 @@ import AdminStudents from '../pages/admin/students';
 import ChatLayout from '../components/shared/chat';
 import StudentSchedule from '../pages/student/schdule';
 
+import PrivateRoute from '../provider/PrivateRoutes';
+
 const router = createBrowserRouter([
     {
         path: '/',
-        // element: <PrivateRoute> <App /> </PrivateRoute>,
-        element: <App />,
+        element: (
+            <PrivateRoute>
+                <App />
+            </PrivateRoute>
+        ),
         errorElement: <ErrorPage />,
         children: [
             // Admin
-            { path: '/admin/overview', element: <AdminOverview /> },
-            { path: '/admin/student', element: <AdminStudents /> },
-            { path: '/admin/mentors', element: <AdminMentors /> },
-            { path: '/admin/teacher', element: <AdminTeachers /> },
-            { path: '/admin/events', element: <AdminEvents /> },
-            { path: '/admin/materials', element: <AdminLearningMaterials /> },
-            { path: '/admin/schedule', element: <AdminSchedule /> },
-            { path: '/admin/weekly-report', element: <AdminWeeklyReport /> },
+            {
+                path: '/admin/overview',
+                element: (
+                    <PrivateRoute role={['admin', 'super_admin']}>
+                        <AdminOverview />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: '/admin/student',
+                element: (
+                    <PrivateRoute role={['admin', 'super_admin']}>
+                        <AdminStudents />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: '/admin/mentors',
+                element: (
+                    <PrivateRoute role={['admin', 'super_admin']}>
+                        <AdminMentors />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: '/admin/teacher',
+                element: (
+                    <PrivateRoute role={['admin', 'super_admin']}>
+                        <AdminTeachers />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: '/admin/events',
+                element: (
+                    <PrivateRoute role={['admin', 'super_admin']}>
+                        <AdminEvents />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: '/admin/materials',
+                element: (
+                    <PrivateRoute role={['admin', 'super_admin']}>
+                        <AdminLearningMaterials />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: '/admin/schedule',
+                element: (
+                    <PrivateRoute role={['admin', 'super_admin']}>
+                        <AdminSchedule />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: '/admin/weekly-report',
+                element: (
+                    <PrivateRoute role={['admin', 'super_admin']}>
+                        <AdminWeeklyReport />
+                    </PrivateRoute>
+                ),
+            },
 
             //Teacher
-            { path: '/teacher/overview', element: <TeacherOverview /> },
-            { path: '/teacher/my-student', element: <MyStudent /> },
-            { path: '/teacher/class-schedule', element: <ClassSchedule /> },
-            { path: '/teacher/resources', element: <Resources /> },
-            { path: '/teacher/assignment', element: <Assignment /> },
-            { path: '/teacher/chat', element: <ChatLayout /> },
-            { path: '/teacher/attendance', element: <AttendanceTeacher /> },
+            {
+                path: '/teacher/overview',
+                element: (
+                    <PrivateRoute role="teacher">
+                        <TeacherOverview />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: '/teacher/my-student',
+                element: (
+                    <PrivateRoute role="teacher">
+                        <MyStudent />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: '/teacher/class-schedule',
+                element: (
+                    <PrivateRoute role="teacher">
+                        <ClassSchedule />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: '/teacher/resources',
+                element: (
+                    <PrivateRoute role="teacher">
+                        <Resources />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: '/teacher/assignment',
+                element: (
+                    <PrivateRoute role="teacher">
+                        <Assignment />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: '/teacher/chat',
+                element: (
+                    <PrivateRoute role="teacher">
+                        <ChatLayout />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: '/teacher/attendance',
+                element: (
+                    <PrivateRoute role="teacher">
+                        <AttendanceTeacher />
+                    </PrivateRoute>
+                ),
+            },
 
             //  Mentor Coordinator
-            { path: '/mentor-coordinator/overview', element: <MentorCoordinatorOverview /> },
-            { path: '/mentor-coordinator/mentors', element: <Mentors /> },
-            { path: '/mentor-coordinator/group-schedule', element: <GroupSchedule /> },
-            { path: '/mentor-coordinator/resources', element: <CoordinatorResources /> },
-            { path: '/mentor-coordinator/profile', element: <MentorCoordinatorProfile /> },
+            {
+                path: '/mentor-coordinator/overview',
+                element: (
+                    <PrivateRoute role="coordinator">
+                        <MentorCoordinatorOverview />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: '/mentor-coordinator/mentors',
+                element: (
+                    <PrivateRoute role="coordinator">
+                        <Mentors />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: '/mentor-coordinator/group-schedule',
+                element: (
+                    <PrivateRoute role="coordinator">
+                        <GroupSchedule />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: '/mentor-coordinator/resources',
+                element: (
+                    <PrivateRoute role="coordinator">
+                        <CoordinatorResources />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: '/mentor-coordinator/profile',
+                element: (
+                    <PrivateRoute role="coordinator">
+                        <MentorCoordinatorProfile />
+                    </PrivateRoute>
+                ),
+            },
 
             // Student
-            { path: '/student/overview', element: <StudentOverview /> },
-            { path: '/student/goal', element: <Goal /> },
-            { path: '/student/schedule', element: <StudentSchedule /> },
-            { path: '/student/resources', element: <StudentResources /> },
-            { path: '/student/assignment', element: <StudentAssignment /> },
-            { path: '/student/mentor', element: <Mentor /> },
-            { path: '/student/events', element: <StudentEvents /> },
-            { path: '/student/chat', element: <ChatLayout /> },
-            { path: '/student/profile', element: <StudentProfile /> },
+            {
+                path: '/student/overview',
+                element: (
+                    <PrivateRoute role="student">
+                        <StudentOverview />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: '/student/goal',
+                element: (
+                    <PrivateRoute role="student">
+                        <Goal />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: '/student/schedule',
+                element: (
+                    <PrivateRoute role="student">
+                        <StudentSchedule />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: '/student/resources',
+                element: (
+                    <PrivateRoute role="student">
+                        <StudentResources />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: '/student/assignment',
+                element: (
+                    <PrivateRoute role="student">
+                        <StudentAssignment />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: '/student/mentor',
+                element: (
+                    <PrivateRoute role="student">
+                        <Mentor />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: '/student/events',
+                element: (
+                    <PrivateRoute role="student">
+                        <StudentEvents />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: '/student/chat',
+                element: (
+                    <PrivateRoute role="student">
+                        <ChatLayout />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: '/student/profile',
+                element: (
+                    <PrivateRoute role="student">
+                        <StudentProfile />
+                    </PrivateRoute>
+                ),
+            },
 
             // Mentor
-            { path: '/mentor/overview', element: <MentorOverview /> },
-            { path: '/mentor/students', element: <Students /> },
-            { path: '/mentor/weekly-report', element: <WeeklyReport /> },
-            { path: '/mentor/time-tracking', element: <TimeTracking /> },
-            { path: '/mentor/learning-materials', element: <LearningMaterials /> },
-            { path: '/mentor/woops', element: <Woops /> },
-            { path: '/mentor/chat', element: <ChatLayout /> },
-            { path: '/mentor/profile', element: <MentorSetting /> },
+            {
+                path: '/mentor/overview',
+                element: (
+                    <PrivateRoute role="mentor">
+                        <MentorOverview />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: '/mentor/students',
+                element: (
+                    <PrivateRoute role="mentor">
+                        <Students />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: '/mentor/weekly-report',
+                element: (
+                    <PrivateRoute role="mentor">
+                        <WeeklyReport />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: '/mentor/time-tracking',
+                element: (
+                    <PrivateRoute role="mentor">
+                        <TimeTracking />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: '/mentor/learning-materials',
+                element: (
+                    <PrivateRoute role="mentor">
+                        <LearningMaterials />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: '/mentor/woops',
+                element: (
+                    <PrivateRoute role="mentor">
+                        <Woops />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: '/mentor/chat',
+                element: (
+                    <PrivateRoute role="mentor">
+                        <ChatLayout />
+                    </PrivateRoute>
+                ),
+            },
+            {
+                path: '/mentor/profile',
+                element: (
+                    <PrivateRoute role="mentor">
+                        <MentorSetting />
+                    </PrivateRoute>
+                ),
+            },
         ],
     },
     { path: '/login', element: <Login /> },
