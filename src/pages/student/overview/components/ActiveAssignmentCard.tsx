@@ -31,7 +31,7 @@ const ActiveAssignmentCard = ({ assignment }: ActiveAssignmentCardProps) => {
                     <p className="text-[#888888] text-sm mt-1">Due: {assignment.dueDate}</p>
                 </div>
             </div>
-            <div className="text-[#D97706] font-semibold text-[15px]">{assignment.status==='PENDING'}</div>
+            <div className="text-[#D97706] font-semibold text-[15px]">{assignment.status}</div>
         </Link>
     );
 };

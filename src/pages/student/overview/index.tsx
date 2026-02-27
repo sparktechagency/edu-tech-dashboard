@@ -77,7 +77,6 @@ const StudentOverview = () => {
     location: "Online",
     color: "#3BB77E",
   })) || [];
-  console.log('Formatted Events:', formattedEvents);
 
 
   const formattedAssignments = assignmentsData?.data?.map((a: any) => ({
@@ -85,7 +84,7 @@ const StudentOverview = () => {
     title: a.title,
     dueDate: new Date(a.dueDate).toLocaleDateString(),
     subject: "COMPUTER",
-    status: "Active",
+    status: "In Process",
   })) || [];
 
   return (
@@ -137,10 +136,12 @@ mentor={{
         <div className="space-y-4 pt-3">
           {formattedAssignments.length > 0 ? (
             formattedAssignments.map((assignment: any) => (
-              <ActiveAssignmentCard
-                key={assignment.id}
-                assignment={assignment}
-              />
+              ['PENDING'].includes(assignment.status) && (
+                <ActiveAssignmentCard
+                  key={assignment.id}
+                  assignment={assignment}
+                />
+              )
             ))
           ) : (
             <div className="bg-white p-10 rounded-2xl border border-dashed border-gray-200 text-center text-[#888888]">

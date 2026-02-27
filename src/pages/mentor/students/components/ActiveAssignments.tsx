@@ -38,9 +38,9 @@ const ActiveAssignments = ({ data }: ActiveAssignmentsProps) => {
                             </div>
                         </div>
                         <span
-                            className={`text-sm font-bold ${assignment.status === 'In Progress' ? 'text-amber-500' : 'text-green-500'}`}
+                            className={`text-sm font-bold ${assignment.status === 'Pending' ? 'text-amber-500' : 'text-green-500'}`}
                         >
-                            {assignment.status}
+                            {assignment.status==='Pending'}
                         </span>
                     </div>
                 ))}
