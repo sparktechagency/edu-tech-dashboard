@@ -22,15 +22,15 @@ const StudentDetails = () => {
                                 <p className="text-xs text-gray-500">{student.email}</p>
                             </div>
                         </div>
-                        <div className="text-right">
-                            <p className="text-xs font-semibold text-gray-600">Group</p>
-                            <p className="text-xs text-green-500">{student.userGroup}</p>
-                        </div>
-                        <div className="text-right">
-                            <p className="text-xs font-semibold text-gray-600">Track</p>
-                            <p className="text-xs text-blue-500">{student.track || 'N/A'}</p>
-                        </div>
-                    </div>
+                <div className="text-right">
+                <p className="text-xs font-semibold text-gray-600">Group</p>
+                <p className="text-xs text-green-500">{student.userGroup?.[0]?.name || 'N/A'}</p>
+                </div>
+                <div className="text-right">
+                <p className="text-xs font-semibold text-gray-600">Track</p>
+                <p className="text-xs text-blue-500">{student.userGroupTrack?.name || 'N/A'}</p>
+                </div>
+                                    </div>
                 ))}
             </div>
         </div>

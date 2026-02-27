@@ -159,6 +159,12 @@ export const studentSidebarItems: TSidebarItem[] = [
         icon: <LuCalendarDays size={24} />,
     },
     {
+        key: 'schedule',
+        label: 'Class',
+        path: 'student/schedule',
+        icon: <AiOutlineSchedule size={24} />,
+    },
+    {
         key: 'resources',
         label: 'Resources',
         path: 'student/resources',

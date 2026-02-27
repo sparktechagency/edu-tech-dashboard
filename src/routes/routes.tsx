@@ -39,6 +39,7 @@ import AdminTeachers from '../pages/admin/teachers';
 import AdminMentors from '../pages/admin/mentors';
 import AdminStudents from '../pages/admin/students';
 import ChatLayout from '../components/shared/chat';
+import StudentSchedule from '../pages/student/schdule';
 
 const router = createBrowserRouter([
     {
@@ -76,6 +77,7 @@ const router = createBrowserRouter([
             // Student
             { path: '/student/overview', element: <StudentOverview /> },
             { path: '/student/goal', element: <Goal /> },
+            { path: '/student/schedule', element: <StudentSchedule /> },
             { path: '/student/resources', element: <StudentResources /> },
             { path: '/student/assignment', element: <StudentAssignment /> },
             { path: '/student/mentor', element: <Mentor /> },
