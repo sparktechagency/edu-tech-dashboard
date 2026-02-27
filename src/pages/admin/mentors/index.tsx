@@ -172,42 +172,6 @@ const AdminMentors = () => {
 
     return (
         <div className="">
-            {/* Header / Stats Title */}
-            <div className="mb-6">
-                <h2 className="text-xl font-bold text-gray-800 mb-3">Mentor Hours Logging</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl">
-                    {/* Total Hours Card */}
-                    <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm relative overflow-hidden">
-                        <p className="text-gray-400 text-xs font-bold mb-2 tracking-wider">TOTAL HOURS THIS MONTH</p>
-                        <div className="flex items-baseline gap-2 mb-3">
-                            <span className="text-3xl font-bold text-gray-800">{mentorStats[0].value}</span>
-                            <span className="text-gray-400 text-sm">{mentorStats[0].unit}</span>
-                        </div>
-                        <div className="flex items-center gap-1 text-[#52c41a] text-xs font-semibold">
-                            <TrendingUp size={14} />
-                            <span>{mentorStats[0].trend}</span>
-                        </div>
-                    </div>
-
-                    {/* Target Hours Card */}
-                    <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm relative overflow-hidden">
-                        <p className="text-gray-400 text-xs font-bold mb-2 tracking-wider">TARGET HOURS</p>
-                        <div className="flex items-baseline gap-2 mb-4">
-                            <span className="text-3xl font-bold text-gray-800">{mentorStats[1].value}</span>
-                            <span className="text-gray-400 text-sm">{mentorStats[1].unit}</span>
-                        </div>
-                        <Progress
-                            percent={mentorStats[1].progress}
-                            showInfo={false}
-                            strokeColor="#52c41a"
-                            trailColor="#f0f0f0"
-                            strokeWidth={10}
-                            className="mb-0"
-                        />
-                    </div>
-                </div>
-            </div>
-
             {/* Management Section Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 mt-8 gap-4">
                 <HeaderTitle title="Mentor Management" />
