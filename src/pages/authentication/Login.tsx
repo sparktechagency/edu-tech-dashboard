@@ -29,7 +29,7 @@ const Login = () => {
             toast.promise(login(values).unwrap(), {
                 loading: 'Logging in...',
                 success: (res) => {
-                    console.log(res);
+                    // console.log(res);
                     localStorage.setItem('token', res?.data?.accessToken);
                     localStorage.setItem('role', res?.data?.role);
                     const role = res?.data?.role?.toLowerCase();
