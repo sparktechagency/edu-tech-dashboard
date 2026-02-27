@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Table, Button, Input, Tag, Avatar } from 'antd';
+import { Table, Button, Input, Tag, Avatar, Modal } from 'antd';
 import { Search, Eye, Edit2, Trash2, Link, Calendar, GraduationCap } from 'lucide-react';
 import ImportExcelModal from '../../../../components/modals/admin/ImportExcelModal';
 import StudentDetailsModal from '../../../../components/modals/admin/StudentDetailsModal';
@@ -9,12 +9,14 @@ import AssignIndividualClassModal from '../../../../components/modals/admin/Assi
 import ReviewModal from '../../../../components/modals/admin/ReviewModal';
 import HeaderTitle from '../../../../components/shared/HeaderTitle';
 import {
+    useDeleteStudentMutation,
     useGetAllStudentsQuery,
     useGetUserGroupsQuery,
     useGetUserTracksQuery,
 } from '../../../../redux/apiSlices/admin/adminStudentApi';
 import { useGetAdminMentorsQuery } from '../../../../redux/apiSlices/admin/adminMentorsApi';
 import { imageUrl } from '../../../../redux/api/baseApi';
+import { toast } from 'sonner';
 
 const Student = () => {
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
@@ -23,6 +25,7 @@ const Student = () => {
     const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
     const [isClassModalOpen, setIsClassModalOpen] = useState(false);
     const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [selectedStudent, setSelectedStudent] = useState<any>(null);
     const [page, setPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
@@ -31,6 +34,7 @@ const Student = () => {
     const { data: mentorsApi, isLoading: isMentorsLoading } = useGetAdminMentorsQuery({ page, searchTerm });
     const { data: userGroupsApi, isLoading: isUserGroupsLoading } = useGetUserGroupsQuery({});
     const { data: userTracksApi, isLoading: isUserTracksLoading } = useGetUserTracksQuery({});
+    const [deleteStudent, { isLoading: isDeleting }] = useDeleteStudentMutation();
     const allStudents = studentsApi?.data?.data;
     const allMentors = mentorsApi?.data?.mentors || [];
     const userGroups = userGroupsApi?.data;
@@ -38,7 +42,23 @@ const Student = () => {
 
     const pagination = studentsApi?.data?.pagination;
 
+    const handleDeleteStudent = async () => {
+        if (!selectedStudent?._id) return;
+
+        toast.promise(deleteStudent(selectedStudent._id).unwrap(), {
+            loading: 'Deleting student...',
+            success: (res) => {
+                setIsDeleteModalOpen(false);
+                setSelectedStudent(null);
+                refetch();
+                return res?.message || 'Student deleted successfully';
+            },
+            error: (err: any) => err?.data?.message || 'Failed to delete student',
+        });
+    };
+
     const columns = [
+        // ... (columns definitions)
         {
             title: 'STUDENT',
             dataIndex: 'firstName',
@@ -163,11 +183,15 @@ const Student = () => {
                     >
                         Class
                     </Button> */}
-                    {/* <Button
+                    <Button
+                        onClick={() => {
+                            setSelectedStudent(record);
+                            setIsDeleteModalOpen(true);
+                        }}
                         icon={<Trash2 size={14} />}
                         danger
                         className="flex items-center gap-2 rounded-md h-8 border-[#ff4d4f]"
-                    ></Button> */}
+                    ></Button>
                 </div>
             ),
         },
@@ -241,6 +265,27 @@ const Student = () => {
                 onCancel={() => setIsReviewModalOpen(false)}
                 student={selectedStudent}
             />
+
+            <Modal
+                title="Confirm Student Deletion"
+                open={isDeleteModalOpen}
+                onOk={handleDeleteStudent}
+                onCancel={() => setIsDeleteModalOpen(false)}
+                okText="Delete"
+                cancelText="Cancel"
+                okButtonProps={{ danger: true, loading: isDeleting }}
+                centered
+            >
+                <div className="py-4">
+                    <p className="text-gray-600">
+                        Are you sure you want to delete{' '}
+                        <b>
+                            {selectedStudent?.firstName} {selectedStudent?.lastName}
+                        </b>
+                        ? This action will permanently remove the student account and cannot be undone.
+                    </p>
+                </div>
+            </Modal>
         </div>
     );
 };

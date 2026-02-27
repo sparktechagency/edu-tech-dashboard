@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { Table, Button, Input, Space, Tag, Avatar, Progress } from 'antd';
-import { Search, Filter, Download, Eye, Edit2, Trash2, User, Star, TrendingUp, Plus } from 'lucide-react';
-import { mentorStats } from '../../../constants/admin-data/mentors';
+import { Table, Button, Input, Space, Tag, Avatar } from 'antd';
+import { Search, Filter, Download, Eye, Edit2, Trash2, User, Plus } from 'lucide-react';
 import HeaderTitle from '../../../components/shared/HeaderTitle';
 import ImportMentorsModal from '../../../components/modals/admin/ImportMentorsModal';
 import MentorDetailsModal from '../../../components/modals/admin/MentorDetailsModal';

@@ -39,6 +39,12 @@ const adminStudentApi = api.injectEndpoints({
                 method: 'GET',
             }),
         }),
+        deleteStudent: build.mutation({
+            query: (id: string) => ({
+                url: `/auth/delete-account/${id}`,
+                method: 'DELETE',
+            }),
+        }),
 
         // GOALS
         getAllGoals: build.query({
@@ -97,4 +103,5 @@ export const {
     useDeleteGoalMutation,
     useTakeAttendanceMutation,
     useGetAllClassesQuery,
+    useDeleteStudentMutation,
 } = adminStudentApi;

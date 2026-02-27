@@ -22,15 +22,15 @@ const HeaderDashboard = () => {
                     ? 'Mentor'
                     : 'Admin';
     const routeRole =
-        role === 'SUPER_ADMIN'
+        role === 'super_admin'
             ? 'admin'
-            : role === 'TEACHER'
+            : role === 'teacher'
               ? 'teacher'
-              : role === 'COORDINATOR'
+              : role === 'coordinator'
                 ? 'mentor-coordinator'
-                : role === 'STUDENT'
+                : role === 'student'
                   ? 'student'
-                  : role === 'MENTOR'
+                  : role === 'mentor'
                     ? 'mentor'
                     : 'admin';
     return (
