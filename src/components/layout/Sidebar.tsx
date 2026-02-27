@@ -16,9 +16,9 @@ const Sidebar = () => {
     const { data: userData, isLoading, isFetching } = useProfileQuery({});
 
     const sidebarItems = useMemo(() => {
-        if (!userData?.data?.role) return [];
+        if (!localStorage.getItem('role')) return [];
 
-        switch (userData?.data?.role) {
+        switch (localStorage.getItem('role')) {
             case 'SUPER_ADMIN':
                 return adminSidebarItems;
             case 'TEACHER':

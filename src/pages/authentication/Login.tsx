@@ -31,7 +31,15 @@ const Login = () => {
                 success: (res) => {
                     console.log(res);
                     localStorage.setItem('token', res?.data?.accessToken);
-                    navigate('/');
+                    localStorage.setItem('role', res?.data?.role);
+                    const role = res?.data?.role?.toLowerCase();
+                    let routeRole = role;
+                    if (role === 'super_admin') {
+                        routeRole = 'admin';
+                    } else if (role === 'coordinator') {
+                        routeRole = 'mentor-coordinator';
+                    }
+                    navigate(`/${routeRole}/overview`);
                     return res.message || 'Login successful';
                 },
                 error: (err) => err.data.errorMessages[0].message || 'Login failed',
