@@ -3,35 +3,34 @@ import { FiLogOut } from 'react-icons/fi';
 import { toast } from 'sonner';
 import { useDispatch } from 'react-redux';
 import { api } from '../../redux/api/baseApi';
-import { useProfileQuery } from '../../redux/apiSlices/authSlice';
 
 const HeaderDashboard = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { data: userData } = useProfileQuery({});
-    const userRole = userData?.data?.role;
+    const role = localStorage.getItem('role')?.toLowerCase() || '';
+
     const ShareNetwork =
-        userRole === 'SUPER_ADMIN'
+        role === 'super_admin'
             ? 'Admin'
-            : userRole === 'TEACHER'
+            : role === 'teacher'
               ? 'Teacher'
-              : userRole === 'COORDINATOR'
+              : role === 'coordinator'
                 ? 'Mentor Coordinator'
-                : userRole === 'STUDENT'
+                : role === 'student'
                   ? 'Student'
-                  : userRole === 'MENTOR'
+                  : role === 'mentor'
                     ? 'Mentor'
                     : 'Admin';
     const routeRole =
-        userRole === 'SUPER_ADMIN'
+        role === 'SUPER_ADMIN'
             ? 'admin'
-            : userRole === 'TEACHER'
+            : role === 'TEACHER'
               ? 'teacher'
-              : userRole === 'COORDINATOR'
+              : role === 'COORDINATOR'
                 ? 'mentor-coordinator'
-                : userRole === 'STUDENT'
+                : role === 'STUDENT'
                   ? 'student'
-                  : userRole === 'MENTOR'
+                  : role === 'MENTOR'
                     ? 'mentor'
                     : 'admin';
     return (
