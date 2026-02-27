@@ -1,7 +1,6 @@
 import { LuMapPin, LuUsers, LuClock, LuMessageSquare, LuMail, LuUser, LuCalendar } from 'react-icons/lu';
-import { Mentor } from '../../../../constants/student/mentor';
 
-export const MentorSidebar = ({ mentor, handleConversation }: { mentor: Mentor; handleConversation: () => void }) => (
+export const MentorSidebar = ({ mentor, handleChat }: { mentor: any; handleChat: any }) => (
     <div className="lg:col-span-5 space-y-6">
         {/* About Section */}
         <div className="bg-white p-8 rounded-2xl border border-gray-100 space-y-6">
@@ -31,7 +30,7 @@ export const MentorSidebar = ({ mentor, handleConversation }: { mentor: Mentor; 
             </section>
 
             <button
-                onClick={handleConversation}
+                onClick={() => handleChat(mentor._id)}
                 className="w-full flex items-center justify-center gap-2 border border-[#3BB77E] text-[#3BB77E] py-3 rounded-xl font-semibold hover:bg-[#3BB77E]/5 transition-colors"
             >
                 <LuMessageSquare size={18} />

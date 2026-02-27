@@ -67,6 +67,21 @@ const adminStudentApi = api.injectEndpoints({
                 method: 'DELETE',
             }),
         }),
+
+        // ATTENDANCE
+        takeAttendance: build.mutation({
+            query: (data: any) => ({
+                url: `/student-attendance`,
+                method: 'POST',
+                body: data,
+            }),
+        }),
+        getAllClasses: build.query({
+            query: () => ({
+                url: `/class`,
+                method: 'GET',
+            }),
+        }),
     }),
 });
 
@@ -80,4 +95,6 @@ export const {
     useCreateGoalMutation,
     useUpdateGoalMutation,
     useDeleteGoalMutation,
+    useTakeAttendanceMutation,
+    useGetAllClassesQuery,
 } = adminStudentApi;

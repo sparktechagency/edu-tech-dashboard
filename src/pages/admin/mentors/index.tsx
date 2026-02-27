@@ -229,7 +229,11 @@ const AdminMentors = () => {
             </div>
 
             {/* Modals */}
-            <ImportMentorsModal open={isImportModalOpen} onCancel={() => setIsImportModalOpen(false)} />
+            <ImportMentorsModal
+                open={isImportModalOpen}
+                onCancel={() => setIsImportModalOpen(false)}
+                refetch={refetch}
+            />
             <AddMentorModal
                 open={isAddMentorModalOpen}
                 onCancel={() => setIsAddMentorModalOpen(false)}

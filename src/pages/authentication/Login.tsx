@@ -54,7 +54,7 @@ const Login = () => {
         if (changedValues.role) {
             const roleCredentials: Record<string, { email: string }> = {
                 admin: { email: 'azizulsparktech@gmail.com' },
-                student: { email: 'segiba3385@gxuzi.com' },
+                student: { email: 'woyik33076@helesco.com' },
                 mentor: { email: 'bonodej524@gamening.com' },
                 teacher: { email: 'teacher@gxuzi.com' },
                 'mentor-coordinator': { email: 'matin51126@codgal.com' },
