@@ -30,5 +30,5 @@ export const api = createApi({
     endpoints: () => ({}),
 });
 
-export const imageUrl = 'http://10.10.7.72:8000/uploads';
-export const socketUrl = 'http://10.10.7.72:8000';
+export const imageUrl = 'http://72.61.74.10:5000/uploads';
+export const socketUrl = 'http://72.61.74.10:5000';
