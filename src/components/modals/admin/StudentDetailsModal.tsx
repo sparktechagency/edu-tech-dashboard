@@ -9,6 +9,7 @@ interface StudentDetailsModalProps {
 }
 
 const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({ open, onCancel, student }) => {
+    console.log(student);
     if (!student) return null;
 
     const InfoRow = ({
@@ -64,7 +65,8 @@ const StudentDetailsModal: React.FC<StudentDetailsModalProps> = ({ open, onCance
                     <InfoRow label="Last Name" value={student.lastName} />
                     <InfoRow label="Email" value={student.email} />
                     <InfoRow label="Contact Number" value={student.contactNumber} />
-                    <InfoRow label="Group" value={student.userGroup?.[0]?.name} isTag />
+                    <InfoRow label="Group" value={student.userGroup?.map((g: any) => g.name).join(', ')} isTag />
+                    <InfoRow label="Track" value={student.userGroupTrack?.name} isTag />
                     <InfoRow
                         label="Status"
                         value={student.verified ? 'Verified' : 'Unverified'}

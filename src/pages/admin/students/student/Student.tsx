@@ -8,7 +8,11 @@ import AssignMentorModal from '../../../../components/modals/admin/AssignMentorM
 import AssignIndividualClassModal from '../../../../components/modals/admin/AssignIndividualClassModal';
 import ReviewModal from '../../../../components/modals/admin/ReviewModal';
 import HeaderTitle from '../../../../components/shared/HeaderTitle';
-import { useGetAllStudentsQuery } from '../../../../redux/apiSlices/admin/adminStudentApi';
+import {
+    useGetAllStudentsQuery,
+    useGetUserGroupsQuery,
+    useGetUserTracksQuery,
+} from '../../../../redux/apiSlices/admin/adminStudentApi';
 import { useGetAdminMentorsQuery } from '../../../../redux/apiSlices/admin/adminMentorsApi';
 import { imageUrl } from '../../../../redux/api/baseApi';
 
@@ -25,8 +29,14 @@ const Student = () => {
     // API CALLS
     const { data: studentsApi, refetch } = useGetAllStudentsQuery({ page, searchTerm });
     const { data: mentorsApi, isLoading: isMentorsLoading } = useGetAdminMentorsQuery({ page, searchTerm });
+    const { data: userGroupsApi, isLoading: isUserGroupsLoading } = useGetUserGroupsQuery({});
+    const { data: userTracksApi, isLoading: isUserTracksLoading } = useGetUserTracksQuery({});
     const allStudents = studentsApi?.data?.data;
     const allMentors = mentorsApi?.data?.mentors || [];
+    const userGroups = userGroupsApi?.data;
+    const userTracks = userTracksApi?.data;
+    console.log(userGroups, 'user groups');
+    console.log(userTracks, 'user tracks');
 
     const pagination = studentsApi?.data?.pagination;
 
@@ -145,7 +155,7 @@ const Student = () => {
                     >
                         Assign
                     </Button>
-                    <Button
+                    {/* <Button
                         icon={<Calendar size={14} />}
                         onClick={() => {
                             setSelectedStudent(record);
@@ -154,7 +164,7 @@ const Student = () => {
                         className="flex items-center gap-2 border-gray-200 text-gray-500 rounded-md h-8"
                     >
                         Class
-                    </Button>
+                    </Button> */}
                     {/* <Button
                         icon={<Trash2 size={14} />}
                         danger
@@ -218,6 +228,10 @@ const Student = () => {
                 allMentors={allMentors}
                 isMentorsLoading={isMentorsLoading}
                 refetch={refetch}
+                userGroups={userGroups}
+                userTracks={userTracks}
+                isUserGroupsLoading={isUserGroupsLoading}
+                isUserTracksLoading={isUserTracksLoading}
             />
             <AssignIndividualClassModal
                 open={isClassModalOpen}

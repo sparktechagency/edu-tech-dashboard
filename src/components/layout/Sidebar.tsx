@@ -9,10 +9,6 @@ import {
 import { TSidebarItem } from '../../utils/generateSidebarItems';
 import { useEffect, useMemo, useState } from 'react';
 
-/* =========================
-   Navbar Skeleton
-========================= */
-
 const NavbarSkeleton = () => {
     return (
         <div className="container py-5 px-1.5">
@@ -29,25 +25,15 @@ const NavbarSkeleton = () => {
     );
 };
 
-/* =========================
-   Sidebar Component
-========================= */
-
 const Sidebar = () => {
     const location = useLocation();
 
-    // 🔥 Reactive role state
     const [role, setRole] = useState<string | null>(localStorage.getItem('role'));
 
-    // 🔥 Update role when route changes (after login navigate)
     useEffect(() => {
         const storedRole = localStorage.getItem('role');
         setRole(storedRole);
     }, [location.pathname]);
-
-    /* =========================
-       Role Based Sidebar Items
-    ========================= */
 
     const sidebarItems = useMemo(() => {
         if (!role) return [];
@@ -68,26 +54,14 @@ const Sidebar = () => {
         }
     }, [role]);
 
-    /* =========================
-       Loading State
-    ========================= */
-
     if (!role) {
         return <NavbarSkeleton />;
     }
-
-    /* =========================
-       Active Route Checker
-    ========================= */
 
     const isActive = (path?: string) => {
         if (!path) return false;
         return location.pathname === `/${path}` || location.pathname.startsWith(`/${path}/`);
     };
-
-    /* =========================
-       UI
-    ========================= */
 
     return (
         <div className="container py-5 px-1.5">

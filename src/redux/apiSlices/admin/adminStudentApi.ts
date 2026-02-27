@@ -27,7 +27,25 @@ const adminStudentApi = api.injectEndpoints({
                 body: data,
             }),
         }),
+        getUserGroups: build.query({
+            query: () => ({
+                url: `/user-group`,
+                method: 'GET',
+            }),
+        }),
+        getUserTracks: build.query({
+            query: () => ({
+                url: `/user-group/tracks`,
+                method: 'GET',
+            }),
+        }),
     }),
 });
 
-export const { useGetAllStudentsQuery, useUpdateStudentMutation, useUpdateMentorMutation } = adminStudentApi;
+export const {
+    useGetAllStudentsQuery,
+    useUpdateStudentMutation,
+    useUpdateMentorMutation,
+    useGetUserGroupsQuery,
+    useGetUserTracksQuery,
+} = adminStudentApi;
